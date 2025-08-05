@@ -1,2 +1,3 @@
-# FitnessOverlays-Next
-Creating Fitness Strava Overlays for copying into Photos and Videos built on Next.js
+# Fitness Overlays - Next.js
+
+Simple Next.js app with Strava OAuth authentication using Better Auth and Supabase.
