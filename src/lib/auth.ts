@@ -28,11 +28,14 @@ export const auth = betterAuth({
           userInfoUrl: "https://www.strava.com/api/v3/athlete",
           overrideUserInfo: true,
           getUserInfo: async (tokens) => {
-            const profile = await fetch("https://www.strava.com/api/v3/athlete", {
-              headers: {
-                Authorization: `Bearer ${tokens.accessToken}`,
-              },
-            }).then((res) => res.json());
+            const profile = await fetch(
+              "https://www.strava.com/api/v3/athlete",
+              {
+                headers: {
+                  Authorization: `Bearer ${tokens.accessToken}`,
+                },
+              }
+            ).then((res) => res.json());
 
             return {
               id: profile.id.toString(),
@@ -48,4 +51,4 @@ export const auth = betterAuth({
       ],
     }),
   ],
-}); 
+});

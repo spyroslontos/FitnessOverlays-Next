@@ -10,4 +10,4 @@ export async function syncStravaData(userId: string) {
     console.error("Sync failed:", error);
     return { success: false, error: "Sync failed" };
   }
-} 
+}

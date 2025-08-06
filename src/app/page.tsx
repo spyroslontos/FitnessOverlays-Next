@@ -31,7 +31,7 @@ export default function Home() {
 
   const handleSync = async () => {
     if (!session?.user?.id) return;
-    
+
     setIsSyncing(true);
     try {
       const result = await syncStravaData(session.user.id);
@@ -57,13 +57,14 @@ export default function Home() {
         <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
           Fitness Overlays
         </h1>
-        
+
         {session?.user ? (
           <div className="text-center space-y-4">
             <p className="text-lg mb-4 text-gray-600">
-              Welcome, <span className="font-semibold">{session.user.name}</span>!
+              Welcome,{" "}
+              <span className="font-semibold">{session.user.name}</span>!
             </p>
-            
+
             <button
               onClick={handleSync}
               disabled={isSyncing}
@@ -71,7 +72,7 @@ export default function Home() {
             >
               {isSyncing ? "Syncing..." : "Sync Strava Data"}
             </button>
-            
+
             <button
               onClick={handleLogout}
               className="w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-3 px-4 rounded-lg transition-colors"
