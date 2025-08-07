@@ -20,19 +20,29 @@ export async function syncAthleteData(userId: string) {
     .where(eq(users.id, userId));
 
   const lastSync = user[0]?.lastStravaSync?.getTime() || 0;
-  if (Date.now() - lastSync < SYNC_COOLDOWN) {
-    return false; // Still in cooldown
+  const timeSinceLastSync = Date.now() - lastSync;
+
+  if (timeSinceLastSync < SYNC_COOLDOWN) {
+    const remainingTime = Math.ceil((SYNC_COOLDOWN - timeSinceLastSync) / 1000);
+    console.log(`Sync cooldown: ${remainingTime}s remaining`);
+    return { synced: false, reason: "cooldown", remainingTime };
   }
 
   const accessToken = await getAccessToken(userId);
-  if (!accessToken) return false;
+  if (!accessToken) {
+    console.log("No access token found for user");
+    return { synced: false, reason: "no_token" };
+  }
 
   try {
     const response = await fetch("https://www.strava.com/api/v3/athlete", {
       headers: { Authorization: `Bearer ${accessToken}` },
     });
 
-    if (!response.ok) return false;
+    if (!response.ok) {
+      console.log(`Strava API error: ${response.status}`);
+      return { synced: false, reason: "api_error", status: response.status };
+    }
 
     const profile = await response.json();
 
@@ -61,9 +71,10 @@ export async function syncAthleteData(userId: string) {
       })
       .where(eq(users.id, userId));
 
-    return true;
+    console.log("Strava data synced successfully");
+    return { synced: true, reason: "success" };
   } catch (error) {
     console.error("Strava sync failed:", error);
-    return false;
+    return { synced: false, reason: "error", error: String(error) };
   }
 }

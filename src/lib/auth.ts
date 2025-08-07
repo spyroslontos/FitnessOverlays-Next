@@ -37,6 +37,14 @@ export const auth = betterAuth({
               }
             ).then((res) => res.json());
 
+            // Also sync detailed data to database
+            try {
+              const { syncAthleteData } = await import("./strava");
+              await syncAthleteData(profile.id.toString());
+            } catch (error) {
+              console.error("Failed to sync athlete data during login:", error);
+            }
+
             return {
               id: profile.id.toString(),
               name: `${profile.firstname} ${profile.lastname}`,

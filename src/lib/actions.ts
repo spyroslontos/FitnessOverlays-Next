@@ -4,10 +4,10 @@ import { syncAthleteData } from "./strava";
 
 export async function syncStravaData(userId: string) {
   try {
-    const wasSynced = await syncAthleteData(userId);
-    return { success: true, synced: wasSynced };
+    const result = await syncAthleteData(userId);
+    return result;
   } catch (error) {
     console.error("Sync failed:", error);
-    return { success: false, error: "Sync failed" };
+    return { synced: false, reason: "error", error: String(error) };
   }
 }
