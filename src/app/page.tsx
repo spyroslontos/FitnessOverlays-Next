@@ -4,6 +4,7 @@ import { authClient } from "@/lib/auth-client";
 import { syncStravaData } from "@/lib/actions";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Header } from "@/components/header";
 
 export default function Home() {
   const { data: session, isPending } = authClient.useSession();
@@ -18,10 +19,6 @@ export default function Home() {
       errorCallbackURL: "/",
       disableRedirect: false,
     });
-  };
-
-  const handleLogout = async () => {
-    await authClient.signOut();
   };
 
   const handleSync = async () => {
@@ -55,39 +52,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Simple Header */}
-      <header className="border-b bg-white p-4">
-        <div className="flex items-center justify-between max-w-4xl mx-auto">
-          <h1 className="text-2xl font-bold">FitnessOverlays</h1>
-
-          {session?.user && (
-            <div className="flex items-center gap-3">
-              <Button onClick={handleLogout} variant="ghost" size="sm">
-                Logout
-              </Button>
-
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full overflow-hidden border">
-                  {session.user.image ? (
-                    <img
-                      src={session.user.image}
-                      alt={session.user.name || "Profile"}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-gray-300 flex items-center justify-center text-sm">
-                      {session.user.name?.charAt(0) || "U"}
-                    </div>
-                  )}
-                </div>
-                <span className="text-sm font-medium hidden sm:block">
-                  {session.user.name}
-                </span>
-              </div>
-            </div>
-          )}
-        </div>
-      </header>
+      <Header />
 
       {/* Main Content */}
       <div className="flex items-center justify-center min-h-[calc(100vh-80px)]">
