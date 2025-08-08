@@ -1,16 +1,15 @@
-import { authClient } from "@/lib/auth-client";
+import { auth } from "@/lib/auth";
 import { syncAthleteData } from "@/lib/strava";
 import { NextResponse } from "next/server";
 
-export async function POST() {
+export async function POST(request: Request) {
   try {
-    const session = await authClient.getSession();
-
-    if (!session?.data?.user?.id) {
+    const session = await auth.api.getSession({ headers: request.headers });
+    if (!session?.user?.id) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
 
-    const wasSynced = await syncAthleteData(session.data.user.id);
+    const wasSynced = await syncAthleteData(session.user.id);
 
     return NextResponse.json({
       success: true,

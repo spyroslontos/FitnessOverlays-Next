@@ -1,6 +1,10 @@
 "use server";
 
-import { syncAthleteData } from "./strava";
+import {
+  syncAthleteData,
+  getAthleteActivities,
+  getActivityDetail,
+} from "./strava";
 
 export async function syncStravaData(userId: string) {
   try {
@@ -10,4 +14,12 @@ export async function syncStravaData(userId: string) {
     console.error("Sync failed:", error);
     return { synced: false, reason: "error", error: String(error) };
   }
+}
+
+export async function fetchActivities(userId: string, page = 1) {
+  return getAthleteActivities(userId, page);
+}
+
+export async function fetchActivityDetail(userId: string, activityId: string) {
+  return getActivityDetail(userId, activityId);
 }

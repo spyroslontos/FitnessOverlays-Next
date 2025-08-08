@@ -23,6 +23,7 @@ export const auth = betterAuth({
           authorizationUrl: "https://www.strava.com/oauth/authorize",
           tokenUrl: "https://www.strava.com/oauth/token",
           redirectURI: "http://localhost:3000/api/auth/callback/strava",
+          // Strava expects scopes as comma-delimited string in the OAuth authorize URL
           scopes: ["read,activity:read_all,profile:read_all"],
           pkce: true,
           userInfoUrl: "https://www.strava.com/api/v3/athlete",
@@ -36,14 +37,6 @@ export const auth = betterAuth({
                 },
               }
             ).then((res) => res.json());
-
-            // Also sync detailed data to database
-            try {
-              const { syncAthleteData } = await import("./strava");
-              await syncAthleteData(profile.id.toString());
-            } catch (error) {
-              console.error("Failed to sync athlete data during login:", error);
-            }
 
             return {
               id: profile.id.toString(),

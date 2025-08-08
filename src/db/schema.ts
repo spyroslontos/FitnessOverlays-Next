@@ -7,6 +7,7 @@ import {
   decimal,
   bigint,
   json,
+  serial,
 } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
@@ -99,7 +100,7 @@ export const activities = pgTable("activities", {
 
 // Activity Lists (for pagination/sync management)
 export const activityLists = pgTable("activity_lists", {
-  id: integer("id").primaryKey(),
+  id: serial("id").primaryKey(),
   userId: text("user_id")
     .notNull()
     .references(() => users.id),
