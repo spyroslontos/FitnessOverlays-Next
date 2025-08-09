@@ -200,8 +200,13 @@ export default function ActivitiesPage() {
     );
   if (!session?.user) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-lg">Please sign in to view activities.</div>
+      <div className="min-h-screen bg-gray-50">
+        <Header />
+        <main className="max-w-5xl mx-auto p-4">
+          <div className="min-h-[50vh] flex items-center justify-center">
+            <div className="text-lg">Please sign in to view activities.</div>
+          </div>
+        </main>
       </div>
     );
   }

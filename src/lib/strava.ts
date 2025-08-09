@@ -240,11 +240,19 @@ export async function getAthleteActivities(
 }
 
 export async function getActivityDetail(userId: string, activityId: string) {
+  // validate id is a positive integer-like string
+  if (!/^\d+$/.test(String(activityId))) {
+    const invalidError: any = new Error("Activity not found");
+    invalidError.status = 404;
+    invalidError.code = "INVALID_ID";
+    throw invalidError;
+  }
+  const activityIdNum = Number(activityId);
   // check cached activity and ownership
   const cached = await db
     .select()
     .from(activities)
-    .where(eq(activities.activityId, Number(activityId)));
+    .where(eq(activities.activityId, activityIdNum));
   if (cached[0] && cached[0].userId === userId) {
     const freshEnough =
       cached[0].lastSynced &&
@@ -264,7 +272,7 @@ export async function getActivityDetail(userId: string, activityId: string) {
   let accessToken = await getValidAccessToken(userId);
   if (!accessToken) throw new Error("Missing Strava access token");
   let res = await fetch(
-    `https://www.strava.com/api/v3/activities/${activityId}?include_all_efforts=true`,
+    `https://www.strava.com/api/v3/activities/${activityIdNum}?include_all_efforts=true`,
     {
       headers: { Authorization: `Bearer ${accessToken}` },
     }
@@ -280,7 +288,7 @@ export async function getActivityDetail(userId: string, activityId: string) {
       if (refreshed) {
         accessToken = refreshed;
         res = await fetch(
-          `https://www.strava.com/api/v3/activities/${activityId}?include_all_efforts=true`,
+          `https://www.strava.com/api/v3/activities/${activityIdNum}?include_all_efforts=true`,
           {
             headers: { Authorization: `Bearer ${accessToken}` },
           }
@@ -288,7 +296,17 @@ export async function getActivityDetail(userId: string, activityId: string) {
       }
     }
   }
-  if (!res.ok) throw new Error(`Strava activity error ${res.status}`);
+  if (!res.ok) {
+    if (res.status === 404) {
+      const notFoundError: any = new Error("Activity not found");
+      notFoundError.status = 404;
+      notFoundError.code = "NOT_FOUND";
+      throw notFoundError;
+    }
+    const apiError: any = new Error(`Strava activity error ${res.status}`);
+    apiError.status = res.status;
+    throw apiError;
+  }
   const detail = await res.json();
 
   // upsert cache, enforce ownership

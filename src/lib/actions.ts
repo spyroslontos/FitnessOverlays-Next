@@ -21,5 +21,12 @@ export async function fetchActivities(userId: string, page = 1) {
 }
 
 export async function fetchActivityDetail(userId: string, activityId: string) {
-  return getActivityDetail(userId, activityId);
+  try {
+    return await getActivityDetail(userId, activityId);
+  } catch (error: any) {
+    if (error?.status === 404) {
+      return { data: null, source: "network", notFound: true } as const;
+    }
+    throw error;
+  }
 }
