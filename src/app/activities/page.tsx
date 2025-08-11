@@ -5,6 +5,7 @@ import { fetchActivities } from "@/lib/actions";
 import { useEffect, useState } from "react";
 import { Header } from "@/components/header";
 import { Button } from "@/components/ui/button";
+import { LoginWithStravaButton } from "@/components/login-with-strava-button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
@@ -156,12 +157,14 @@ export default function ActivitiesPage() {
   const [datePref, setDatePref] = useState<string>("%m/%d/%Y");
   const [measurePref, setMeasurePref] = useState<"meters" | "feet">("meters");
 
+  const handleLogin = async () => {};
+
   useEffect(() => {
     if (!session?.user?.id) return;
     // fetch preferences once
     (async () => {
       try {
-        const res = await fetch("/api/me");
+        const res = await fetch("/api/preferences");
         if (res.ok) {
           const json = await res.json();
           if (json.datePreference) setDatePref(json.datePreference);
@@ -176,7 +179,7 @@ export default function ActivitiesPage() {
       setLoading(true);
       setError(null);
       try {
-        const res = await fetchActivities(session.user.id, page);
+        const res = await fetchActivities(page);
         setActivities((prev) =>
           page === 1 ? res.data : [...prev, ...res.data]
         );
@@ -204,7 +207,15 @@ export default function ActivitiesPage() {
         <Header />
         <main className="max-w-5xl mx-auto p-4">
           <div className="min-h-[50vh] flex items-center justify-center">
-            <div className="text-lg">Please sign in to view activities.</div>
+            <div className="text-center space-y-4">
+              <div className="text-lg">Please sign in to view activities.</div>
+              <div className="flex items-center justify-center gap-3">
+                <Button asChild variant="outline">
+                  <a href="/">Go Home</a>
+                </Button>
+                <LoginWithStravaButton callbackURL="/activities" />
+              </div>
+            </div>
           </div>
         </main>
       </div>

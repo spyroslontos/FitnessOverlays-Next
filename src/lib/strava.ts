@@ -240,87 +240,90 @@ export async function getAthleteActivities(
 }
 
 export async function getActivityDetail(userId: string, activityId: string) {
-  // validate id is a positive integer-like string
-  if (!/^\d+$/.test(String(activityId))) {
-    const invalidError: any = new Error("Activity not found");
-    invalidError.status = 404;
-    invalidError.code = "INVALID_ID";
-    throw invalidError;
+  const throwNotFound = (): never => {
+    const error: any = new Error("Activity not found");
+    error.status = 404;
+    error.code = "NOT_FOUND";
+    throw error;
+  };
+
+  // Validate id: positive numeric up to 19 digits
+  const idStr = String(activityId);
+  if (!/^[1-9]\d{0,18}$/.test(idStr)) {
+    throwNotFound();
   }
-  const activityIdNum = Number(activityId);
-  // check cached activity and ownership
+  const activityIdNum = Number(idStr);
+
+  // Try serving from cache when detailed and fresh
   const cached = await db
     .select()
     .from(activities)
-    .where(eq(activities.activityId, activityIdNum));
-  if (cached[0] && cached[0].userId === userId) {
-    const freshEnough =
-      cached[0].lastSynced &&
+    .where(
+      and(
+        eq(activities.activityId, activityIdNum),
+        eq(activities.userId, userId)
+      )
+    );
+  if (cached[0]) {
+    const isFresh =
+      !!cached[0].lastSynced &&
       Date.now() - new Date(cached[0].lastSynced).getTime() < SYNC_COOLDOWN;
-
-    // Strava resource_state: 2 = summary, 3 = detailed
-    const resourceState = (cached[0].data as any)?.resource_state;
+    const resourceState = (cached[0].data as any)?.resource_state; // 2=summary,3=detailed
     const isDetailed = resourceState === 3;
-
-    // Only serve cache if it is detailed OR if it's fresh and detailed is not required
-    if (freshEnough && isDetailed) {
+    if (isFresh && isDetailed) {
       return { data: cached[0].data as any, source: "cache" } as const;
     }
-    // If within cooldown but cache is only summary, proceed to fetch detailed once
   }
 
+  // Fetch from Strava (with one refresh retry on 401)
   let accessToken = await getValidAccessToken(userId);
   if (!accessToken) throw new Error("Missing Strava access token");
-  let res = await fetch(
-    `https://www.strava.com/api/v3/activities/${activityIdNum}?include_all_efforts=true`,
-    {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    }
-  );
-  if (!res.ok) {
-    if (res.status === 401) {
-      const refreshed = await refreshAccessToken(
-        userId,
-        (
-          await getAccount(userId)
-        )?.refreshToken
-      );
-      if (refreshed) {
-        accessToken = refreshed;
-        res = await fetch(
-          `https://www.strava.com/api/v3/activities/${activityIdNum}?include_all_efforts=true`,
-          {
-            headers: { Authorization: `Bearer ${accessToken}` },
-          }
-        );
-      }
+  const url = `https://www.strava.com/api/v3/activities/${activityIdNum}?include_all_efforts=true`;
+  const doFetch = (token: string) =>
+    fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+
+  let res = await doFetch(accessToken);
+  if (res.status === 401) {
+    const refreshed = await refreshAccessToken(
+      userId,
+      (
+        await getAccount(userId)
+      )?.refreshToken
+    );
+    if (refreshed) {
+      accessToken = refreshed;
+      res = await doFetch(accessToken);
     }
   }
+
+  if (res.status === 404) {
+    throwNotFound();
+  }
   if (!res.ok) {
-    if (res.status === 404) {
-      const notFoundError: any = new Error("Activity not found");
-      notFoundError.status = 404;
-      notFoundError.code = "NOT_FOUND";
-      throw notFoundError;
-    }
     const apiError: any = new Error(`Strava activity error ${res.status}`);
     apiError.status = res.status;
     throw apiError;
   }
+
   const detail = await res.json();
 
-  // upsert cache, enforce ownership
+  // Ensure we have owner-level detail; non-owner tokens only get summary (resource_state 2)
+  if ((detail?.resource_state ?? 0) !== 3) {
+    throwNotFound();
+  }
+
+  // Upsert cache
   await db
     .insert(activities)
     .values({
-      activityId: Number(activityId),
+      activityId: activityIdNum,
       userId,
       data: detail,
       lastSynced: new Date(),
     })
     .onConflictDoUpdate({
       target: activities.activityId,
-      set: { data: detail, lastSynced: new Date(), userId },
+      set: { data: detail, lastSynced: new Date() },
     });
 
   return { data: detail, source: "network" } as const;

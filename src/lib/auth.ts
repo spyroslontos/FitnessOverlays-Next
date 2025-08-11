@@ -22,8 +22,9 @@ export const auth = betterAuth({
           clientSecret: process.env.STRAVA_CLIENT_SECRET!,
           authorizationUrl: "https://www.strava.com/oauth/authorize",
           tokenUrl: "https://www.strava.com/oauth/token",
-          redirectURI: "http://localhost:3000/api/auth/callback/strava",
-          // Strava expects scopes as comma-delimited string in the OAuth authorize URL
+          redirectURI: `${
+            process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"
+          }/api/auth/callback/strava`,
           scopes: ["read,activity:read_all,profile:read_all"],
           pkce: true,
           userInfoUrl: "https://www.strava.com/api/v3/athlete",

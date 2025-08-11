@@ -4,7 +4,7 @@ import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useEffect, useRef } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,10 +16,12 @@ import {
 export function Header() {
   const { data: session } = authClient.useSession();
   const pathname = usePathname();
+  const router = useRouter();
   const lastSyncRef = useRef<number>(0);
 
   const handleLogout = async () => {
     await authClient.signOut();
+    router.refresh();
   };
 
   // Background sync on login, navigation, and refresh (server enforces cooldown)

@@ -1,11 +1,11 @@
 import { headers } from "next/headers";
-import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { auth } from "@/lib/auth";
 import { getActivityDetail } from "@/lib/strava";
 import { Header } from "@/components/header";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { LoginWithStravaButton } from "@/components/login-with-strava-button";
 
 export default async function ActivityDetailPage({
   params,
@@ -13,9 +13,6 @@ export default async function ActivityDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  if (!/^\d+$/.test(String(id))) {
-    notFound();
-  }
 
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session?.user) {
@@ -24,7 +21,17 @@ export default async function ActivityDetailPage({
         <Header />
         <main className="max-w-3xl mx-auto p-4">
           <div className="min-h-[50vh] flex items-center justify-center">
-            <div className="text-lg">Please sign in to view activities.</div>
+            <div className="text-center space-y-4">
+              <div className="text-lg">Please sign in to view activities.</div>
+              <div className="flex items-center justify-center gap-3">
+                <a href="/" className="text-sm text-blue-600 hover:underline">
+                  ← Go Home
+                </a>
+                <LoginWithStravaButton callbackURL={`/activities/${id}`}>
+                  Login with Strava
+                </LoginWithStravaButton>
+              </div>
+            </div>
           </div>
         </main>
       </div>
@@ -54,6 +61,19 @@ async function ActivityDetailContent({
   id: string;
 }) {
   try {
+    if (!/^\d+$/.test(String(id))) {
+      return (
+        <div className="mt-6">
+          <div className="rounded-lg border bg-white p-6 text-center">
+            <h2 className="mt-2 text-xl font-semibold">Activity not found</h2>
+            <p className="mt-1 text-sm text-gray-600">
+              The requested activity does not exist.
+            </p>
+          </div>
+        </div>
+      );
+    }
+
     const res = await getActivityDetail(userId, id);
     const detail: any = res.data;
     return (
@@ -90,37 +110,14 @@ async function ActivityDetailContent({
         </pre>
       </div>
     );
-  } catch (e: any) {
-    if (e?.status === 404) {
-      return (
-        <div className="mt-6">
-          <div className="rounded-lg border bg-white p-6 text-center">
-            <div className="text-2xl">🏃‍♂️💨</div>
-            <h2 className="mt-2 text-xl font-semibold">
-              We couldn’t find that activity
-            </h2>
-            <p className="mt-1 text-sm text-gray-600">
-              It may not exist, or you don’t have access to view it.
-            </p>
-            <div className="mt-4">
-              <a
-                href="/activities"
-                className="text-sm text-blue-600 hover:underline"
-              >
-                ← Back to Activities
-              </a>
-            </div>
-          </div>
-        </div>
-      );
-    }
+  } catch {
     return (
       <div className="mt-6">
         <div className="rounded-lg border bg-white p-6 text-center">
-          <h2 className="mt-2 text-xl font-semibold">
-            Failed to load activity
-          </h2>
-          <p className="mt-1 text-sm text-gray-600">Please try again later.</p>
+          <h2 className="mt-2 text-xl font-semibold">Activity not found</h2>
+          <p className="mt-1 text-sm text-gray-600">
+            You may not have access to this activity.
+          </p>
         </div>
       </div>
     );

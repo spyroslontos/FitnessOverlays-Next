@@ -4,6 +4,7 @@ import { authClient } from "@/lib/auth-client";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Header } from "@/components/header";
+import { LoginWithStravaButton } from "@/components/login-with-strava-button";
 import {
   Carousel,
   CarouselContent,
@@ -17,14 +18,7 @@ export default function Home() {
 
   // No background sync needed - happens during login now
 
-  const handleLogin = async () => {
-    await authClient.signIn.oauth2({
-      providerId: "strava",
-      callbackURL: "/",
-      errorCallbackURL: "/",
-      disableRedirect: false,
-    });
-  };
+  const handleLogin = async () => {};
 
   if (isPending) {
     return (
@@ -101,9 +95,9 @@ export default function Home() {
               <p className="text-lg mb-6 text-gray-600">
                 Connect with Strava to get started
               </p>
-              <Button onClick={handleLogin} className="w-full">
-                Login with Strava
-              </Button>
+              <div className="w-full flex justify-center">
+                <LoginWithStravaButton />
+              </div>
             </div>
           )}
         </div>
