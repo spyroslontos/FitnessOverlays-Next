@@ -21,11 +21,14 @@ export async function POST(request: Request) {
 
     const wasSynced = await syncAthleteData(session.user.id);
 
-    return NextResponse.json({
+    const res = NextResponse.json({
       success: true,
       synced: wasSynced,
       message: wasSynced ? "Fresh data fetched" : "Using cached data",
     });
+    // No-store since this triggers background or fresh data
+    res.headers.set("Cache-Control", "no-store");
+    return res;
   } catch (error) {
     console.error("Sync API error:", error);
     return NextResponse.json({ error: "Sync failed" }, { status: 500 });

@@ -17,8 +17,13 @@ export async function GET(request: Request) {
     .from(users)
     .where(eq(users.id, session.user.id));
 
-  return NextResponse.json({
-    datePreference: row?.datePreference || "%m/%d/%Y",
-    measurementPreference: row?.measurementPreference || "meters",
-  });
+  const res = NextResponse.json(
+    {
+      datePreference: row?.datePreference || "%m/%d/%Y",
+      measurementPreference: row?.measurementPreference || "meters",
+    },
+    { status: 200 }
+  );
+  res.headers.set("Cache-Control", "private, max-age=60");
+  return res;
 }
