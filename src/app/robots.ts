@@ -13,6 +13,7 @@ export default function robots(): MetadataRoute.Robots {
           "/sitemap.xml",
           "/robots.txt",
           "/",
+          "/activities/demo",
         ],
       },
       {
@@ -24,6 +25,7 @@ export default function robots(): MetadataRoute.Robots {
           "/favicon.ico",
           "/sitemap.xml",
           "/robots.txt",
+          "/activities/demo",
         ],
       },
       {
@@ -35,6 +37,7 @@ export default function robots(): MetadataRoute.Robots {
           "/favicon.ico",
           "/sitemap.xml",
           "/robots.txt",
+          "/activities/demo",
         ],
       },
     ],

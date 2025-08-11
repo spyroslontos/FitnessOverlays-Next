@@ -197,7 +197,12 @@ export default function ActivitiesPage() {
       <div className="min-h-screen bg-gray-50">
         <Header />
         <main className="max-w-5xl mx-auto p-4">
-          <div className="text-sm text-gray-600">Loading session...</div>
+          <div className="flex items-center justify-between">
+            <div className="text-sm text-gray-600">Loading session...</div>
+            <Button asChild variant="outline">
+              <a href="/activities/demo">Try Demo</a>
+            </Button>
+          </div>
         </main>
       </div>
     );
@@ -214,6 +219,9 @@ export default function ActivitiesPage() {
                   <a href="/">Go Home</a>
                 </Button>
                 <LoginWithStravaButton callbackURL="/activities" />
+                <Button asChild variant="outline">
+                  <a href="/activities/demo">Try Demo</a>
+                </Button>
               </div>
             </div>
           </div>

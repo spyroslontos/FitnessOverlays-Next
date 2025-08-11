@@ -1,7 +1,6 @@
 "use client";
 
 import { authClient } from "@/lib/auth-client";
-import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Header } from "@/components/header";
 import { LoginWithStravaButton } from "@/components/login-with-strava-button";
@@ -15,8 +14,6 @@ import {
 
 export default function Home() {
   const { data: session, isPending } = authClient.useSession();
-
-  // No background sync needed - happens during login now
 
   const handleLogin = async () => {};
 
@@ -46,13 +43,19 @@ export default function Home() {
                 <span className="font-semibold">{session.user.name}</span>!
               </p>
 
-              <div className="flex gap-3">
-                <Button asChild className="w-full">
-                  <a href="/activities">Go to Activities</a>
-                </Button>
+              <div className="space-y-3">
+                <div className="flex gap-3">
+                  <Button asChild className="w-full">
+                    <a href="/activities">Go to Activities</a>
+                  </Button>
+                </div>
+                <div>
+                  <Button asChild variant="outline" className="w-full">
+                    <a href="/activities/demo">Try Demo</a>
+                  </Button>
+                </div>
               </div>
 
-              {/* Simple mobile-friendly carousel for onboarding/marketing */}
               <Carousel className="mt-6">
                 <CarouselContent>
                   <CarouselItem>
@@ -95,8 +98,15 @@ export default function Home() {
               <p className="text-lg mb-6 text-gray-600">
                 Connect with Strava to get started
               </p>
-              <div className="w-full flex justify-center">
-                <LoginWithStravaButton />
+              <div className="space-y-3">
+                <div className="w-full flex justify-center">
+                  <LoginWithStravaButton />
+                </div>
+                <div>
+                  <Button asChild variant="outline" className="w-full">
+                    <a href="/activities/demo">Try Demo</a>
+                  </Button>
+                </div>
               </div>
             </div>
           )}
