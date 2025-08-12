@@ -9,6 +9,13 @@ import { LoginWithStravaButton } from "@/components/login-with-strava-button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
+import {
+  formatDate as formatDateByPreference,
+  formatDistanceWithPref,
+  paceSpeedLabel,
+  formatPaceOrSpeed,
+  formatDuration,
+} from "@/lib/format";
 
 type Activity = {
   id: number;
@@ -67,86 +74,6 @@ function sportAccentBorderClass(sport: string) {
   }
 }
 
-function formatDistance(distanceMeters: number) {
-  // TODO: Replace with user preference from DB when available
-  const km = distanceMeters / 1000;
-  return `${km.toFixed(2)} km`;
-}
-
-function formatPaceOrSpeed(a: Activity, pref: "meters" | "feet") {
-  const km = a.distance / 1000;
-  if (km <= 0 || a.moving_time <= 0) return "";
-  if (
-    a.sport_type?.toLowerCase().includes("run") ||
-    a.sport_type === "Walk" ||
-    a.sport_type === "Hike"
-  ) {
-    const isMiles = pref === "feet";
-    const distanceUnits = isMiles ? km / 1.609344 : km;
-    const secondsPerUnit = a.moving_time / distanceUnits;
-    const m = Math.floor(secondsPerUnit / 60)
-      .toString()
-      .padStart(2, "0");
-    const s = Math.floor(secondsPerUnit % 60)
-      .toString()
-      .padStart(2, "0");
-    return `${m}:${s} ${isMiles ? "/mi" : "/km"}`;
-  }
-  // speed km/h
-  if (pref === "feet") {
-    const mph = (a.distance / a.moving_time) * 2.23693629;
-    return `${mph.toFixed(1)} mph`;
-  }
-  const kph = (a.distance / a.moving_time) * 3.6;
-  return `${kph.toFixed(1)} km/h`;
-}
-
-function formatDate(dateISO: string, pref: string) {
-  const d = new Date(dateISO);
-  // Basic support for %m/%d/%Y (US). Extend if other patterns appear.
-  const mm = String(d.getMonth() + 1).padStart(2, "0");
-  const dd = String(d.getDate()).padStart(2, "0");
-  const yyyy = d.getFullYear();
-  if (pref === "%m/%d/%Y") return `${mm}/${dd}/${yyyy}`;
-  // default locale fallback with time
-  return d.toLocaleString();
-}
-
-function formatDistanceWithPref(
-  distanceMeters: number,
-  pref: "meters" | "feet"
-) {
-  if (pref === "feet") {
-    const feet = distanceMeters * 3.28084;
-    const miles = feet / 5280;
-    return miles >= 0.1 ? `${miles.toFixed(2)} mi` : `${Math.round(feet)} ft`;
-  }
-  const km = distanceMeters / 1000;
-  return km >= 0.1 ? `${km.toFixed(2)} km` : `${Math.round(distanceMeters)} m`;
-}
-
-function paceSpeedLabel(a: Activity) {
-  const lower = a.sport_type?.toLowerCase() || "";
-  return lower.includes("run") ||
-    a.sport_type === "Walk" ||
-    a.sport_type === "Hike"
-    ? "Pace"
-    : "Speed";
-}
-
-function formatDuration(seconds: number) {
-  const h = Math.floor(seconds / 3600)
-    .toString()
-    .padStart(2, "0");
-  const m = Math.floor((seconds % 3600) / 60)
-    .toString()
-    .padStart(2, "0");
-  const s = Math.floor(seconds % 60)
-    .toString()
-    .padStart(2, "0");
-  return `${h}:${m}:${s}`;
-}
-
 export default function ActivitiesPage() {
   const { data: session, isPending } = authClient.useSession();
   const [page, setPage] = useState(1);
@@ -156,8 +83,6 @@ export default function ActivitiesPage() {
   const isInitialLoading = loading && activities.length === 0;
   const [datePref, setDatePref] = useState<string>("%m/%d/%Y");
   const [measurePref, setMeasurePref] = useState<"meters" | "feet">("meters");
-
-  const handleLogin = async () => {};
 
   useEffect(() => {
     if (!session?.user?.id) return;
@@ -268,7 +193,7 @@ export default function ActivitiesPage() {
                   {a.sport_type}
                 </Badge>
                 <div className="text-xs text-gray-500">
-                  {formatDate(a.start_date, datePref)}
+                  {formatDateByPreference(a.start_date, datePref)}
                 </div>
               </header>
               <div className="mt-2 font-medium text-base truncate">
