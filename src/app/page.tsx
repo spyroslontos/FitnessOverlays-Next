@@ -12,10 +12,8 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 
-export default function Home() {
+export default function LandingPage() {
   const { data: session, isPending } = authClient.useSession();
-
-  const handleLogin = async () => {};
 
   if (isPending) {
     return (
@@ -46,12 +44,7 @@ export default function Home() {
               <div className="space-y-3">
                 <div className="flex gap-3">
                   <Button asChild className="w-full">
-                    <a href="/activities">Go to Activities</a>
-                  </Button>
-                </div>
-                <div>
-                  <Button asChild variant="outline" className="w-full">
-                    <a href="/activities/demo">Try Demo</a>
+                    <a href="/app">Go to App</a>
                   </Button>
                 </div>
               </div>

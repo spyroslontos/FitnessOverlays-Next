@@ -3,7 +3,7 @@
 import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, ReactNode } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import {
   DropdownMenu,
@@ -13,7 +13,11 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 
-export function Header() {
+interface HeaderProps {
+  mobileSidebarTrigger?: ReactNode;
+}
+
+export function Header({ mobileSidebarTrigger }: HeaderProps) {
   const { data: session } = authClient.useSession();
   const pathname = usePathname();
   const router = useRouter();
@@ -37,19 +41,15 @@ export function Header() {
   return (
     <header className="border-b bg-white p-3 sm:p-4 sticky top-0 z-40">
       <div className="flex items-center justify-between max-w-4xl mx-auto">
-        <a href="/" className="text-xl sm:text-2xl font-bold truncate">
-          FitnessOverlays
-        </a>
+        <div className="flex items-center gap-3">
+          {mobileSidebarTrigger}
+          <a href="/" className="text-xl sm:text-2xl font-bold truncate">
+            FitnessOverlays
+          </a>
+        </div>
 
         {session?.user && (
           <div className="flex items-center gap-2 sm:gap-3">
-            <a
-              href="/activities"
-              className="hidden sm:inline-block text-sm font-medium hover:underline"
-            >
-              Activities
-            </a>
-
             <DropdownMenu>
               <DropdownMenuTrigger className="outline-none">
                 <div className="flex items-center gap-2">
@@ -69,7 +69,7 @@ export function Header() {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
                 <DropdownMenuItem asChild>
-                  <a href="/activities">Activities</a>
+                  <a href="/app">App</a>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogout} variant="destructive">
