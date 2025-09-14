@@ -1,39 +1,36 @@
-# FitnessOverlays 🏃📱
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## 🌍 Live Website
+## Getting Started
 
-[fitnessoverlays.com](https://fitnessoverlays.com/)
+First, run the development server:
 
-## Turn Your Strava Activities into Custom Overlays
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
 
-FitnessOverlays lets you create clean, Instagram-ready overlays from your Strava activities. Designed to work smoothly on both mobile and desktop.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
----
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-## ⚙️ How It Works
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-1. **Connect** your Strava account securely via Strava's OAuth.
-2. **Choose an activity** from your personal Strava history.
-3. **Customize** your overlay:
-   - Pick stats to include
-   - Choose text size, color, alignment
-   - Select number of columns
-4. **Export** as a transparent PNG or plain text
+## Learn More
 
----
+To learn more about Next.js, take a look at the following resources:
 
-## 📤 Export & Share
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-- **Copy as text**
-- **Copy image** (transparent PNG, including map if selected)
-- **Download** or long-press to save on mobile
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
----
+## Deploy on Vercel
 
-## ❓ FAQ
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-For common questions like disconnecting from Strava or privacy details, visit the [FAQ page](https://fitnessoverlays.com/faq).
-
----
-
-![Powered by Strava](public/images/api_logo_pwrdBy_strava_horiz_orange.svg)
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

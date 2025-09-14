@@ -1,14 +1,16 @@
-import { AuthButton } from "@/components/auth-button";
-import { SessionInfo } from "@/components/session-info";
+import { SessionInfo } from "@/components/session-info"
+import { Header } from "@/components/header"
 
 export default function Home() {
   return (
-    <div className="p-8">
-      <h1 className="text-2xl font-bold mb-4">Strava Auth Test</h1>
-      <div className="space-y-4">
-        <AuthButton />
+    <>
+    <Header />
+    
+    <div className="min-h-screen p-8">
+      <div className="max-w-md mx-auto">
+        <h1 className="text-2xl font-bold mb-6">Fitness Overlays</h1>
         <SessionInfo />
       </div>
-    </div>
-  );
+    </div></>
+  )
 }

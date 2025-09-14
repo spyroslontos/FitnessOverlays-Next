@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { Toaster } from "@/components/ui/sonner";
-import { SessionProvider } from "next-auth/react";
+import { Header } from "@/components/header";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Fitness Overlays - Strava Auth Test",
-  description: "Test Strava authentication with Auth.js",
+  title: "FitnessOverlays",
+  description: "Create beautiful fitness overlays for your activities",
 };
 
 export default function RootLayout({
@@ -29,10 +28,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <SessionProvider>
-          {children}
-          <Toaster richColors position="top-center" closeButton />
-        </SessionProvider>
+        {children}
       </body>
     </html>
   );

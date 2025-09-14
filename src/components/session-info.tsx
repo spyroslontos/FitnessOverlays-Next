@@ -1,17 +1,14 @@
-"use client"
+import { auth } from "@/lib/auth"
 
-import { useSession } from "next-auth/react"
+export async function SessionInfo() {
+  const session = await auth()
 
-export function SessionInfo() {
-  const { data: session, status } = useSession()
-
-  if (status === "loading") return <div>Loading...</div>
   if (!session) return <div>Not logged in</div>
 
   return (
     <div className="p-4 border rounded">
       <h3 className="font-bold mb-2">Session Data</h3>
-      <pre className="text-xs bg-gray-100 p-2 rounded overflow-auto">
+      <pre className="text-xs p-2 rounded overflow-auto">
         {JSON.stringify(session, null, 2)}
       </pre>
     </div>
