@@ -1,4 +1,5 @@
 import { signIn, signOut } from "@/lib/auth";
+import { LogOut } from "lucide-react";
 
 export function SignInButton() {
   return (
@@ -30,11 +31,9 @@ export function SignOutButton() {
         await signOut();
       }}
     >
-      <button
-        type="submit"
-        className="bg-gray-500 text-white px-4 py-2 rounded"
-      >
-        Sign Out
+      <button type="submit" className="w-full text-left flex items-center">
+        <LogOut className="mr-2 h-4 w-4" />
+        Log out
       </button>
     </form>
   );

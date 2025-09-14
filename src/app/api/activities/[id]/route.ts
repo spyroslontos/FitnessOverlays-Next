@@ -1,7 +1,10 @@
 import { auth } from "@/lib/auth";
 import { NextResponse } from "next/server";
 
-export async function GET() {
+export async function GET(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
   try {
     const session = await auth();
 
@@ -9,10 +12,12 @@ export async function GET() {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
 
-    console.log("🌐 Making Strava API call to /athlete/activities endpoint");
+    const { id } = await params;
+    const activityId = id;
+    console.log("🌐 Making Strava API call to /activities/" + activityId);
 
     const response = await fetch(
-      "https://www.strava.com/api/v3/athlete/activities",
+      `https://www.strava.com/api/v3/activities/${activityId}`,
       {
         headers: {
           Authorization: `Bearer ${session.accessToken}`,
@@ -24,11 +29,11 @@ export async function GET() {
     console.log("📡 Strava API response status:", response.status);
 
     if (!response.ok) {
-      throw new Error(`Failed to fetch activities data: ${response.status}`);
+      throw new Error(`Failed to fetch activity data: ${response.status}`);
     }
 
     const data = await response.json();
-    console.log("✅ Activities data received:", data.length, "activities");
+    console.log("✅ Activity data received:", data.name);
 
     return NextResponse.json(data, {
       headers: {
@@ -36,9 +41,9 @@ export async function GET() {
       },
     });
   } catch (error) {
-    console.error("Error fetching activities:", error);
+    console.error("Error fetching activity:", error);
     return NextResponse.json(
-      { error: "Failed to fetch activities" },
+      { error: "Failed to fetch activity" },
       { status: 500 }
     );
   }
