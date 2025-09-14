@@ -1,30 +1,39 @@
-# Fitness Overlays
+# FitnessOverlays 🏃📱
 
-A modern web application that connects with Strava to display your fitness data in beautiful, customizable overlays. Built with Next.js, featuring seamless OAuth authentication and real-time data synchronization.
+## 🌍 Live Website
 
-## Features
+[fitnessoverlays.com](https://fitnessoverlays.com/)
 
-- 🔐 **Secure Authentication** - OAuth integration with Strava
-- 📊 **Real-time Data Sync** - Automatic synchronization with your Strava activities
-- 🎨 **Customizable Overlays** - Beautiful, responsive design for displaying fitness metrics
-- ⚡ **Fast Performance** - Built with Next.js 15 and optimized for speed
-- 🗄️ **Reliable Storage** - Powered by Supabase for robust data management
+## Turn Your Strava Activities into Custom Overlays
 
-## Getting Started
+FitnessOverlays lets you create clean, Instagram-ready overlays from your Strava activities. Designed to work smoothly on both mobile and desktop.
 
-1. Clone the repository
-2. Install dependencies: `npm install`
-3. Set up your environment variables
-4. Run the development server: `npm run dev`
+---
 
-## Tech Stack
+## ⚙️ How It Works
 
-- **Frontend**: Next.js 15, React 19, TypeScript
-- **Authentication**: Better Auth with Strava OAuth
-- **Database**: Supabase (PostgreSQL)
-- **Styling**: Tailwind CSS
-- **ORM**: Drizzle ORM
+1. **Connect** your Strava account securely via Strava's OAuth.
+2. **Choose an activity** from your personal Strava history.
+3. **Customize** your overlay:
+   - Pick stats to include
+   - Choose text size, color, alignment
+   - Select number of columns
+4. **Export** as a transparent PNG or plain text
 
-## Contributing
+---
 
-This project is actively maintained. Feel free to submit issues and pull requests.
+## 📤 Export & Share
+
+- **Copy as text**
+- **Copy image** (transparent PNG, including map if selected)
+- **Download** or long-press to save on mobile
+
+---
+
+## ❓ FAQ
+
+For common questions like disconnecting from Strava or privacy details, visit the [FAQ page](https://fitnessoverlays.com/faq).
+
+---
+
+![Powered by Strava](public/images/api_logo_pwrdBy_strava_horiz_orange.svg)
