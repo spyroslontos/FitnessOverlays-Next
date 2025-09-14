@@ -18,6 +18,7 @@ export async function GET() {
         Authorization: `Bearer ${session.accessToken}`,
       },
       next: { revalidate: 180 }, // Cache for 3 minutes
+      signal: AbortSignal.timeout(10000), // 10 second timeout
     });
 
     console.log("📡 Strava API response status:", response.status);

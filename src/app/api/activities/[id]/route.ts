@@ -13,7 +13,15 @@ export async function GET(
     }
 
     const { id } = await params;
-    const activityId = id;
+
+    // Validate activity ID - must be a positive integer
+    const activityId = parseInt(id, 10);
+    if (isNaN(activityId) || activityId <= 0 || !Number.isInteger(activityId)) {
+      return NextResponse.json(
+        { error: "Invalid activity ID. Must be a positive integer." },
+        { status: 400 }
+      );
+    }
     console.log("🌐 Making Strava API call to /activities/" + activityId);
 
     const response = await fetch(
@@ -23,6 +31,7 @@ export async function GET(
           Authorization: `Bearer ${session.accessToken}`,
         },
         next: { revalidate: 180 }, // Cache for 3 minutes
+        signal: AbortSignal.timeout(10000), // 10 second timeout
       }
     );
 
