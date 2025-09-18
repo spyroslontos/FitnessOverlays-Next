@@ -18,7 +18,6 @@ export function AppSidebar() {
   const { isPending, error, data } = useQuery({
     queryKey: ["activityData"],
     queryFn: () => fetch("/api/activities").then((res) => res.json()),
-    staleTime: 0, // Always refetch when component mounts
   });
 
   const activities = Array.isArray(data) ? data : [];

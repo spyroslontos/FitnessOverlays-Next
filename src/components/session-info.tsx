@@ -3,8 +3,6 @@ import { auth } from "@/lib/auth";
 export async function SessionInfo() {
   const session = await auth();
 
-  // if (!session) return <div>Not logged in</div>;
-
   return (
     <div className="p-4 border rounded">
       <h3 className="font-bold mb-2">Session Data</h3>

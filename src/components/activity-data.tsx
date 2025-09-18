@@ -13,6 +13,9 @@ export function ActivityData() {
     queryFn: () =>
       fetch(`/api/activities/${selectedActivityId}`).then((res) => res.json()),
     enabled: !!selectedActivityId,
+    staleTime: 3 * 60 * 1000, // 3 minutes - matches server cache
+    gcTime: 3 * 60 * 1000, // 3 minutes - garbage collect after 3 minutes
+    refetchOnWindowFocus: true, // Refetch when window gains focus
   });
 
   // Listen for activity selection from sidebar

@@ -76,11 +76,6 @@ export const activities = pgTable("activities", {
   lastSynced: timestamp("last_synced", { withTimezone: true })
     .notNull()
     .defaultNow(),
-  // User selection metadata
-  selectedAt: timestamp("selected_at", { withTimezone: true })
-    .notNull()
-    .defaultNow(),
-  isSelected: boolean("is_selected").notNull().default(true),
 });
 
 // Overlays (your app's custom data)

@@ -1,7 +1,10 @@
 import { auth } from "@/lib/auth";
 import { NextResponse } from "next/server";
-import { db } from "@/db/db";
+import { db } from "@/db";
 import { activities } from "@/db/schema";
+import { eq, and } from "drizzle-orm";
+
+const CACHE_DURATION = 3 * 60 * 1000; // 3 minutes
 
 export async function GET(
   request: Request,
@@ -16,7 +19,7 @@ export async function GET(
 
     const { id } = await params;
 
-    // Validate activity ID - must be a positive integer with reasonable bounds
+    // Validate activity ID
     const activityId = parseInt(id, 10);
     if (
       isNaN(activityId) ||
@@ -29,7 +32,35 @@ export async function GET(
         { status: 400 }
       );
     }
-    console.log("🌐 Making Strava API call to /activities/" + activityId);
+
+    const userId = session.user?.id;
+    if (!userId) {
+      return NextResponse.json({ error: "No user ID" }, { status: 401 });
+    }
+
+    // Check DB cache first - ensure activity belongs to current user
+    const cached = await db
+      .select()
+      .from(activities)
+      .where(
+        and(
+          eq(activities.activityId, activityId),
+          eq(activities.userId, parseInt(userId, 10))
+        )
+      )
+      .limit(1);
+
+    if (cached.length > 0) {
+      const lastSynced = cached[0].lastSynced;
+      const isStale = Date.now() - lastSynced.getTime() > CACHE_DURATION;
+
+      if (!isStale) {
+        console.log("💾 Returning from DB cache");
+        return NextResponse.json(cached[0].data);
+      }
+    }
+
+    console.log("🌐 Fetching from Strava API");
 
     const response = await fetch(
       `https://www.strava.com/api/v3/activities/${activityId}`,
@@ -37,12 +68,9 @@ export async function GET(
         headers: {
           Authorization: `Bearer ${session.accessToken}`,
         },
-        next: { revalidate: 180 }, // Cache for 3 minutes
-        signal: AbortSignal.timeout(10000), // 10 second timeout
+        signal: AbortSignal.timeout(10000),
       }
     );
-
-    console.log("📡 Strava API response status:", response.status);
 
     if (!response.ok) {
       throw new Error(`Failed to fetch activity data: ${response.status}`);
@@ -51,41 +79,34 @@ export async function GET(
     const data = await response.json();
     console.log("✅ Activity data received:", data.name);
 
-    // Store the selected activity in database
-    try {
-      // Get the athlete ID from the activity data
-      const userId = data.athlete?.id;
-      if (userId) {
-        await db
-          .insert(activities)
-          .values({
-            activityId: data.id,
-            userId: userId,
-            data: data, // Store full detailed Strava activity JSON
-            selectedAt: new Date(),
-            isSelected: true,
-          })
-          .onConflictDoUpdate({
-            target: activities.activityId,
-            set: {
-              data: data, // Update with latest data
-              lastSynced: new Date(),
-              selectedAt: new Date(),
-              isSelected: true,
-            },
-          });
-        console.log("💾 Selected activity stored in database");
-      }
-    } catch (dbError) {
-      console.error("Database write error (non-blocking):", dbError);
-      // Don't fail the API call if DB write fails
+    // Security check: ensure activity belongs to current user
+    const activityOwnerId = data.athlete?.id;
+    if (!activityOwnerId || activityOwnerId !== parseInt(userId, 10)) {
+      return NextResponse.json(
+        { error: "Activity not found" },
+        { status: 404 }
+      );
     }
 
-    return NextResponse.json(data, {
-      headers: {
-        "Cache-Control": "public, s-maxage=180, stale-while-revalidate=300",
-      },
-    });
+    // Store in DB
+    await db
+      .insert(activities)
+      .values({
+        activityId: data.id,
+        userId: parseInt(userId, 10),
+        data: data,
+        lastSynced: new Date(),
+      })
+      .onConflictDoUpdate({
+        target: activities.activityId,
+        set: {
+          data: data,
+          lastSynced: new Date(),
+        },
+      });
+    console.log("💾 Activity stored in database");
+
+    return NextResponse.json(data);
   } catch (error) {
     console.error("Error fetching activity:", error);
     return NextResponse.json(
