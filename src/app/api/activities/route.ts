@@ -1,5 +1,7 @@
 import { auth } from "@/lib/auth";
 import { NextResponse } from "next/server";
+import { db } from "@/db/db";
+import { activityLists } from "@/db/schema";
 
 export async function GET() {
   try {
@@ -30,6 +32,26 @@ export async function GET() {
 
     const data = await response.json();
     console.log("✅ Activities data received:", data.length, "activities");
+
+    // Store activity list in database
+    try {
+      if (data.length > 0) {
+        // Get the athlete ID from the first activity
+        const userId = data[0].athlete?.id;
+        if (userId) {
+          await db.insert(activityLists).values({
+            userId: userId,
+            data: data, // Full activity list JSON (30 activities)
+            page: 1,
+            perPage: data.length,
+          });
+          console.log("💾 Activity list stored in database");
+        }
+      }
+    } catch (dbError) {
+      console.error("Database write error (non-blocking):", dbError);
+      // Don't fail the API call if DB write fails
+    }
 
     return NextResponse.json(data, {
       headers: {

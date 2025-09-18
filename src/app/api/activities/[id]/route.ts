@@ -1,5 +1,7 @@
 import { auth } from "@/lib/auth";
 import { NextResponse } from "next/server";
+import { db } from "@/db/db";
+import { activities } from "@/db/schema";
 
 export async function GET(
   request: Request,
@@ -14,9 +16,14 @@ export async function GET(
 
     const { id } = await params;
 
-    // Validate activity ID - must be a positive integer
+    // Validate activity ID - must be a positive integer with reasonable bounds
     const activityId = parseInt(id, 10);
-    if (isNaN(activityId) || activityId <= 0 || !Number.isInteger(activityId)) {
+    if (
+      isNaN(activityId) ||
+      activityId <= 0 ||
+      activityId > 999999999999 ||
+      !Number.isInteger(activityId)
+    ) {
       return NextResponse.json(
         { error: "Invalid activity ID. Must be a positive integer." },
         { status: 400 }
@@ -43,6 +50,36 @@ export async function GET(
 
     const data = await response.json();
     console.log("✅ Activity data received:", data.name);
+
+    // Store the selected activity in database
+    try {
+      // Get the athlete ID from the activity data
+      const userId = data.athlete?.id;
+      if (userId) {
+        await db
+          .insert(activities)
+          .values({
+            activityId: data.id,
+            userId: userId,
+            data: data, // Store full detailed Strava activity JSON
+            selectedAt: new Date(),
+            isSelected: true,
+          })
+          .onConflictDoUpdate({
+            target: activities.activityId,
+            set: {
+              data: data, // Update with latest data
+              lastSynced: new Date(),
+              selectedAt: new Date(),
+              isSelected: true,
+            },
+          });
+        console.log("💾 Selected activity stored in database");
+      }
+    } catch (dbError) {
+      console.error("Database write error (non-blocking):", dbError);
+      // Don't fail the API call if DB write fails
+    }
 
     return NextResponse.json(data, {
       headers: {
