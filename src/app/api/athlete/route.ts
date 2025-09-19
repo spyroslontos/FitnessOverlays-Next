@@ -50,6 +50,12 @@ export async function GET() {
     });
 
     if (!response.ok) {
+      if (response.status === 401) {
+        return NextResponse.json(
+          { error: "Token expired, please re-authenticate" },
+          { status: 401 }
+        );
+      }
       throw new Error(`Failed to fetch athlete data: ${response.status}`);
     }
 
