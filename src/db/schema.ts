@@ -8,7 +8,7 @@ import {
   bigint,
   json,
   serial,
-} from "drizzle-orm/pg-core";
+} from "drizzle-orm/pg-core"
 
 export const users = pgTable("users", {
   id: bigint("id", { mode: "number" }).primaryKey(), // This IS the athleteId
@@ -50,7 +50,7 @@ export const users = pgTable("users", {
 
   // Sync tracking
   lastStravaSync: timestamp("last_strava_sync", { withTimezone: true }),
-});
+})
 
 // Activity Lists (for pagination/sync management) - Store the 30 activities from list
 export const activityLists = pgTable("activity_lists", {
@@ -64,7 +64,7 @@ export const activityLists = pgTable("activity_lists", {
     .defaultNow(),
   page: integer("page").notNull().default(1),
   perPage: integer("per_page").notNull().default(30),
-});
+})
 
 // Individual Activities - Store detailed data when user selects specific activities
 export const activities = pgTable("activities", {
@@ -76,7 +76,7 @@ export const activities = pgTable("activities", {
   lastSynced: timestamp("last_synced", { withTimezone: true })
     .notNull()
     .defaultNow(),
-});
+})
 
 // Overlays (your app's custom data)
 export const overlays = pgTable("overlays", {
@@ -94,4 +94,4 @@ export const overlays = pgTable("overlays", {
   updatedAt: timestamp("updated_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
-});
+})

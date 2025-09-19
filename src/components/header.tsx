@@ -1,7 +1,7 @@
-import { auth } from "@/lib/auth";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { SignInButton, SignOutButton } from "@/components/auth-buttons";
-import { SidebarTrigger } from "@/components/ui/sidebar";
+import { auth } from "@/lib/auth"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { SignInButton, SignOutButton } from "@/components/auth-buttons"
+import { SidebarTrigger } from "@/components/ui/sidebar"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,11 +9,11 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import Link from "next/link";
+} from "@/components/ui/dropdown-menu"
+import Link from "next/link"
 
 export async function Header() {
-  const session = await auth();
+  const session = await auth()
 
   return (
     <header className="sticky top-0 z-50 bg-background border-b">
@@ -39,14 +39,20 @@ export async function Header() {
                 </Avatar>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-56" align="end">
-                <DropdownMenuLabel className="font-normal">
-                  <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none">
+                <DropdownMenuLabel className="p-0 font-normal">
+                  <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage
+                        src={session.user?.image || ""}
+                        alt={session.user?.name || ""}
+                      />
+                      <AvatarFallback>
+                        {session.user?.name?.[0] || "U"}
+                      </AvatarFallback>
+                    </Avatar>
+                    <span className="truncate font-medium">
                       {session.user?.name || "User"}
-                    </p>
-                    <p className="text-xs leading-none text-muted-foreground">
-                      {session.user?.email}
-                    </p>
+                    </span>
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
@@ -61,5 +67,5 @@ export async function Header() {
         </div>
       </div>
     </header>
-  );
+  )
 }

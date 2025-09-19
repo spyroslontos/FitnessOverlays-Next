@@ -1,13 +1,13 @@
-import { signIn, signOut } from "@/lib/auth";
-import { LogOut } from "lucide-react";
-import { redirect } from "next/navigation";
+import { signIn, signOut } from "@/lib/auth"
+import { LogOut } from "lucide-react"
+import { redirect } from "next/navigation"
 
 export function SignInButton() {
   return (
     <form
       action={async () => {
-        "use server";
-        await signIn("strava");
+        "use server"
+        await signIn("strava")
       }}
     >
       <button
@@ -21,16 +21,16 @@ export function SignInButton() {
         />
       </button>
     </form>
-  );
+  )
 }
 
 export function SignOutButton() {
   return (
     <form
       action={async () => {
-        "use server";
-        await signOut();
-        redirect("/");
+        "use server"
+        await signOut()
+        redirect("/")
       }}
     >
       <button type="submit" className="w-full text-left flex items-center">
@@ -38,5 +38,5 @@ export function SignOutButton() {
         Log out
       </button>
     </form>
-  );
+  )
 }

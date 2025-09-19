@@ -1,9 +1,9 @@
-import { auth } from "@/lib/auth";
+import { auth } from "@/lib/auth"
 
 export async function SessionInfo() {
-  const session = await auth();
+  const session = await auth()
 
-  console.log("Session Info:", session);
+  console.log("Session Info:", session)
 
-  return;
+  return
 }

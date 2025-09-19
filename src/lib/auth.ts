@@ -1,7 +1,7 @@
-import NextAuth from "next-auth";
-import Strava from "next-auth/providers/strava";
-import { db } from "@/db";
-import { users } from "@/db/schema";
+import NextAuth from "next-auth"
+import Strava from "next-auth/providers/strava"
+import { db } from "@/db"
+import { users } from "@/db/schema"
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
@@ -18,12 +18,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   callbacks: {
     async jwt({ token, account, profile }) {
       if (account) {
-        token.accessToken = account.access_token;
-        token.refreshToken = account.refresh_token;
-        token.expiresAt = account.expires_at;
+        token.accessToken = account.access_token
+        token.refreshToken = account.refresh_token
+        token.expiresAt = account.expires_at
       }
       if (profile) {
-        token.athleteId = profile.id;
+        token.athleteId = profile.id
 
         // Store profile data in DB during authentication
         try {
@@ -102,18 +102,18 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                   : null,
                 fullAthleteData: profile,
               },
-            });
-          console.log("💾 Profile data stored during authentication");
+            })
+          console.log("💾 Profile data stored during authentication")
         } catch (error) {
-          console.error("Error storing profile data:", error);
+          console.error("Error storing profile data:", error)
         }
       }
-      return token;
+      return token
     },
     async session({ session, token }) {
-      session.accessToken = token.accessToken as string;
-      session.user.id = token.athleteId as string;
-      return session;
+      session.accessToken = token.accessToken as string
+      session.user.id = token.athleteId as string
+      return session
     },
   },
-});
+})

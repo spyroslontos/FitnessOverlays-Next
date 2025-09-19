@@ -1,11 +1,11 @@
-import { drizzle } from "drizzle-orm/postgres-js";
-import postgres from "postgres";
-import * as schema from "./schema";
+import { drizzle } from "drizzle-orm/postgres-js"
+import postgres from "postgres"
+import * as schema from "./schema"
 
-const connectionString = process.env.DATABASE_URL!;
+const connectionString = process.env.DATABASE_URL!
 
 if (!connectionString) {
-  throw new Error("DATABASE_URL environment variable is required");
+  throw new Error("DATABASE_URL environment variable is required")
 }
 
 // Configure postgres client with security settings
@@ -14,6 +14,6 @@ const client = postgres(connectionString, {
   idle_timeout: 20, // Close idle connections after 20 seconds
   connect_timeout: 10, // Connection timeout
   ssl: "require", // Force SSL connection
-});
+})
 
-export const db = drizzle(client, { schema });
+export const db = drizzle(client, { schema })

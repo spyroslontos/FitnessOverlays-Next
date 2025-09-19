@@ -1,53 +1,53 @@
-"use client";
+"use client"
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from "@/components/ui/tooltip"
 
 interface Activity {
-  id: number;
-  name: string;
-  type: string;
-  distance: number;
-  moving_time: number;
-  total_elevation_gain: number;
-  start_date: string;
-  average_speed?: number;
-  max_speed?: number;
-  average_heartrate?: number;
-  max_heartrate?: number;
-  kudos_count: number;
-  comment_count: number;
+  id: number
+  name: string
+  type: string
+  distance: number
+  moving_time: number
+  total_elevation_gain: number
+  start_date: string
+  average_speed?: number
+  max_speed?: number
+  average_heartrate?: number
+  max_heartrate?: number
+  kudos_count: number
+  comment_count: number
 }
 
 interface ActivityTileProps {
-  activity: Activity;
-  onClick?: (activityId: number) => void;
+  activity: Activity
+  onClick?: (activityId: number) => void
 }
 
 export function ActivityTile({ activity, onClick }: ActivityTileProps) {
   const formatDistance = (meters: number) => {
     if (meters >= 1000) {
-      return `${(meters / 1000).toFixed(1)} km`;
+      return `${(meters / 1000).toFixed(1)} km`
     }
-    return `${meters.toFixed(0)} m`;
-  };
+    return `${meters.toFixed(0)} m`
+  }
 
   const formatTime = (seconds: number) => {
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
+    const hours = Math.floor(seconds / 3600)
+    const minutes = Math.floor((seconds % 3600) / 60)
     if (hours > 0) {
-      return `${hours}h ${minutes}m`;
+      return `${hours}h ${minutes}m`
     }
-    return `${minutes}m`;
-  };
+    return `${minutes}m`
+  }
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString();
-  };
+    return new Date(dateString).toLocaleDateString()
+  }
 
   return (
     <Tooltip>
@@ -120,5 +120,5 @@ export function ActivityTile({ activity, onClick }: ActivityTileProps) {
         </div>
       </TooltipContent>
     </Tooltip>
-  );
+  )
 }

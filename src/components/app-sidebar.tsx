@@ -1,6 +1,6 @@
-"use client";
+"use client"
 
-import { useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query"
 import {
   Sidebar,
   SidebarContent,
@@ -11,16 +11,16 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarRail,
-} from "@/components/ui/sidebar";
-import { ActivityTile } from "./activity-tile";
+} from "@/components/ui/sidebar"
+import { ActivityTile } from "./activity-tile"
 
 export function AppSidebar() {
   const { isPending, error, data } = useQuery({
     queryKey: ["activityData"],
     queryFn: () => fetch("/api/activities").then((res) => res.json()),
-  });
+  })
 
-  const activities = Array.isArray(data) ? data : [];
+  const activities = Array.isArray(data) ? data : []
 
   return (
     <Sidebar collapsible="icon">
@@ -53,7 +53,7 @@ export function AppSidebar() {
                         onClick={(id) => {
                           window.dispatchEvent(
                             new CustomEvent("activitySelected", { detail: id })
-                          );
+                          )
                         }}
                       />
                     </SidebarMenuItem>
@@ -66,5 +66,5 @@ export function AppSidebar() {
       </SidebarContent>
       <SidebarRail />
     </Sidebar>
-  );
+  )
 }
