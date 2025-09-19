@@ -8,6 +8,10 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export function ActivitiesList() {
+  const [selectedActivityId, setSelectedActivityId] = useState<number | null>(
+    null
+  );
+
   const { isPending, error, data } = useQuery({
     queryKey: ["activityData"],
     queryFn: () => fetch("/api/activities").then((res) => res.json()),
@@ -21,39 +25,20 @@ export function ActivitiesList() {
     if (latestActivity) {
       const persisted = localStorage.getItem("selectedActivityId");
       const timestamp = localStorage.getItem("selectedActivityTimestamp");
+      const oneDay = 24 * 60 * 60 * 1000;
 
-      if (persisted && timestamp) {
-        const timeDiff = Date.now() - Number(timestamp);
-        const oneDay = 24 * 60 * 60 * 1000; // 1 day in milliseconds
+      const shouldUseLatest =
+        !persisted || !timestamp || Date.now() - Number(timestamp) >= oneDay;
+      const activityId = shouldUseLatest
+        ? latestActivity.id
+        : Number(persisted);
 
-        if (timeDiff >= oneDay) {
-          // Auto-select latest if more than 1 day old
-          localStorage.setItem(
-            "selectedActivityId",
-            latestActivity.id.toString()
-          );
-          localStorage.setItem(
-            "selectedActivityTimestamp",
-            Date.now().toString()
-          );
-          window.dispatchEvent(
-            new CustomEvent("activitySelected", { detail: latestActivity.id })
-          );
-        }
-      } else {
-        // First time or no timestamp
-        localStorage.setItem(
-          "selectedActivityId",
-          latestActivity.id.toString()
-        );
-        localStorage.setItem(
-          "selectedActivityTimestamp",
-          Date.now().toString()
-        );
-        window.dispatchEvent(
-          new CustomEvent("activitySelected", { detail: latestActivity.id })
-        );
-      }
+      setSelectedActivityId(activityId);
+      localStorage.setItem("selectedActivityId", activityId.toString());
+      localStorage.setItem("selectedActivityTimestamp", Date.now().toString());
+      window.dispatchEvent(
+        new CustomEvent("activitySelected", { detail: activityId })
+      );
     }
   }, [latestActivity]);
 
@@ -71,32 +56,30 @@ export function ActivitiesList() {
               Error loading activities
             </div>
           ) : (
-            activities.map((activity: any, index: number) => {
-              const selectedId = localStorage.getItem("selectedActivityId");
-              return (
-                <div key={activity.id} className="relative">
-                  <div className="absolute top-2 right-2 z-10 flex gap-1">
-                    {index === 0 && <Badge variant="secondary">Latest</Badge>}
-                    {selectedId && Number(selectedId) === activity.id && (
-                      <Badge variant="default">Selected</Badge>
-                    )}
-                  </div>
-                  <ActivityTile
-                    activity={activity}
-                    onClick={(id) => {
-                      localStorage.setItem("selectedActivityId", id.toString());
-                      localStorage.setItem(
-                        "selectedActivityTimestamp",
-                        Date.now().toString()
-                      );
-                      window.dispatchEvent(
-                        new CustomEvent("activitySelected", { detail: id })
-                      );
-                    }}
-                  />
+            activities.map((activity: any, index: number) => (
+              <div key={activity.id} className="relative">
+                <div className="absolute top-2 right-2 z-10 flex gap-1">
+                  {index === 0 && <Badge variant="secondary">Latest</Badge>}
+                  {selectedActivityId === activity.id && (
+                    <Badge variant="default">Selected</Badge>
+                  )}
                 </div>
-              );
-            })
+                <ActivityTile
+                  activity={activity}
+                  onClick={(id) => {
+                    setSelectedActivityId(id);
+                    localStorage.setItem("selectedActivityId", id.toString());
+                    localStorage.setItem(
+                      "selectedActivityTimestamp",
+                      Date.now().toString()
+                    );
+                    window.dispatchEvent(
+                      new CustomEvent("activitySelected", { detail: id })
+                    );
+                  }}
+                />
+              </div>
+            ))
           )}
         </div>
       </CardContent>
