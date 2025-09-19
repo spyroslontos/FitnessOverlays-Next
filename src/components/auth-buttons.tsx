@@ -1,5 +1,6 @@
 import { signIn, signOut } from "@/lib/auth";
 import { LogOut } from "lucide-react";
+import { redirect } from "next/navigation";
 
 export function SignInButton() {
   return (
@@ -29,6 +30,7 @@ export function SignOutButton() {
       action={async () => {
         "use server";
         await signOut();
+        redirect("/");
       }}
     >
       <button type="submit" className="w-full text-left flex items-center">

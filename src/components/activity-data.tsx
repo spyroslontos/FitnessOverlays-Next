@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export function ActivityData() {
   const [selectedActivityId, setSelectedActivityId] = useState<number | null>(
@@ -18,8 +19,22 @@ export function ActivityData() {
     refetchOnWindowFocus: true, // Refetch when window gains focus
   });
 
-  // Listen for activity selection from sidebar
+  // Load selected activity from localStorage and listen for changes
   useEffect(() => {
+    const updateSelection = () => {
+      const persisted = localStorage.getItem("selectedActivityId");
+      if (persisted) {
+        setSelectedActivityId(Number(persisted));
+      }
+    };
+
+    // Initial load
+    updateSelection();
+
+    // Listen for storage changes
+    window.addEventListener("storage", updateSelection);
+
+    // Listen for custom events from ActivitiesList
     const handleActivitySelect = (event: CustomEvent) => {
       setSelectedActivityId(event.detail);
     };
@@ -28,31 +43,27 @@ export function ActivityData() {
       "activitySelected",
       handleActivitySelect as EventListener
     );
-    return () =>
+
+    return () => {
+      window.removeEventListener("storage", updateSelection);
       window.removeEventListener(
         "activitySelected",
         handleActivitySelect as EventListener
       );
+    };
   }, []);
-
-  if (!selectedActivityId) {
-    return (
-      <div className="p-4 border rounded">
-        <h3 className="font-bold mb-2">Activity Data</h3>
-        <p className="text-sm text-muted-foreground">
-          Select an activity to view details
-        </p>
-      </div>
-    );
-  }
 
   if (error) return "An error has occurred: " + error.message;
 
   return (
-    <div className="p-4 border rounded">
-      <h3 className="font-bold mb-2">Activity Data</h3>
+    <div className="p-4 border rounded-lg">
       {isPending ? (
-        <div>Loading activity data...</div>
+        <div className="space-y-2">
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-3/4" />
+          <Skeleton className="h-4 w-1/2" />
+          <Skeleton className="h-32 w-full" />
+        </div>
       ) : (
         <pre className="text-xs p-2 rounded overflow-auto">
           {JSON.stringify(data, null, 2)}
