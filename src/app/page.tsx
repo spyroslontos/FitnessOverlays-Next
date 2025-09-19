@@ -1,25 +1,18 @@
-import { SessionInfo } from "@/components/session-info";
-import { AthleteInfo } from "@/components/athlete-info";
-import { ActivityData } from "@/components/activity-data";
+import { auth } from "@/lib/auth";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
-export default function Home() {
+export default async function Home() {
+  const session = await auth();
+
   return (
-    <>
-      <h1 className="text-2xl font-bold mb-6">Fitness Overlays</h1>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div>
-          <h2 className="text-lg font-semibold mb-4">Session Info</h2>
-          <SessionInfo />
-        </div>
-        <div>
-          <h2 className="text-lg font-semibold mb-4">Athlete Data</h2>
-          <AthleteInfo />
-        </div>
-        <div>
-          <h2 className="text-lg font-semibold mb-4">Activity Data</h2>
-          <ActivityData />
-        </div>
-      </div>
-    </>
+    <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6">
+      <h1 className="text-4xl font-bold">Fitness Overlays</h1>
+      {session && (
+        <Link href="/app">
+          <Button size="lg">Go to App</Button>
+        </Link>
+      )}
+    </div>
   );
 }

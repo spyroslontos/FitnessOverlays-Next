@@ -2,12 +2,6 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { QueryProvider } from "@/components/query-provider";
-import {
-  SidebarProvider,
-  SidebarTrigger,
-  SidebarInset,
-} from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/app-sidebar";
 import { Header } from "@/components/header";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
@@ -38,15 +32,10 @@ export default function RootLayout({
       >
         <QueryProvider>
           <TooltipProvider>
-            <SidebarProvider>
-              <AppSidebar />
-              <SidebarInset>
-                <Header />
-                <div className="flex-1 p-8">
-                  <div className="max-w-7xl mx-auto">{children}</div>
-                </div>
-              </SidebarInset>
-            </SidebarProvider>
+            <Header />
+            <div className="flex-1 p-8">
+              <div className="max-w-7xl mx-auto">{children}</div>
+            </div>
           </TooltipProvider>
         </QueryProvider>
       </body>

@@ -10,7 +10,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { LogOut } from "lucide-react";
 import Link from "next/link";
 
 export async function Header() {
@@ -20,7 +19,6 @@ export async function Header() {
     <header className="sticky top-0 z-50 bg-background border-b">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <SidebarTrigger />
           <Link href="/" className="text-xl font-bold">
             FitnessOverlays
           </Link>
