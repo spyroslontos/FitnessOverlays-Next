@@ -23,6 +23,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.expiresAt = account.expires_at
       }
 
+      if (profile) {
+        token.athleteId = profile.id
+      }
+
       // Check if token needs refresh (Strava tokens expire every 6 hours)
       if (token.expiresAt && Date.now() < (token.expiresAt as number) * 1000) {
         return token
@@ -62,16 +66,25 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
       }
 
+      return token
+    },
+    async session({ session, token }) {
+      session.accessToken = token.accessToken as string
+      session.user.id = token.athleteId as string
+      return session
+    },
+  },
+  events: {
+    async signIn({ user, account, profile }) {
       if (profile) {
-        token.athleteId = profile.id
-
-        // Store profile data in DB during authentication
         try {
+          console.log("🔄 Syncing user data after sign in")
+
+          // Store fresh profile data in DB
           const userData = {
             id: parseInt(profile.id as string, 10),
             name: `${profile.firstname} ${profile.lastname}`,
             createdAt: new Date(),
-            updatedAt: new Date(),
             athleteId: parseInt(profile.id as string, 10),
             username: profile.username as string,
             firstname: profile.firstname as string,
@@ -111,17 +124,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             target: users.id,
             set: updateData,
           })
-          console.log("💾 Profile data stored during authentication")
+
+          console.log("✅ User data synced after sign in")
         } catch (error) {
-          console.error("Error storing profile data:", error)
+          console.error("Error syncing user data after sign in:", error)
         }
       }
-      return token
-    },
-    async session({ session, token }) {
-      session.accessToken = token.accessToken as string
-      session.user.id = token.athleteId as string
-      return session
     },
   },
 })

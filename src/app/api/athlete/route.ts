@@ -78,7 +78,6 @@ export async function GET() {
         id: athleteId,
         name: `${data.firstname} ${data.lastname}`,
         createdAt: new Date(),
-        updatedAt: new Date(),
         athleteId: data.id,
         username: data.username,
         firstname: data.firstname,
@@ -111,7 +110,6 @@ export async function GET() {
         target: users.id,
         set: {
           name: `${data.firstname} ${data.lastname}`,
-          updatedAt: new Date(),
           lastStravaSync: new Date(),
           username: data.username,
           firstname: data.firstname,

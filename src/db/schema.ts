@@ -14,7 +14,6 @@ export const users = pgTable("users", {
   id: bigint("id", { mode: "number" }).primaryKey(), // This IS the athleteId
   name: text("name").notNull(),
   createdAt: timestamp("createdAt").notNull(),
-  updatedAt: timestamp("updatedAt").notNull(),
 
   // Strava athlete data - important fields for metrics/graphs
   athleteId: bigint("athlete_id", { mode: "number" }).notNull(),
@@ -42,14 +41,14 @@ export const users = pgTable("users", {
   ftp: decimal("ftp", { precision: 5, scale: 2 }),
 
   // Strava timestamps
-  stravaCreatedAt: timestamp("strava_created_at", { withTimezone: true }),
-  stravaUpdatedAt: timestamp("strava_updated_at", { withTimezone: true }),
+  stravaCreatedAt: timestamp("strava_created_at"),
+  stravaUpdatedAt: timestamp("strava_updated_at"),
 
   // Full JSON data for flexibility
   fullAthleteData: json("full_athlete_data").notNull(),
 
   // Sync tracking
-  lastStravaSync: timestamp("last_strava_sync", { withTimezone: true }),
+  lastStravaSync: timestamp("last_strava_sync"),
 })
 
 // Activity Lists (for pagination/sync management) - Store the 30 activities from list
@@ -59,9 +58,7 @@ export const activityLists = pgTable("activity_lists", {
     .notNull()
     .references(() => users.id),
   data: json("data").notNull(), // Activity list JSON (30 activities)
-  lastSynced: timestamp("last_synced", { withTimezone: true })
-    .notNull()
-    .defaultNow(),
+  lastSynced: timestamp("last_synced").notNull().defaultNow(),
   page: integer("page").notNull().default(1),
   perPage: integer("per_page").notNull().default(30),
 })
@@ -73,9 +70,7 @@ export const activities = pgTable("activities", {
     .notNull()
     .references(() => users.id),
   data: json("data").notNull(), // Full Strava activity JSON from detailed API call
-  lastSynced: timestamp("last_synced", { withTimezone: true })
-    .notNull()
-    .defaultNow(),
+  lastSynced: timestamp("last_synced").notNull().defaultNow(),
 })
 
 // Overlays (your app's custom data)
@@ -88,10 +83,6 @@ export const overlays = pgTable("overlays", {
   description: text("description"),
   config: json("config").notNull(), // JSON config for overlay
   isActive: boolean("is_active").notNull().default(true),
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .notNull()
-    .defaultNow(),
-  updatedAt: timestamp("updated_at", { withTimezone: true })
-    .notNull()
-    .defaultNow(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
 })
