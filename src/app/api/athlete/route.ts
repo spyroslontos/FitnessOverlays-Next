@@ -53,7 +53,7 @@ export async function GET() {
       if (response.status === 401) {
         return NextResponse.json(
           { error: "Token expired, please re-authenticate" },
-          { status: 401 }
+          { status: 401 },
         )
       }
       throw new Error(`Failed to fetch athlete data: ${response.status}`)
@@ -145,7 +145,7 @@ export async function GET() {
     console.error("Error fetching athlete:", error)
     return NextResponse.json(
       { error: "Failed to fetch athlete data" },
-      { status: 500 }
+      { status: 500 },
     )
   }
 }

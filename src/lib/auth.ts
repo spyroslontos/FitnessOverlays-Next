@@ -75,7 +75,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
   },
   events: {
-    async signIn({ user, account, profile }) {
+    async signIn({ profile }) {
       if (profile) {
         try {
           console.log("🔄 Syncing user data after sign in")
@@ -118,7 +118,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             lastStravaSync: new Date(),
           }
 
-          const { createdAt, ...updateData } = userData
+          const { createdAt: _, ...updateData } = userData
 
           await db.insert(users).values(userData).onConflictDoUpdate({
             target: users.id,

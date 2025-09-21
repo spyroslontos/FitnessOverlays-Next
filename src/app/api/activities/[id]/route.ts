@@ -6,10 +6,7 @@ import { eq, and } from "drizzle-orm"
 
 const CACHE_DURATION = 3 * 60 * 1000 // 3 minutes
 
-export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export async function GET({ params }: { params: { id: string } }) {
   try {
     const session = await auth()
 
@@ -17,19 +14,19 @@ export async function GET(
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 })
     }
 
-    const { id } = await params
+    const { id } = params
 
     // Validate activity ID
     const activityId = parseInt(id, 10)
     if (
-      isNaN(activityId) ||
+      Number.isNaN(activityId) ||
       activityId <= 0 ||
       activityId > 999999999999 ||
       !Number.isInteger(activityId)
     ) {
       return NextResponse.json(
         { error: "Invalid activity ID. Must be a positive integer." },
-        { status: 400 }
+        { status: 400 },
       )
     }
 
@@ -45,8 +42,8 @@ export async function GET(
       .where(
         and(
           eq(activities.activityId, activityId),
-          eq(activities.userId, parseInt(userId, 10))
-        )
+          eq(activities.userId, parseInt(userId, 10)),
+        ),
       )
       .limit(1)
 
@@ -69,7 +66,7 @@ export async function GET(
           Authorization: `Bearer ${session.accessToken}`,
         },
         signal: AbortSignal.timeout(10000),
-      }
+      },
     )
 
     if (!response.ok) {
@@ -108,7 +105,7 @@ export async function GET(
     console.error("Error fetching activity:", error)
     return NextResponse.json(
       { error: "Failed to fetch activity" },
-      { status: 500 }
+      { status: 500 },
     )
   }
 }

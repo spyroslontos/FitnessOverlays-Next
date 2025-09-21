@@ -45,14 +45,14 @@ export async function GET() {
           Authorization: `Bearer ${session.accessToken}`,
         },
         signal: AbortSignal.timeout(10000),
-      }
+      },
     )
 
     if (!response.ok) {
       if (response.status === 401) {
         return NextResponse.json(
           { error: "Token expired, please re-authenticate" },
-          { status: 401 }
+          { status: 401 },
         )
       }
       throw new Error(`Failed to fetch activities data: ${response.status}`)
@@ -99,7 +99,7 @@ export async function GET() {
     console.error("Error fetching activities:", error)
     return NextResponse.json(
       { error: "Failed to fetch activities" },
-      { status: 500 }
+      { status: 500 },
     )
   }
 }
