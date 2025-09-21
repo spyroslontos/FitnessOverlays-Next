@@ -2,6 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query"
 import { useEffect, useState } from "react"
+import { useSession } from "next-auth/react"
 import { ActivityTile } from "./activity-tile"
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -17,13 +18,15 @@ import {
 
 export function ActivitiesList() {
   const [selectedActivityId, setSelectedActivityId] = useState<number | null>(
-    null
+    null,
   )
   const [currentPage, setCurrentPage] = useState(1)
+  const { data: session } = useSession()
 
   const { isPending, error, data } = useQuery({
     queryKey: ["activityData"],
     queryFn: () => fetch("/api/activities").then((res) => res.json()),
+    enabled: !!session,
   })
 
   const allActivities = Array.isArray(data) ? data : []
@@ -49,7 +52,7 @@ export function ActivitiesList() {
       localStorage.setItem("selectedActivityId", activityId.toString())
       localStorage.setItem("selectedActivityTimestamp", Date.now().toString())
       window.dispatchEvent(
-        new CustomEvent("activitySelected", { detail: activityId })
+        new CustomEvent("activitySelected", { detail: activityId }),
       )
     }
   }, [latestActivity])
@@ -65,7 +68,11 @@ export function ActivitiesList() {
       </CardHeader>
       <CardContent>
         <div className="space-y-3">
-          {isPending ? (
+          {!session ? (
+            <div className="text-sm text-muted-foreground text-center py-8">
+              Please sign in to view your activities
+            </div>
+          ) : isPending ? (
             [...Array(5)].map((_, i) => <Skeleton key={i} className="h-32" />)
           ) : error ? (
             <div className="text-sm text-destructive">
@@ -89,10 +96,10 @@ export function ActivitiesList() {
                     localStorage.setItem("selectedActivityId", id.toString())
                     localStorage.setItem(
                       "selectedActivityTimestamp",
-                      Date.now().toString()
+                      Date.now().toString(),
                     )
                     window.dispatchEvent(
-                      new CustomEvent("activitySelected", { detail: id })
+                      new CustomEvent("activitySelected", { detail: id }),
                     )
                   }}
                 />
@@ -121,7 +128,7 @@ export function ActivitiesList() {
                       {page}
                     </PaginationLink>
                   </PaginationItem>
-                )
+                ),
               )}
               <PaginationItem>
                 <PaginationNext

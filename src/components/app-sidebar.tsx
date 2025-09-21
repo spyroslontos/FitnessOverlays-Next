@@ -52,7 +52,7 @@ export function AppSidebar() {
                         activity={activity}
                         onClick={(id) => {
                           window.dispatchEvent(
-                            new CustomEvent("activitySelected", { detail: id })
+                            new CustomEvent("activitySelected", { detail: id }),
                           )
                         }}
                       />

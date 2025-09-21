@@ -26,7 +26,7 @@ export function MetricControls({
     onMetricsChange(
       pressed
         ? [...selectedMetrics, metricKey]
-        : selectedMetrics.filter((m) => m !== metricKey)
+        : selectedMetrics.filter((m) => m !== metricKey),
     )
   }
 

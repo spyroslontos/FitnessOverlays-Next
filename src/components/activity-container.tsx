@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useQuery } from "@tanstack/react-query"
+import { useSession } from "next-auth/react"
 import { OverlayCanvas } from "./overlay-canvas"
 import { MetricControls } from "./metric-controls"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -9,7 +10,7 @@ import { UnitSystem } from "@/lib/metrics"
 
 export function ActivityContainer() {
   const [selectedActivityId, setSelectedActivityId] = useState<number | null>(
-    null
+    null,
   )
   const [visibleMetrics, setVisibleMetrics] = useState<string[]>([
     "distance",
@@ -18,12 +19,13 @@ export function ActivityContainer() {
     "avgSpeed",
   ])
   const [unitSystem, setUnitSystem] = useState<UnitSystem>("metric")
+  const { data: session } = useSession()
 
   const { data, isPending } = useQuery({
     queryKey: ["activityData", selectedActivityId],
     queryFn: () =>
       fetch(`/api/activities/${selectedActivityId}`).then((res) => res.json()),
-    enabled: !!selectedActivityId,
+    enabled: !!selectedActivityId && !!session,
   })
 
   useEffect(() => {
@@ -37,13 +39,13 @@ export function ActivityContainer() {
       setSelectedActivityId(event.detail)
     window.addEventListener(
       "activitySelected",
-      handleActivitySelect as EventListener
+      handleActivitySelect as EventListener,
     )
     return () => {
       window.removeEventListener("storage", updateSelection)
       window.removeEventListener(
         "activitySelected",
-        handleActivitySelect as EventListener
+        handleActivitySelect as EventListener,
       )
     }
   }, [])
@@ -62,6 +64,7 @@ export function ActivityContainer() {
         visibleMetrics={visibleMetrics}
         data={data}
         unitSystem={unitSystem}
+        isPending={isPending}
       />
       <MetricControls
         onMetricsChange={handleMetricsChange}

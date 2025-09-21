@@ -6,7 +6,10 @@ import { eq, and } from "drizzle-orm"
 
 const CACHE_DURATION = 3 * 60 * 1000 // 3 minutes
 
-export async function GET({ params }: { params: { id: string } }) {
+export async function GET(
+  _request: Request,
+  { params }: { params: { id: string } },
+) {
   try {
     const session = await auth()
 

@@ -11,6 +11,7 @@ export const METRICS: Metric[] = [
     key: "distance",
     label: "Distance",
     formatter: (data, unitSystem) => {
+      if (!data?.distance) return "N/A"
       if (unitSystem === "imperial") {
         return `${((data.distance as number) / 1609.34).toFixed(2)} mi`
       }
@@ -21,6 +22,7 @@ export const METRICS: Metric[] = [
     key: "time",
     label: "Time",
     formatter: (data) => {
+      if (!data?.moving_time) return "N/A"
       const hours = Math.floor((data.moving_time as number) / 3600)
       const minutes = Math.floor(((data.moving_time as number) % 3600) / 60)
       const seconds = (data.moving_time as number) % 60
@@ -31,6 +33,7 @@ export const METRICS: Metric[] = [
     key: "pace",
     label: "Pace",
     formatter: (data, unitSystem) => {
+      if (!data?.average_speed) return "N/A"
       if (unitSystem === "imperial") {
         const pacePerMile = 60 / ((data.average_speed as number) * 2.237) // m/s to mph
         const minutes = Math.floor(pacePerMile)
@@ -51,6 +54,7 @@ export const METRICS: Metric[] = [
     key: "avgSpeed",
     label: "Avg Speed",
     formatter: (data, unitSystem) => {
+      if (!data?.average_speed) return "N/A"
       if (unitSystem === "imperial") {
         return `${((data.average_speed as number) * 2.237).toFixed(1)} mph`
       }

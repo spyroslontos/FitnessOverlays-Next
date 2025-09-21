@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
 import "./globals.css"
 import { QueryProvider } from "@/components/query-provider"
+import { SessionProvider } from "next-auth/react"
 import { Header } from "@/components/header"
 import { TooltipProvider } from "@/components/ui/tooltip"
 
@@ -30,14 +31,16 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <QueryProvider>
-          <TooltipProvider>
-            <Header />
-            <div className="flex-1 p-8">
-              <div className="max-w-7xl mx-auto">{children}</div>
-            </div>
-          </TooltipProvider>
-        </QueryProvider>
+        <SessionProvider>
+          <QueryProvider>
+            <TooltipProvider>
+              <Header />
+              <div className="flex-1 p-8">
+                <div className="max-w-7xl mx-auto">{children}</div>
+              </div>
+            </TooltipProvider>
+          </QueryProvider>
+        </SessionProvider>
       </body>
     </html>
   )
