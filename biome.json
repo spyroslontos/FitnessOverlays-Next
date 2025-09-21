@@ -22,8 +22,12 @@
   "linter": {
     "enabled": true,
     "rules": {
+      "correctness": {
+        "useExhaustiveDependencies": "off"
+      },
       "recommended": true,
       "suspicious": {
+        "noDocumentCookie": "off",
         "noUnknownAtRules": "off",
         "noArrayIndexKey": "off"
       },

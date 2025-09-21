@@ -8,6 +8,7 @@ import {
   bigint,
   json,
   serial,
+  unique,
 } from "drizzle-orm/pg-core"
 
 export const users = pgTable("users", {
@@ -52,16 +53,20 @@ export const users = pgTable("users", {
 })
 
 // Activity Lists (for pagination/sync management) - Store the 30 activities from list
-export const activityLists = pgTable("activity_lists", {
-  id: serial("id").primaryKey(),
-  userId: bigint("user_id", { mode: "number" })
-    .notNull()
-    .references(() => users.id),
-  data: json("data").notNull(), // Activity list JSON (30 activities)
-  lastSynced: timestamp("last_synced").notNull().defaultNow(),
-  page: integer("page").notNull().default(1),
-  perPage: integer("per_page").notNull().default(30),
-})
+export const activityLists = pgTable(
+  "activity_lists",
+  {
+    id: serial("id").primaryKey(),
+    userId: bigint("user_id", { mode: "number" })
+      .notNull()
+      .references(() => users.id),
+    data: json("data").notNull(), // Activity list JSON (30 activities)
+    lastSynced: timestamp("last_synced").notNull().defaultNow(),
+    page: integer("page").notNull().default(1),
+    perPage: integer("per_page").notNull().default(30),
+  },
+  (table) => [unique("unique_user_page").on(table.userId, table.page)],
+)
 
 // Individual Activities - Store detailed data when user selects specific activities
 export const activities = pgTable("activities", {

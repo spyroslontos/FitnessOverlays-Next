@@ -8,11 +8,11 @@ export default async function App() {
 
   return (
     <>
-      <AthleteInfo />
       <div className="grid grid-cols-2 md:grid-cols-2 gap-6">
         <ActivitiesList />
         <ActivityContainer />
       </div>
+      <AthleteInfo />
     </>
   )
 }
