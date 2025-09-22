@@ -3,7 +3,6 @@ import { Geist, Geist_Mono } from "next/font/google"
 import "./globals.css"
 import { QueryProvider } from "@/components/query-provider"
 import { SessionProvider } from "next-auth/react"
-import { Header } from "@/components/header"
 import { TooltipProvider } from "@/components/ui/tooltip"
 
 const geistSans = Geist({
@@ -33,12 +32,7 @@ export default function RootLayout({
       >
         <SessionProvider>
           <QueryProvider>
-            <TooltipProvider>
-              <Header />
-              <div className="flex-1 p-8">
-                <div className="max-w-7xl mx-auto">{children}</div>
-              </div>
-            </TooltipProvider>
+            <TooltipProvider>{children}</TooltipProvider>
           </QueryProvider>
         </SessionProvider>
       </body>

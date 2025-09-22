@@ -30,7 +30,11 @@
         "noDocumentCookie": "off",
         "noUnknownAtRules": "off",
         "noArrayIndexKey": "off",
-        "noExplicitAny": "off"
+        "noExplicitAny": "off",
+        "noShadowRestrictedNames": "off"
+      },
+      "a11y": {
+        "useValidAnchorAnchor": "off"
       },
       "style": {
         "useImportType": "off",
