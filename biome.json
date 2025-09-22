@@ -29,7 +29,8 @@
       "suspicious": {
         "noDocumentCookie": "off",
         "noUnknownAtRules": "off",
-        "noArrayIndexKey": "off"
+        "noArrayIndexKey": "off",
+        "noExplicitAny": "off"
       },
       "style": {
         "useImportType": "off",

@@ -17,7 +17,7 @@ export async function GET(
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 })
     }
 
-    const { id } = params
+    const { id } = await params
 
     // Validate activity ID
     const activityId = parseInt(id, 10)
