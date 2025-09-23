@@ -1,7 +1,11 @@
-import { auth } from "@/lib/auth"
+"use client"
+
+import { SidebarIcon } from "lucide-react"
+import { useSession } from "next-auth/react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { SignInButton, SignOutButton } from "@/components/auth-buttons"
-import { SidebarTrigger } from "@/components/ui/sidebar"
+import { Button } from "@/components/ui/button"
+import { Separator } from "@/components/ui/separator"
+import { useSidebar } from "@/components/ui/sidebar"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,22 +14,39 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { signOut } from "next-auth/react"
 import Link from "next/link"
 
-export async function Header() {
-  const session = await auth()
+export function AppHeader() {
+  const { toggleSidebar } = useSidebar()
+  const { data: session } = useSession()
 
   return (
-    <header className="sticky top-0 z-50 bg-background border-b">
-      <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Link href="/" className="text-xl font-bold">
+    <header className="bg-background sticky top-0 z-50 flex w-full items-center border-b">
+      <div className="relative flex h-(--header-height) w-full items-center justify-between px-4">
+        <div className="flex items-center gap-2">
+          <Button
+            className="h-8 px-3 gap-2 sm:gap-2"
+            variant="ghost"
+            onClick={toggleSidebar}
+          >
+            <SidebarIcon className="h-4 w-4" />
+            <span className="text-sm font-medium hidden sm:inline">
+              Activities
+            </span>
+          </Button>
+          <Separator orientation="vertical" className="h-4 hidden sm:block" />
+        </div>
+        <div className="absolute left-1/2 transform -translate-x-1/2">
+          <Link
+            href="/"
+            className="text-lg sm:text-xl font-bold hover:text-primary transition-colors truncate max-w-[200px] sm:max-w-none"
+          >
             FitnessOverlays
           </Link>
         </div>
-
-        <div className="flex items-center gap-4">
-          {session ? (
+        <div className="flex items-center">
+          {session && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Avatar className="h-8 w-8 cursor-pointer">
@@ -56,13 +77,14 @@ export async function Header() {
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <SignOutButton />
+                <DropdownMenuItem
+                  onClick={() => signOut({ callbackUrl: "/" })}
+                  className="cursor-pointer"
+                >
+                  Sign out
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-          ) : (
-            <SignInButton />
           )}
         </div>
       </div>

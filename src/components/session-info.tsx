@@ -5,5 +5,5 @@ export async function SessionInfo() {
 
   console.log("Session Info:", session)
 
-  return
+  return null
 }

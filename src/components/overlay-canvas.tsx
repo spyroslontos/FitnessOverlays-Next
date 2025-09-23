@@ -23,7 +23,7 @@ export function OverlayCanvas({
   if (!session) {
     return (
       <div className="w-full">
-        <AspectRatio ratio={9 / 16} className="bg-gray-50 rounded-lg">
+        <AspectRatio ratio={3 / 4} className="bg-gray-50 rounded-lg">
           <div
             className="flex flex-col justify-center items-center h-full w-full p-4"
             style={{ fontSize: "clamp(0.5rem, 3vh, 1.5rem)" }}
@@ -38,7 +38,7 @@ export function OverlayCanvas({
   if (isPending) {
     return (
       <div className="w-full">
-        <AspectRatio ratio={9 / 16} className="bg-gray-50 rounded-lg">
+        <AspectRatio ratio={3 / 4} className="bg-gray-50 rounded-lg">
           <div className="flex flex-col justify-center items-center h-full w-full p-4 space-y-2">
             {visibleMetrics.map((_, i) => (
               <div key={i} className="text-center space-y-1 w-full">

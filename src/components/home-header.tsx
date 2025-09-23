@@ -1,11 +1,6 @@
-"use client"
-
-import { SidebarIcon } from "lucide-react"
-import { useSession } from "next-auth/react"
+import { auth } from "@/lib/auth"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
-import { Separator } from "@/components/ui/separator"
-import { useSidebar } from "@/components/ui/sidebar"
+import { SignInButton, SignOutButton } from "@/components/auth-buttons"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,39 +9,22 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { signOut } from "next-auth/react"
 import Link from "next/link"
 
-export function SiteHeader() {
-  const { toggleSidebar } = useSidebar()
-  const { data: session } = useSession()
+export async function HomeHeader() {
+  const session = await auth()
 
   return (
-    <header className="bg-background sticky top-0 z-50 flex w-full items-center border-b">
-      <div className="relative flex h-(--header-height) w-full items-center justify-between px-4">
-        <div className="flex items-center gap-2">
-          <Button
-            className="h-8 px-3 gap-2 sm:gap-2"
-            variant="ghost"
-            onClick={toggleSidebar}
-          >
-            <SidebarIcon className="h-4 w-4" />
-            <span className="text-sm font-medium hidden sm:inline">
-              Activities
-            </span>
-          </Button>
-          <Separator orientation="vertical" className="h-4 hidden sm:block" />
-        </div>
-        <div className="absolute left-1/2 transform -translate-x-1/2">
-          <Link
-            href="/"
-            className="text-lg sm:text-xl font-bold hover:text-primary transition-colors truncate max-w-[200px] sm:max-w-none"
-          >
+    <header className="sticky top-0 z-50 bg-background border-b">
+      <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <Link href="/" className="text-xl font-bold">
             FitnessOverlays
           </Link>
         </div>
-        <div className="flex items-center">
-          {session && (
+
+        <div className="flex items-center gap-4">
+          {session ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Avatar className="h-8 w-8 cursor-pointer">
@@ -77,14 +55,13 @@ export function SiteHeader() {
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={() => signOut({ callbackUrl: "/" })}
-                  className="cursor-pointer"
-                >
-                  Sign out
+                <DropdownMenuItem asChild>
+                  <SignOutButton />
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+          ) : (
+            <SignInButton />
           )}
         </div>
       </div>

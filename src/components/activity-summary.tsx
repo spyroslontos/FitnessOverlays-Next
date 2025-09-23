@@ -10,7 +10,7 @@ interface ActivityDetailsProps {
   isPending?: boolean
 }
 
-export function ActivityDetails({ data, isPending }: ActivityDetailsProps) {
+export function ActivitySummary({ data, isPending }: ActivityDetailsProps) {
   const { data: athletePreferences } = useAthletePreferences()
   
   const unitSystem = athletePreferences?.unitSystem || "metric"

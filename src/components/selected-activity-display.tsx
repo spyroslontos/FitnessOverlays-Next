@@ -3,10 +3,10 @@
 import { useState, useEffect } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { useSession } from "next-auth/react"
-import { ActivityDetails } from "./activity-details"
-import { ActivityContainer } from "./activity-container"
+import { ActivitySummary } from "./activity-summary"
+import { OverlayWorkspace } from "./overlay-workspace"
 
-export function ActivityViewer() {
+export function SelectedActivityDisplay() {
   const [selectedActivityId, setSelectedActivityId] = useState<number | null>(null)
   const { data: session } = useSession()
 
@@ -18,6 +18,8 @@ export function ActivityViewer() {
   })
 
   useEffect(() => {
+    if (typeof window === 'undefined') return
+
     const updateSelection = () => {
       const persisted = localStorage.getItem("selectedActivityId")
       if (persisted) setSelectedActivityId(Number(persisted))
@@ -41,8 +43,8 @@ export function ActivityViewer() {
 
   return (
     <div className="space-y-4">
-      <ActivityDetails data={data} isPending={isPending} />
-      <ActivityContainer data={data} isPending={isPending} />
+      <ActivitySummary data={data} isPending={isPending} />
+      <OverlayWorkspace data={data} isPending={isPending} />
     </div>
   )
 }

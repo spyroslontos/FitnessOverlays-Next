@@ -18,5 +18,5 @@ export function AthleteInfo() {
 
   if (error) return `An error has occurred: ${error.message}`
 
-  return
+  return null
 }

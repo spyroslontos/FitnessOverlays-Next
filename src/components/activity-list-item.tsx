@@ -1,6 +1,7 @@
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
 import {
   Tooltip,
   TooltipContent,
@@ -28,9 +29,11 @@ interface Activity {
 interface ActivityTileProps {
   activity: Activity
   onClick?: (activityId: number) => void
+  isLatest?: boolean
+  isSelected?: boolean
 }
 
-export function ActivityTile({ activity, onClick }: ActivityTileProps) {
+export function ActivityListItem({ activity, onClick, isLatest, isSelected }: ActivityTileProps) {
   const { data: athletePreferences } = useAthletePreferences()
   
   const unitSystem = athletePreferences?.unitSystem || "metric"
@@ -44,14 +47,28 @@ export function ActivityTile({ activity, onClick }: ActivityTileProps) {
           onClick={() => onClick?.(activity.id)}
         >
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium line-clamp-2">
-              {activity.name}
-            </CardTitle>
+            <div className="flex justify-between items-start mb-2">
+              <CardTitle className="text-sm font-medium line-clamp-2 flex-1 pr-2">
+                {activity.name}
+              </CardTitle>
+              <span className="text-xs text-muted-foreground whitespace-nowrap">
+                {formatDate(activity.start_date, dateFormat)}
+              </span>
+            </div>
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
               <span className="px-2 py-1 bg-primary/10 rounded-full">
                 {activity.type}
               </span>
-              <span>{formatDate(activity.start_date, dateFormat)}</span>
+              {isLatest && (
+                <Badge className="text-xs bg-orange-500 hover:bg-orange-600 text-white">
+                  Latest
+                </Badge>
+              )}
+              {isSelected && (
+                <Badge variant="default" className="text-xs">
+                  Selected
+                </Badge>
+              )}
             </div>
           </CardHeader>
           <CardContent className="pt-0">

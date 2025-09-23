@@ -4,10 +4,10 @@ import * as React from "react"
 import { useQuery } from "@tanstack/react-query"
 import { useEffect, useState } from "react"
 import { useSession } from "next-auth/react"
-import { Command } from "lucide-react"
 import Image from "next/image"
-import { ActivityTile } from "./activity-tile"
+import { ActivityListItem } from "./activity-list-item"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import {
   Sidebar,
@@ -48,9 +48,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const activities = allActivities.slice(startIndex, endIndex)
   const latestActivity = allActivities.length > 0 ? allActivities[0] : null
 
-  // Set initial selection on data load
+  // Set initial selection on data load (only after hydration)
   useEffect(() => {
-    if (latestActivity) {
+    if (latestActivity && typeof window !== 'undefined') {
       const persisted = localStorage.getItem("selectedActivityId")
       const timestamp = localStorage.getItem("selectedActivityTimestamp")
       const oneDay = 24 * 60 * 60 * 1000
@@ -59,17 +59,30 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         !persisted || !timestamp || Date.now() - Number(timestamp) >= oneDay
       const activityId = shouldUseLatest ? latestActivity.id : Number(persisted)
 
-      setSelectedActivityId(activityId)
+      selectActivity(activityId)
+    }
+  }, [latestActivity])
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page)
+  }
+
+  const selectActivity = (activityId: number) => {
+    setSelectedActivityId(activityId)
+    if (typeof window !== 'undefined') {
       localStorage.setItem("selectedActivityId", activityId.toString())
       localStorage.setItem("selectedActivityTimestamp", Date.now().toString())
       window.dispatchEvent(
         new CustomEvent("activitySelected", { detail: activityId }),
       )
     }
-  }, [latestActivity])
+  }
 
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page)
+  const jumpToLatest = () => {
+    if (latestActivity) {
+      setCurrentPage(1)
+      selectActivity(latestActivity.id)
+    }
   }
 
   return (
@@ -81,8 +94,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
-              <a href="#">
+            <div className="flex items-center justify-between w-full">
+              <div className="flex items-center gap-2 flex-1 px-2 py-2">
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg">
                   <Image
                     src="/images/FitnessOverlaysLogo.jpg"
@@ -95,8 +108,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">Activities</span>
                 </div>
-              </a>
-            </SidebarMenuButton>
+              </div>
+              {latestActivity && (currentPage !== 1 || selectedActivityId !== latestActivity.id) && (
+                <Button 
+                  size="sm" 
+                  onClick={jumpToLatest}
+                  className="text-xs px-2 py-1 h-auto ml-2"
+                >
+                  Jump to latest
+                </Button>
+              )}
+            </div>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
@@ -114,34 +136,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             </div>
           ) : (
             activities.map((activity: any, index: number) => (
-              <div key={activity.id} className="relative">
-                <div className="absolute top-2 right-2 z-10 flex gap-1">
-                  {index === 0 && currentPage === 1 && (
-                    <Badge variant="secondary" className="text-xs">
-                      Latest
-                    </Badge>
-                  )}
-                  {selectedActivityId === activity.id && (
-                    <Badge variant="default" className="text-xs">
-                      Selected
-                    </Badge>
-                  )}
-                </div>
-                <ActivityTile
-                  activity={activity}
-                  onClick={(id) => {
-                    setSelectedActivityId(id)
-                    localStorage.setItem("selectedActivityId", id.toString())
-                    localStorage.setItem(
-                      "selectedActivityTimestamp",
-                      Date.now().toString(),
-                    )
-                    window.dispatchEvent(
-                      new CustomEvent("activitySelected", { detail: id }),
-                    )
-                  }}
-                />
-              </div>
+              <ActivityListItem
+                key={activity.id}
+                activity={activity}
+                isLatest={index === 0 && currentPage === 1}
+                isSelected={selectedActivityId === activity.id}
+                onClick={selectActivity}
+              />
             ))
           )}
         </div>
