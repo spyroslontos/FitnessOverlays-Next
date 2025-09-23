@@ -1,5 +1,11 @@
 export type UnitSystem = "metric" | "imperial"
 
+// Maps Strava measurement preference to our unit system
+export const mapStravaUnitsToUnitSystem = (measurementPreference?: string): UnitSystem => {
+  // Strava uses "meters" or "feet" - if feet, use imperial, otherwise default to metric
+  return measurementPreference === "feet" ? "imperial" : "metric"
+}
+
 export interface Metric {
   key: string
   label: string

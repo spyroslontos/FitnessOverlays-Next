@@ -7,9 +7,7 @@ import { ActivityDetails } from "./activity-details"
 import { ActivityContainer } from "./activity-container"
 
 export function ActivityViewer() {
-  const [selectedActivityId, setSelectedActivityId] = useState<number | null>(
-    null,
-  )
+  const [selectedActivityId, setSelectedActivityId] = useState<number | null>(null)
   const { data: session } = useSession()
 
   const { data, isPending } = useQuery({
@@ -44,7 +42,7 @@ export function ActivityViewer() {
   return (
     <div className="space-y-4">
       <ActivityDetails data={data} isPending={isPending} />
-      <ActivityContainer />
+      <ActivityContainer data={data} isPending={isPending} />
     </div>
   )
 }

@@ -7,69 +7,27 @@ import { OverlayCanvas } from "./overlay-canvas"
 import { MetricControls } from "./metric-controls"
 import { Skeleton } from "@/components/ui/skeleton"
 import { UnitSystem } from "@/lib/metrics"
+import { useAthletePreferences } from "@/hooks/use-athlete-preferences"
 
-export function ActivityContainer() {
-  const [selectedActivityId, setSelectedActivityId] = useState<number | null>(
-    null,
-  )
+interface ActivityContainerProps {
+  data?: any
+  isPending?: boolean
+}
+
+export function ActivityContainer({ data, isPending }: ActivityContainerProps) {
   const [visibleMetrics, setVisibleMetrics] = useState<string[]>([
     "distance",
     "time",
     "pace",
     "avgSpeed",
   ])
-  const [unitSystem, setUnitSystem] = useState<UnitSystem>("metric")
-  const { data: session } = useSession()
-
-  const { data, isPending } = useQuery({
-    queryKey: ["activityData", selectedActivityId],
-    queryFn: () =>
-      fetch(`/api/activities/${selectedActivityId}`).then((res) => res.json()),
-    enabled: !!selectedActivityId && !!session,
-  })
-
-  useEffect(() => {
-    const updateSelection = () => {
-      const persisted = localStorage.getItem("selectedActivityId")
-      if (persisted) setSelectedActivityId(Number(persisted))
-    }
-
-    const updateUnitSystem = () => {
-      const persistedUnitSystem = localStorage.getItem(
-        "unitSystem",
-      ) as UnitSystem
-      if (
-        persistedUnitSystem === "metric" ||
-        persistedUnitSystem === "imperial"
-      ) {
-        setUnitSystem(persistedUnitSystem)
-      }
-    }
-
-    updateSelection()
-    updateUnitSystem()
-    window.addEventListener("storage", updateSelection)
-    const handleActivitySelect = (event: CustomEvent) =>
-      setSelectedActivityId(event.detail)
-    window.addEventListener(
-      "activitySelected",
-      handleActivitySelect as EventListener,
-    )
-    return () => {
-      window.removeEventListener("storage", updateSelection)
-      window.removeEventListener(
-        "activitySelected",
-        handleActivitySelect as EventListener,
-      )
-    }
-  }, [])
+  const { data: athletePreferences } = useAthletePreferences()
+  
+  // Use athlete preferences for unit system, fallback to metric
+  const unitSystem: UnitSystem = athletePreferences?.unitSystem || "metric"
 
   const handleMetricsChange = (metrics: string[]) => {
     setVisibleMetrics(metrics)
-  }
-
-  const handleUnitSystemChange = (unitSystem: UnitSystem) => {
-    setUnitSystem(unitSystem)
   }
 
   return (
@@ -82,8 +40,6 @@ export function ActivityContainer() {
       />
       <MetricControls
         onMetricsChange={handleMetricsChange}
-        onUnitSystemChange={handleUnitSystemChange}
-        unitSystem={unitSystem}
         selectedMetrics={visibleMetrics}
       />
       <div className="p-4 border rounded-lg">

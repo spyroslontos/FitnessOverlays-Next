@@ -2,7 +2,8 @@
 
 import { Calendar, Clock, Route, Zap } from "lucide-react"
 import { Card } from "@/components/ui/card"
-import { formatDistance, formatTime, formatPace } from "@/lib/activity-utils"
+import { formatDistance, formatTime, formatPace, formatDate } from "@/lib/activity-utils"
+import { useAthletePreferences } from "@/hooks/use-athlete-preferences"
 
 interface ActivityDetailsProps {
   data?: any
@@ -10,6 +11,11 @@ interface ActivityDetailsProps {
 }
 
 export function ActivityDetails({ data, isPending }: ActivityDetailsProps) {
+  const { data: athletePreferences } = useAthletePreferences()
+  
+  const unitSystem = athletePreferences?.unitSystem || "metric"
+  const dateFormat = athletePreferences?.datePreference || "%m/%d/%Y"
+  
   if (isPending) {
     return (
       <Card className="p-3 mb-4">
@@ -35,10 +41,6 @@ export function ActivityDetails({ data, isPending }: ActivityDetailsProps) {
     )
   }
 
-  const formatDateRelative = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString()
-  }
-
   return (
     <Card className="p-3 mb-4">
       <div className="space-y-2">
@@ -49,12 +51,12 @@ export function ActivityDetails({ data, isPending }: ActivityDetailsProps) {
           <div className="flex items-center gap-1">
             <Calendar className="h-3 w-3 text-gray-500" />
             <span className="text-gray-600">
-              {formatDateRelative(data.start_date)}
+              {formatDate(data.start_date, dateFormat)}
             </span>
           </div>
           <div className="flex items-center gap-1">
             <Route className="h-3 w-3 text-gray-500" />
-            <span className="font-medium">{formatDistance(data.distance)}</span>
+            <span className="font-medium">{formatDistance(data.distance, unitSystem)}</span>
           </div>
           <div className="flex items-center gap-1">
             <Clock className="h-3 w-3 text-gray-500" />
@@ -63,7 +65,7 @@ export function ActivityDetails({ data, isPending }: ActivityDetailsProps) {
           <div className="flex items-center gap-1">
             <Zap className="h-3 w-3 text-gray-500" />
             <span className="font-medium">
-              {formatPace(data.distance, data.moving_time)}
+              {formatPace(data.distance, data.moving_time, unitSystem)}
             </span>
           </div>
         </div>

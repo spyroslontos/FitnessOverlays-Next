@@ -8,32 +8,25 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { METRICS, UnitSystem } from "@/lib/metrics"
+import { useAthletePreferences } from "@/hooks/use-athlete-preferences"
 
 interface MetricControlsProps {
   onMetricsChange: (metrics: string[]) => void
-  onUnitSystemChange: (unitSystem: UnitSystem) => void
-  unitSystem: UnitSystem
   selectedMetrics: string[]
 }
 
 export function MetricControls({
   onMetricsChange,
-  onUnitSystemChange,
-  unitSystem,
   selectedMetrics,
 }: MetricControlsProps) {
+  const { data: athletePreferences } = useAthletePreferences()
+  
   const toggleMetric = (metricKey: string, pressed: boolean) => {
     onMetricsChange(
       pressed
         ? [...selectedMetrics, metricKey]
         : selectedMetrics.filter((m) => m !== metricKey),
     )
-  }
-
-  const toggleUnitSystem = () => {
-    const newUnitSystem = unitSystem === "metric" ? "imperial" : "metric"
-    localStorage.setItem("unitSystem", newUnitSystem)
-    onUnitSystemChange(newUnitSystem)
   }
 
   return (
@@ -47,14 +40,6 @@ export function MetricControls({
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <h4 className="font-medium text-sm">Select Metrics</h4>
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={toggleUnitSystem}
-              className="text-xs"
-            >
-              {unitSystem === "metric" ? "Imperial" : "Metric"}
-            </Button>
           </div>
           <div className="flex gap-2 overflow-x-auto pb-2">
             {METRICS.map((metric) => (

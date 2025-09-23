@@ -6,7 +6,8 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
-import { formatDistance, formatTime, formatDate } from "@/lib/activity-utils"
+import { formatDistance, formatTime, formatDate, formatSpeed, formatElevation } from "@/lib/activity-utils"
+import { useAthletePreferences } from "@/hooks/use-athlete-preferences"
 
 interface Activity {
   id: number
@@ -30,6 +31,11 @@ interface ActivityTileProps {
 }
 
 export function ActivityTile({ activity, onClick }: ActivityTileProps) {
+  const { data: athletePreferences } = useAthletePreferences()
+  
+  const unitSystem = athletePreferences?.unitSystem || "metric"
+  const dateFormat = athletePreferences?.datePreference || "%m/%d/%Y"
+  
   return (
     <Tooltip>
       <TooltipTrigger asChild>
@@ -45,7 +51,7 @@ export function ActivityTile({ activity, onClick }: ActivityTileProps) {
               <span className="px-2 py-1 bg-primary/10 rounded-full">
                 {activity.type}
               </span>
-              <span>{formatDate(activity.start_date)}</span>
+              <span>{formatDate(activity.start_date, dateFormat)}</span>
             </div>
           </CardHeader>
           <CardContent className="pt-0">
@@ -53,7 +59,7 @@ export function ActivityTile({ activity, onClick }: ActivityTileProps) {
               <div>
                 <div className="text-muted-foreground">Distance</div>
                 <div className="font-medium">
-                  {formatDistance(activity.distance)}
+                  {formatDistance(activity.distance, unitSystem)}
                 </div>
               </div>
               <div>
@@ -66,7 +72,7 @@ export function ActivityTile({ activity, onClick }: ActivityTileProps) {
                 <div>
                   <div className="text-muted-foreground">Elevation</div>
                   <div className="font-medium">
-                    {activity.total_elevation_gain.toFixed(0)}m
+                    {formatElevation(activity.total_elevation_gain, unitSystem)}
                   </div>
                 </div>
               )}
@@ -74,7 +80,7 @@ export function ActivityTile({ activity, onClick }: ActivityTileProps) {
                 <div>
                   <div className="text-muted-foreground">Avg Speed</div>
                   <div className="font-medium">
-                    {activity.average_speed.toFixed(1)} m/s
+                    {formatSpeed(activity.average_speed, unitSystem)}
                   </div>
                 </div>
               )}
@@ -93,12 +99,12 @@ export function ActivityTile({ activity, onClick }: ActivityTileProps) {
         </Card>
       </TooltipTrigger>
       <TooltipContent side="right">
-        <div className="text-sm">
-          <div className="font-medium">{activity.name}</div>
-          <div className="text-xs text-muted-foreground">
-            {activity.type} • {formatDate(activity.start_date)}
+          <div className="text-sm">
+            <div className="font-medium">{activity.name}</div>
+            <div className="text-xs text-muted-foreground">
+              {activity.type} • {formatDate(activity.start_date, dateFormat)}
+            </div>
           </div>
-        </div>
       </TooltipContent>
     </Tooltip>
   )
