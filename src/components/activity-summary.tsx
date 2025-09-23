@@ -43,43 +43,43 @@ export function ActivitySummary({ data, isPending }: ActivityDetailsProps) {
   }
 
   return (
-    <Card className="p-4 mb-4">
-      <div className="space-y-3">
-        <div className="flex justify-between items-start gap-2">
-          <h3 className="font-medium text-lg truncate flex-1" title={data.name}>
+    <Card className="p-3 mb-4">
+      <div className="space-y-2">
+        <div className="flex justify-between items-center gap-2">
+          <h3 className="font-medium text-base truncate flex-1" title={data.name}>
             {data.name}
           </h3>
           <div className="flex items-center gap-1 text-gray-600 flex-shrink-0">
-            <Calendar className="h-4 w-4 text-gray-500" />
-            <span className="text-base whitespace-nowrap">
+            <Calendar className="h-3 w-3 text-gray-500" />
+            <span className="text-sm whitespace-nowrap">
               {formatDate(data.start_date, dateFormat)}
             </span>
           </div>
         </div>
-        <div className="grid grid-cols-4 gap-4 text-base items-center">
+        <div className="flex items-center gap-3 text-sm">
           <div className="flex items-center gap-1">
-            <Route className="h-4 w-4 text-gray-500" />
+            <Route className="h-3 w-3 text-gray-500" />
             <span className="font-medium">{formatDistance(data.distance, unitSystem)}</span>
           </div>
           <div className="flex items-center gap-1">
-            <Clock className="h-4 w-4 text-gray-500" />
+            <Clock className="h-3 w-3 text-gray-500" />
             <span className="font-medium">{formatTime(data.moving_time)}</span>
           </div>
           <div className="flex items-center gap-1">
-            <Zap className="h-4 w-4 text-gray-500" />
+            <Zap className="h-3 w-3 text-gray-500" />
             <span className="font-medium">
               {formatPace(data.distance, data.moving_time, unitSystem)}
             </span>
           </div>
-          <div className="flex justify-end">
+          <div className="flex justify-end ml-auto">
             <Button
-              variant="outline"
+              variant="ghost"
               size="sm"
-              className="px-2 text-xs bg-orange-500 hover:bg-orange-600 text-white border-orange-500 hover:border-orange-600"
+              className="h-7 px-2 text-xs bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white border-0 shadow-sm hover:shadow-md transition-all duration-200"
               onClick={() => window.open(`https://www.strava.com/activities/${data.id}`, '_blank')}
             >
               <ExternalLink className="h-3 w-3 mr-1" />
-              Strava
+              View
             </Button>
           </div>
         </div>

@@ -1,7 +1,5 @@
 "use client"
 
-import { useEffect, useRef } from "react"
-import * as fabric from "fabric"
 import { Skeleton } from "@/components/ui/skeleton"
 import { getMetricByKey, UnitSystem } from "@/lib/metrics"
 import { useSession } from "next-auth/react"
@@ -37,8 +35,6 @@ export function OverlayCanvas({
   textColor = '#ffffff',
 }: OverlayCanvasProps) {
   const { data: session, status } = useSession()
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-  const fabricCanvasRef = useRef<fabric.Canvas | null>(null)
 
   const STYLES = {
     baseClassName: `w-full h-full min-h-[200px] sm:min-h-[400px] rounded-lg border bg-card text-card-foreground shadow-sm ${className}`,
@@ -55,61 +51,26 @@ export function OverlayCanvas({
     }
   }
 
-  useEffect(() => {
-    if (!canvasRef.current || !session || !data) return
+  const CONFIG = {
+    fontSizes: { 
+      label: { small: 14, medium: 16, large: 20 }, 
+      value: { small: 20, medium: 24, large: 28 } 
+    },
+    alignment: { left: 'left', center: 'center', right: 'right' }
+  }
 
-    const canvas = new fabric.Canvas(canvasRef.current, { 
-      width: canvasRef.current.offsetWidth, 
-      height: canvasRef.current.offsetHeight, 
-      backgroundColor: 'transparent', 
-      selection: false, 
-      interactive: false 
-    })
-    fabricCanvasRef.current = canvas
-
-    const CONFIG = {
-      fontSizes: { label: { small: 14, medium: 16, large: 20 }, value: { small: 20, medium: 24, large: 28 } },
-      alignment: { left: 'left', center: 'center', right: 'right' }
+  const getAlignmentClass = (align: Alignment) => {
+    switch (align) {
+      case 'left': return 'text-left items-start'
+      case 'right': return 'text-right items-end'
+      default: return 'text-center items-center'
     }
+  }
 
-    const createText = (text: string, x: number, y: number, fontSize: number, isBold = false) => 
-      new fabric.Text(text, { 
-        left: x, 
-        top: y, 
-        originX: CONFIG.alignment[alignment] as fabric.TOriginX, 
-        originY: 'center', 
-        fontSize, 
-        fill: textColor, 
-        fontFamily,
-        fontWeight: isBold ? 'bold' : 'normal'
-      })
-
-    const renderCanvas = () => {
-      const rowsPerColumn = Math.ceil(visibleMetrics.length / columns)
-      
-      visibleMetrics.forEach((key, i) => {
-        const metric = getMetricByKey(key)
-        if (!metric) return
-        
-        const col = i % columns
-        const row = Math.floor(i / columns)
-        const colWidth = canvas.getWidth() / columns
-        const rowHeight = canvas.getHeight() / rowsPerColumn
-        const x = col * colWidth + colWidth / 2
-        const y = row * rowHeight + rowHeight / 2
-        
-        canvas.add(createText(metric.label, x, y - 15, CONFIG.fontSizes.label[labelSize]))
-        canvas.add(createText(metric.formatter(data, unitSystem), x, y + 15, CONFIG.fontSizes.value[valueSize], true))
-      })
-      canvas.renderAll()
-    }
-
-    renderCanvas()
-    
-    return () => {
-      canvas.dispose()
-    }
-  }, [visibleMetrics, data, unitSystem, session, alignment, labelSize, valueSize, columns, fontFamily, textColor])
+  const getSizeStyle = (size: Size, type: 'label' | 'value') => {
+    const fontSize = CONFIG.fontSizes[type][size]
+    return { fontSize: `${fontSize}px` }
+  }
 
   // Show skeleton while loading
   if (status === "loading" || (session && isPending)) {
@@ -127,15 +88,66 @@ export function OverlayCanvas({
     )
   }
 
-  return (
-    <div className={STYLES.baseClassName} style={STYLES.checkerboard}>
-      {!session ? (
+  if (!session) {
+    return (
+      <div className={STYLES.baseClassName} style={STYLES.checkerboard}>
         <div className="flex items-center justify-center h-full">
           <div className="text-center text-white text-xl drop-shadow-lg">Not Authenticated</div>
         </div>
-      ) : (
-        <canvas ref={canvasRef} className="w-full h-full" />
-      )}
+      </div>
+    )
+  }
+
+  if (!data) {
+    return (
+      <div className={STYLES.baseClassName} style={STYLES.checkerboard}>
+        <div className="flex items-center justify-center h-full">
+          <div className="text-center text-white text-xl drop-shadow-lg">No Activity Selected</div>
+        </div>
+      </div>
+    )
+  }
+
+  const rowsPerColumn = Math.ceil(visibleMetrics.length / columns)
+  const gridCols = columns === 1 ? 'grid-cols-1' : columns === 2 ? 'grid-cols-2' : columns === 3 ? 'grid-cols-3' : 'grid-cols-4'
+
+  return (
+    <div className={STYLES.baseClassName} style={STYLES.checkerboard}>
+      <div className={`grid ${gridCols} gap-4 h-full p-4`}>
+        {visibleMetrics.map((key, i) => {
+          const metric = getMetricByKey(key)
+          if (!metric) return null
+          
+          const col = i % columns
+          const row = Math.floor(i / columns)
+          
+          return (
+            <div 
+              key={key}
+              className={`flex flex-col justify-center space-y-1 ${getAlignmentClass(alignment)}`}
+              style={{ 
+                fontFamily,
+                color: textColor,
+                gridColumn: col + 1,
+                gridRow: row + 1
+              }}
+            >
+              <div 
+                className="font-normal"
+                style={getSizeStyle(labelSize, 'label')}
+              >
+                {metric.label}
+              </div>
+              <div 
+                className="font-bold"
+                style={getSizeStyle(valueSize, 'value')}
+              >
+                {metric.formatter(data, unitSystem)}
+              </div>
+            </div>
+          )
+        })}
+      </div>
     </div>
   )
 }

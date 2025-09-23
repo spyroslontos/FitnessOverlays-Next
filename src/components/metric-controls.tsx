@@ -223,28 +223,57 @@ export function MetricControls({
       {onTextColorChange && (
         <Popover>
           <PopoverTrigger asChild>
-            <Button variant="outline" size="sm" className="px-3">
-              <div className="w-4 h-4 rounded border" style={{ backgroundColor: textColor }} />
+            <Button variant="outline" size="sm" className="p-2">
+              <div 
+                className="w-6 h-6 rounded-full border-2 border-gray-300 shadow-sm"
+                style={{ 
+                  background: 'linear-gradient(45deg, #ff0000, #ff8000, #ffff00, #80ff00, #00ff00, #00ff80, #00ffff, #0080ff, #0000ff, #8000ff, #ff00ff, #ff0080)'
+                }}
+              />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-auto p-4" align="start" side="top">
-            <div className="space-y-3">
-              <h4 className="font-medium">Select Color</h4>
-              <input
-                type="color"
-                value={textColor}
-                onChange={(e) => onTextColorChange(e.target.value)}
-                className="w-full h-10 rounded border cursor-pointer"
-              />
-              <div className="flex gap-2 flex-wrap">
-                {['#ffffff', '#000000', '#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'].map((color) => (
-                  <button
-                    key={color}
-                    className="w-8 h-8 rounded border"
-                    style={{ backgroundColor: color }}
-                    onClick={() => onTextColorChange(color)}
+          <PopoverContent className="w-80 p-4" align="start" side="top">
+            <div className="space-y-4">
+              <h4 className="font-medium text-base">Text Color</h4>
+              
+              <div className="space-y-3">
+                <div>
+                  <label className="text-sm text-gray-600 mb-2 block">Custom Color</label>
+                  <input
+                    type="color"
+                    value={textColor}
+                    onChange={(e) => onTextColorChange(e.target.value)}
+                    className="w-full h-10 rounded-lg border-2 border-gray-200 cursor-pointer hover:border-gray-300 transition-colors"
                   />
-                ))}
+                </div>
+                
+                <div>
+                  <label className="text-sm text-gray-600 mb-2 block">Quick Colors</label>
+                  <div className="grid grid-cols-4 gap-2">
+                    {[
+                      { color: '#ffffff', name: 'White' },
+                      { color: '#000000', name: 'Black' },
+                      { color: '#ff0000', name: 'Red' },
+                      { color: '#00ff00', name: 'Green' },
+                      { color: '#0000ff', name: 'Blue' },
+                      { color: '#ffff00', name: 'Yellow' },
+                      { color: '#ff00ff', name: 'Magenta' },
+                      { color: '#00ffff', name: 'Cyan' },
+                      { color: '#ffa500', name: 'Orange' },
+                      { color: '#800080', name: 'Purple' },
+                      { color: '#ffc0cb', name: 'Pink' },
+                      { color: '#a52a2a', name: 'Brown' }
+                    ].map(({ color, name }) => (
+                      <button
+                        key={color}
+                        className="w-8 h-8 rounded-lg border-2 border-gray-200 hover:border-gray-400 hover:scale-110 transition-all duration-200 shadow-sm hover:shadow-md"
+                        style={{ backgroundColor: color }}
+                        onClick={() => onTextColorChange(color)}
+                        title={name}
+                      />
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
           </PopoverContent>
