@@ -7,20 +7,49 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import { RotateCcw } from "lucide-react"
+import { RotateCcw, AlignLeft, AlignCenter, AlignRight } from "lucide-react"
 import { METRICS, UnitSystem, DEFAULT_METRICS } from "@/lib/metrics"
 import { useAthletePreferences } from "@/hooks/use-athlete-preferences"
+
+type Alignment = 'left' | 'center' | 'right'
+type Size = 'small' | 'medium' | 'large'
 
 interface MetricControlsProps {
   onMetricsChange: (metrics: string[]) => void
   selectedMetrics: string[]
   activityData?: any
+  alignment?: Alignment
+  onAlignmentChange?: (alignment: Alignment) => void
+  labelSize?: Size
+  onLabelSizeChange?: (size: Size) => void
+  valueSize?: Size
+  onValueSizeChange?: (size: Size) => void
+  columns?: 1 | 2 | 3 | 4
+  onColumnsChange?: (columns: 1 | 2 | 3 | 4) => void
+  fontFamily?: string
+  onFontFamilyChange?: (font: string) => void
+  textColor?: string
+  onTextColorChange?: (color: string) => void
+  onResetAll?: () => void
 }
 
 export function MetricControls({
   onMetricsChange,
   selectedMetrics,
   activityData,
+  alignment = 'center',
+  onAlignmentChange,
+  labelSize = 'medium',
+  onLabelSizeChange,
+  valueSize = 'medium',
+  onValueSizeChange,
+  columns = 1,
+  onColumnsChange,
+  fontFamily = 'Poppins',
+  onFontFamilyChange,
+  textColor = '#ffffff',
+  onTextColorChange,
+  onResetAll,
 }: MetricControlsProps) {
   const { data: athletePreferences } = useAthletePreferences()
   
@@ -45,43 +74,189 @@ export function MetricControls({
     onMetricsChange(DEFAULT_METRICS)
   }
 
+  const CONFIG = {
+    align: { order: ['left', 'center', 'right'] as const, icon: (align: string) => 
+      align === 'left' ? <AlignLeft className="h-4 w-4" /> : 
+      align === 'center' ? <AlignCenter className="h-4 w-4" /> : 
+      <AlignRight className="h-4 w-4" />
+    },
+    size: { order: ['small', 'medium', 'large'] as const, display: { small: 'S', medium: 'M', large: 'L' } },
+    columns: { order: [1, 2, 3, 4] as const },
+    font: { 
+      order: ['Poppins', 'Lato', 'Oswald', 'Lora', 'Special Elite'] as const,
+      labels: { 'Poppins': 'Modern', 'Lato': 'Clean', 'Oswald': 'Bold', 'Lora': 'Elegant', 'Special Elite': 'Retro' }
+    }
+  }
+
+  const CycleButton = ({ 
+    value, 
+    order, 
+    onChange, 
+    display, 
+    icon,
+    className = ""
+  }: {
+    value: any
+    order: readonly any[]
+    onChange: (value: any) => void
+    display?: (value: any) => React.ReactNode
+    icon?: (value: any) => React.ReactNode
+    className?: string
+  }) => (
+    <Button 
+      variant="outline" 
+      size="sm" 
+      onClick={() => {
+        const currentIndex = order.indexOf(value)
+        const nextIndex = (currentIndex + 1) % order.length
+        onChange(order[nextIndex])
+      }} 
+      className={`px-3 ${className}`}
+    >
+      {icon ? icon(value) : display ? display(value) : value}
+    </Button>
+  )
+
   return (
-    <Popover>
-      <PopoverTrigger asChild>
-        <Button variant="outline" size="default" className="text-base">
-          Metrics
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-80" align="start" side="top">
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <h4 className="font-medium text-base">Select Metrics</h4>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={resetToDefaults}
-              className="text-sm h-8 px-3 text-red-600 hover:text-red-700 hover:bg-red-50"
-            >
-              <RotateCcw className="h-4 w-4 mr-1" />
-              Reset
-            </Button>
-          </div>
-          <div className="flex gap-2 overflow-x-auto pb-2">
-            {availableMetrics.map((metric) => (
-              <Toggle
-                key={metric.key}
-                pressed={selectedMetrics.includes(metric.key)}
-                onPressedChange={(pressed) => toggleMetric(metric.key, pressed)}
+    <div className="flex gap-2 flex-wrap">
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button variant="outline" size="default" className="text-base">
+            Metrics
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-80" align="start" side="top">
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <h4 className="font-medium text-base">Select Metrics</h4>
+              <Button
+                variant="ghost"
                 size="sm"
-                variant="outline"
-                className="text-base whitespace-nowrap px-4 py-3 h-auto w-auto min-w-fit data-[state=on]:bg-green-600 data-[state=on]:text-white data-[state=on]:border-green-600"
+                onClick={resetToDefaults}
+                className="text-sm h-8 px-3 text-red-600 hover:text-red-700 hover:bg-red-50"
               >
-                {metric.label}
-              </Toggle>
-            ))}
+                <RotateCcw className="h-4 w-4 mr-1" />
+                Reset
+              </Button>
+            </div>
+            <div className="flex gap-2 overflow-x-auto pb-2">
+              {availableMetrics.map((metric) => (
+                <Toggle
+                  key={metric.key}
+                  pressed={selectedMetrics.includes(metric.key)}
+                  onPressedChange={(pressed) => toggleMetric(metric.key, pressed)}
+                  size="sm"
+                  variant="outline"
+                  className="text-base whitespace-nowrap px-4 py-3 h-auto w-auto min-w-fit data-[state=on]:bg-green-600 data-[state=on]:text-white data-[state=on]:border-green-600"
+                >
+                  {metric.label}
+                </Toggle>
+              ))}
+            </div>
           </div>
-        </div>
-      </PopoverContent>
-    </Popover>
+        </PopoverContent>
+      </Popover>
+
+      {onAlignmentChange && (
+        <CycleButton
+          value={alignment}
+          order={CONFIG.align.order}
+          onChange={onAlignmentChange}
+          icon={CONFIG.align.icon}
+        />
+      )}
+
+      {onLabelSizeChange && (
+        <CycleButton
+          value={labelSize}
+          order={CONFIG.size.order}
+          onChange={onLabelSizeChange}
+          display={(size) => CONFIG.size.display[size as keyof typeof CONFIG.size.display]}
+        />
+      )}
+
+      {onValueSizeChange && (
+        <CycleButton
+          value={valueSize}
+          order={CONFIG.size.order}
+          onChange={onValueSizeChange}
+          display={(size) => CONFIG.size.display[size as keyof typeof CONFIG.size.display]}
+        />
+      )}
+
+      {onColumnsChange && (
+        <CycleButton
+          value={columns}
+          order={CONFIG.columns.order}
+          onChange={onColumnsChange}
+        />
+      )}
+
+      {onFontFamilyChange && (
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="outline" size="sm" className="px-3">
+              {CONFIG.font.labels[fontFamily as keyof typeof CONFIG.font.labels] || 'Font'}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-80" align="start" side="top">
+            <div className="space-y-3">
+              <h4 className="font-medium">Select Font</h4>
+              <div className="flex gap-2 overflow-x-auto pb-2">
+                {CONFIG.font.order.map((font) => (
+                  <Button
+                    key={font}
+                    variant={fontFamily === font ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => onFontFamilyChange(font)}
+                    className="text-sm whitespace-nowrap px-4 py-3 h-auto w-auto min-w-fit data-[state=on]:bg-green-600 data-[state=on]:text-white data-[state=on]:border-green-600"
+                  >
+                    {CONFIG.font.labels[font]}
+                  </Button>
+                ))}
+              </div>
+            </div>
+          </PopoverContent>
+        </Popover>
+      )}
+
+      {onTextColorChange && (
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="outline" size="sm" className="px-3">
+              <div className="w-4 h-4 rounded border" style={{ backgroundColor: textColor }} />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-4" align="start" side="top">
+            <div className="space-y-3">
+              <h4 className="font-medium">Select Color</h4>
+              <input
+                type="color"
+                value={textColor}
+                onChange={(e) => onTextColorChange(e.target.value)}
+                className="w-full h-10 rounded border cursor-pointer"
+              />
+              <div className="flex gap-2 flex-wrap">
+                {['#ffffff', '#000000', '#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'].map((color) => (
+                  <button
+                    key={color}
+                    className="w-8 h-8 rounded border"
+                    style={{ backgroundColor: color }}
+                    onClick={() => onTextColorChange(color)}
+                  />
+                ))}
+              </div>
+            </div>
+          </PopoverContent>
+        </Popover>
+      )}
+
+      {onResetAll && (
+        <Button variant="outline" size="sm" onClick={onResetAll} className="px-3 text-red-600 hover:text-red-700 hover:bg-red-50 ml-auto">
+          <RotateCcw className="h-4 w-4 mr-1" />
+          Reset All
+        </Button>
+      )}
+    </div>
   )
 }
