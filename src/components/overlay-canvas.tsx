@@ -53,8 +53,8 @@ export function OverlayCanvas({
 
   const CONFIG = {
     fontSizes: { 
-      label: { small: 14, medium: 16, large: 20 }, 
-      value: { small: 20, medium: 24, large: 28 } 
+      label: { small: 'text-sm', medium: 'text-base', large: 'text-lg' }, 
+      value: { small: 'text-lg', medium: 'text-xl', large: 'text-2xl' } 
     },
     alignment: { left: 'left', center: 'center', right: 'right' }
   }
@@ -67,9 +67,10 @@ export function OverlayCanvas({
     }
   }
 
-  const getSizeStyle = (size: Size, type: 'label' | 'value') => {
-    const fontSize = CONFIG.fontSizes[type][size]
-    return { fontSize: `${fontSize}px` }
+  const getSizeClass = (size: Size, type: 'label' | 'value') => {
+    // Ensure we have valid size values with fallbacks
+    const validSize = size && ['small', 'medium', 'large'].includes(size) ? size : 'medium'
+    return CONFIG.fontSizes[type][validSize]
   }
 
   // Show skeleton while loading
@@ -133,14 +134,12 @@ export function OverlayCanvas({
               }}
             >
               <div 
-                className="font-normal"
-                style={getSizeStyle(labelSize, 'label')}
+                className={`font-normal ${getSizeClass(labelSize, 'label')}`}
               >
                 {metric.label}
               </div>
               <div 
-                className="font-bold"
-                style={getSizeStyle(valueSize, 'value')}
+                className={`font-bold ${getSizeClass(valueSize, 'value')}`}
               >
                 {metric.formatter(data, unitSystem)}
               </div>
