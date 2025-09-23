@@ -26,8 +26,24 @@ export function ActivityContainer({ data, isPending }: ActivityContainerProps) {
   // Use athlete preferences for unit system, fallback to metric
   const unitSystem: UnitSystem = athletePreferences?.unitSystem || "metric"
 
+  // Load selected metrics from localStorage on mount
+  useEffect(() => {
+    const savedMetrics = localStorage.getItem("selectedMetrics")
+    if (savedMetrics) {
+      try {
+        const parsedMetrics = JSON.parse(savedMetrics)
+        if (Array.isArray(parsedMetrics)) {
+          setVisibleMetrics(parsedMetrics)
+        }
+      } catch (error) {
+        console.warn("Failed to parse saved metrics:", error)
+      }
+    }
+  }, [])
+
   const handleMetricsChange = (metrics: string[]) => {
     setVisibleMetrics(metrics)
+    localStorage.setItem("selectedMetrics", JSON.stringify(metrics))
   }
 
   return (
@@ -41,6 +57,7 @@ export function ActivityContainer({ data, isPending }: ActivityContainerProps) {
       <MetricControls
         onMetricsChange={handleMetricsChange}
         selectedMetrics={visibleMetrics}
+        activityData={data}
       />
       <div className="p-4 border rounded-lg">
         {isPending ? (

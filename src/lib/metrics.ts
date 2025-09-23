@@ -107,6 +107,70 @@ export const METRICS: Metric[] = [
       return `${Math.round(data.total_elevation_gain as number)}m`
     },
   },
+  {
+    key: "maxSpeed",
+    label: "Max Speed",
+    formatter: (data, unitSystem) => {
+      if (!data?.max_speed) return "N/A"
+      if (unitSystem === "imperial") {
+        return `${((data.max_speed as number) * 2.237).toFixed(1)} mph`
+      }
+      return `${((data.max_speed as number) * 3.6).toFixed(1)} km/h`
+    },
+  },
+  {
+    key: "elapsedTime",
+    label: "Elapsed Time",
+    formatter: (data) => {
+      if (!data?.elapsed_time) return "N/A"
+      const hours = Math.floor((data.elapsed_time as number) / 3600)
+      const minutes = Math.floor(((data.elapsed_time as number) % 3600) / 60)
+      const seconds = (data.elapsed_time as number) % 60
+      
+      if (hours > 0) {
+        return `${hours}h ${minutes}m ${seconds}s`
+      }
+      if (minutes > 0) {
+        return `${minutes}m ${seconds}s`
+      }
+      return `${seconds}s`
+    },
+  },
+  {
+    key: "sufferScore",
+    label: "Suffer Score",
+    formatter: (data) =>
+      data.suffer_score ? data.suffer_score.toString() : "N/A",
+  },
+  {
+    key: "perceivedExertion",
+    label: "RPE",
+    formatter: (data) =>
+      data.perceived_exertion ? `${data.perceived_exertion}/10` : "N/A",
+  },
+  {
+    key: "elevationHigh",
+    label: "Max Elevation",
+    formatter: (data, unitSystem) => {
+      if (!data.elev_high) return "N/A"
+      if (unitSystem === "imperial") {
+        return `${Math.round((data.elev_high as number) * 3.28084)} ft`
+      }
+      return `${Math.round(data.elev_high as number)}m`
+    },
+  },
+  {
+    key: "kudos",
+    label: "Kudos",
+    formatter: (data) =>
+      data.kudos_count && (data.kudos_count as number) > 0 ? `❤️ ${data.kudos_count}` : "N/A",
+  },
+  {
+    key: "avgPower",
+    label: "Avg Power",
+    formatter: (data) =>
+      data.average_watts ? `${Math.round(data.average_watts as number)}W` : "N/A",
+  },
 ]
 
 export const DEFAULT_METRICS = ["distance", "time", "pace", "avgSpeed"]

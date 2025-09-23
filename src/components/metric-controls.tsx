@@ -7,19 +7,31 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import { METRICS, UnitSystem } from "@/lib/metrics"
+import { RotateCcw } from "lucide-react"
+import { METRICS, UnitSystem, DEFAULT_METRICS } from "@/lib/metrics"
 import { useAthletePreferences } from "@/hooks/use-athlete-preferences"
 
 interface MetricControlsProps {
   onMetricsChange: (metrics: string[]) => void
   selectedMetrics: string[]
+  activityData?: any
 }
 
 export function MetricControls({
   onMetricsChange,
   selectedMetrics,
+  activityData,
 }: MetricControlsProps) {
   const { data: athletePreferences } = useAthletePreferences()
+  
+  // Filter metrics to only show those with actual data
+  const availableMetrics = METRICS.filter((metric) => {
+    if (!activityData) return true // Show all if no data yet
+    
+    const unitSystem = athletePreferences?.unitSystem || "metric"
+    const result = metric.formatter(activityData, unitSystem)
+    return result !== "N/A"
+  })
   
   const toggleMetric = (metricKey: string, pressed: boolean) => {
     onMetricsChange(
@@ -27,6 +39,10 @@ export function MetricControls({
         ? [...selectedMetrics, metricKey]
         : selectedMetrics.filter((m) => m !== metricKey),
     )
+  }
+
+  const resetToDefaults = () => {
+    onMetricsChange(DEFAULT_METRICS)
   }
 
   return (
@@ -40,9 +56,18 @@ export function MetricControls({
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <h4 className="font-medium text-sm">Select Metrics</h4>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={resetToDefaults}
+              className="text-xs h-6 px-2 text-red-600 hover:text-red-700 hover:bg-red-50"
+            >
+              <RotateCcw className="h-3 w-3 mr-1" />
+              Reset
+            </Button>
           </div>
           <div className="flex gap-2 overflow-x-auto pb-2">
-            {METRICS.map((metric) => (
+            {availableMetrics.map((metric) => (
               <Toggle
                 key={metric.key}
                 pressed={selectedMetrics.includes(metric.key)}
