@@ -100,12 +100,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <Image
                     src="/images/FitnessOverlaysLogo.jpg"
                     alt="FitnessOverlays"
-                    width={24}
-                    height={24}
+                    width={30}
+                    height={30}
                     className="rounded"
                   />
                 </div>
-                <div className="grid flex-1 text-left text-sm leading-tight">
+                <div className="grid flex-1 text-left text-base leading-tight">
                   <span className="truncate font-medium">Activities</span>
                 </div>
               </div>
@@ -113,7 +113,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <Button 
                   size="sm" 
                   onClick={jumpToLatest}
-                  className="text-xs px-2 py-1 h-auto ml-2"
+                  className="text-sm px-3 py-2 h-auto ml-2"
                 >
                   Jump to latest
                 </Button>
@@ -125,13 +125,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent className="px-2">
         <div className="space-y-2">
           {!session ? (
-            <div className="text-sm text-muted-foreground text-center py-8">
+            <div className="text-base text-muted-foreground text-center py-8">
               Please sign in to view your activities
             </div>
           ) : isPending ? (
-            [...Array(5)].map((_, i) => <Skeleton key={i} className="h-24" />)
+            [...Array(5)].map((_, i) => <Skeleton key={i} className="h-28" />)
           ) : error ? (
-            <div className="text-sm text-destructive">
+            <div className="text-base text-destructive">
               Error loading activities
             </div>
           ) : (
@@ -165,7 +165,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       href="#"
                       onClick={() => handlePageChange(page)}
                       isActive={currentPage === page}
-                      className="text-xs"
+                      className="text-sm"
                     >
                       {page}
                     </PaginationLink>

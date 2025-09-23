@@ -48,21 +48,21 @@ export function MetricControls({
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline" size="sm">
+        <Button variant="outline" size="default" className="text-base">
           Metrics
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-80" align="start" side="top">
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <h4 className="font-medium text-sm">Select Metrics</h4>
+            <h4 className="font-medium text-base">Select Metrics</h4>
             <Button
               variant="ghost"
               size="sm"
               onClick={resetToDefaults}
-              className="text-xs h-6 px-2 text-red-600 hover:text-red-700 hover:bg-red-50"
+              className="text-sm h-8 px-3 text-red-600 hover:text-red-700 hover:bg-red-50"
             >
-              <RotateCcw className="h-3 w-3 mr-1" />
+              <RotateCcw className="h-4 w-4 mr-1" />
               Reset
             </Button>
           </div>
@@ -74,7 +74,7 @@ export function MetricControls({
                 onPressedChange={(pressed) => toggleMetric(metric.key, pressed)}
                 size="sm"
                 variant="outline"
-                className="text-sm whitespace-nowrap px-3 py-2 h-auto w-auto min-w-fit data-[state=on]:bg-green-600 data-[state=on]:text-white data-[state=on]:border-green-600"
+                className="text-base whitespace-nowrap px-4 py-3 h-auto w-auto min-w-fit data-[state=on]:bg-green-600 data-[state=on]:text-white data-[state=on]:border-green-600"
               >
                 {metric.label}
               </Toggle>

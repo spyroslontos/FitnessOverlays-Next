@@ -42,7 +42,7 @@ export function SelectedActivityDisplay() {
   }, [])
 
   return (
-    <div className="space-y-4">
+    <div className="flex flex-col h-full">
       <ActivitySummary data={data} isPending={isPending} />
       <OverlayWorkspace data={data} isPending={isPending} />
     </div>

@@ -26,12 +26,12 @@ export function AppHeader() {
       <div className="relative flex h-(--header-height) w-full items-center justify-between px-4">
         <div className="flex items-center gap-2">
           <Button
-            className="h-8 px-3 gap-2 sm:gap-2"
+            className="h-10 px-4 gap-2 sm:gap-2"
             variant="ghost"
             onClick={toggleSidebar}
           >
-            <SidebarIcon className="h-4 w-4" />
-            <span className="text-sm font-medium hidden sm:inline">
+            <SidebarIcon className="h-5 w-5" />
+            <span className="text-base font-medium hidden sm:inline">
               Activities
             </span>
           </Button>
@@ -40,7 +40,7 @@ export function AppHeader() {
         <div className="absolute left-1/2 transform -translate-x-1/2">
           <Link
             href="/"
-            className="text-lg sm:text-xl font-bold hover:text-primary transition-colors truncate max-w-[200px] sm:max-w-none"
+            className="text-xl sm:text-2xl font-bold hover:text-primary transition-colors truncate max-w-[200px] sm:max-w-none"
           >
             FitnessOverlays
           </Link>
@@ -49,7 +49,7 @@ export function AppHeader() {
           {session && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Avatar className="h-8 w-8 cursor-pointer">
+                <Avatar className="h-10 w-10 cursor-pointer">
                   <AvatarImage
                     src={session.user?.image || ""}
                     alt={session.user?.name || ""}
@@ -61,8 +61,8 @@ export function AppHeader() {
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-56" align="end">
                 <DropdownMenuLabel className="p-0 font-normal">
-                  <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                    <Avatar className="h-8 w-8">
+                  <div className="flex items-center gap-2 px-1 py-1.5 text-left text-base">
+                    <Avatar className="h-10 w-10">
                       <AvatarImage
                         src={session.user?.image || ""}
                         alt={session.user?.name || ""}
@@ -79,7 +79,7 @@ export function AppHeader() {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={() => signOut({ callbackUrl: "/" })}
-                  className="cursor-pointer"
+                  className="cursor-pointer text-base"
                 >
                   Sign out
                 </DropdownMenuItem>

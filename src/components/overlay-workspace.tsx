@@ -46,18 +46,21 @@ export function OverlayWorkspace({ data, isPending }: ActivityContainerProps) {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="flex flex-col h-full min-h-[300px] sm:min-h-[500px]">
       <OverlayCanvas
         visibleMetrics={visibleMetrics}
         data={data}
         unitSystem={unitSystem}
         isPending={isPending}
+        className="flex-1"
       />
-      <MetricControls
-        onMetricsChange={handleMetricsChange}
-        selectedMetrics={visibleMetrics}
-        activityData={data}
-      />
+      <div className="pt-2 flex gap-2">
+        <MetricControls
+          onMetricsChange={handleMetricsChange}
+          selectedMetrics={visibleMetrics}
+          activityData={data}
+        />
+      </div>
     </div>
   )
 }

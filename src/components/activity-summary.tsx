@@ -33,8 +33,8 @@ export function ActivitySummary({ data, isPending }: ActivityDetailsProps) {
 
   if (!data) {
     return (
-      <Card className="p-3 mb-4">
-        <div className="text-center text-gray-500 text-sm">
+      <Card className="p-4 mb-4">
+        <div className="text-center text-gray-500 text-lg">
           Select an activity to view details
         </div>
       </Card>
@@ -42,28 +42,30 @@ export function ActivitySummary({ data, isPending }: ActivityDetailsProps) {
   }
 
   return (
-    <Card className="p-3 mb-4">
-      <div className="space-y-2">
-        <h3 className="font-medium text-sm truncate" title={data.name}>
-          {data.name}
-        </h3>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-          <div className="flex items-center gap-1">
-            <Calendar className="h-3 w-3 text-gray-500" />
-            <span className="text-gray-600">
+    <Card className="p-4 mb-4">
+      <div className="space-y-3">
+        <div className="flex justify-between items-start gap-2">
+          <h3 className="font-medium text-lg truncate flex-1" title={data.name}>
+            {data.name}
+          </h3>
+          <div className="flex items-center gap-1 text-gray-600 flex-shrink-0">
+            <Calendar className="h-4 w-4 text-gray-500" />
+            <span className="text-base whitespace-nowrap">
               {formatDate(data.start_date, dateFormat)}
             </span>
           </div>
+        </div>
+        <div className="grid grid-cols-3 gap-4 text-base">
           <div className="flex items-center gap-1">
-            <Route className="h-3 w-3 text-gray-500" />
+            <Route className="h-4 w-4 text-gray-500" />
             <span className="font-medium">{formatDistance(data.distance, unitSystem)}</span>
           </div>
           <div className="flex items-center gap-1">
-            <Clock className="h-3 w-3 text-gray-500" />
+            <Clock className="h-4 w-4 text-gray-500" />
             <span className="font-medium">{formatTime(data.moving_time)}</span>
           </div>
           <div className="flex items-center gap-1">
-            <Zap className="h-3 w-3 text-gray-500" />
+            <Zap className="h-4 w-4 text-gray-500" />
             <span className="font-medium">
               {formatPace(data.distance, data.moving_time, unitSystem)}
             </span>
