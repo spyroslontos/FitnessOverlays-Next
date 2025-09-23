@@ -19,22 +19,26 @@ export function OverlayCanvas({
   isPending = false,
   className = "",
 }: OverlayCanvasProps) {
-  const { data: session } = useSession()
+  const { data: session, status } = useSession()
 
-  if (!session) {
-    return (
-      <div 
-        className={`w-full h-full min-h-[200px] sm:min-h-[400px] bg-gray-50 rounded-lg flex flex-col justify-center items-center p-4 ${className}`}
-        style={{ fontSize: "clamp(1rem, 3vh, 1.8rem)" }}
-      >
-        <div className="text-center text-gray-600 text-xl">Not Authenticated</div>
-      </div>
-    )
+  const baseClassName = `w-full h-full min-h-[200px] sm:min-h-[400px] rounded-lg border bg-card text-card-foreground shadow-sm flex flex-col justify-center items-center p-4 ${className}`
+  
+  const checkerboardStyle = {
+    backgroundColor: '#4a4a4a',
+    backgroundImage: `
+      linear-gradient(45deg, #333333 25%, transparent 25%),
+      linear-gradient(-45deg, #333333 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, #333333 75%),
+      linear-gradient(-45deg, transparent 75%, #333333 75%)
+    `,
+    backgroundSize: '20px 20px',
+    backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px'
   }
-
-  if (isPending) {
+  
+  // Show skeleton while loading
+  if (status === "loading" || (session && isPending)) {
     return (
-      <div className={`w-full h-full min-h-[200px] sm:min-h-[400px] bg-gray-50 rounded-lg flex flex-col justify-center items-center p-4 space-y-2 ${className}`}>
+      <div className={`${baseClassName} space-y-2`} style={checkerboardStyle}>
         {visibleMetrics.map((_, i) => (
           <div key={i} className="text-center space-y-1 w-full">
             <Skeleton className="h-3 w-16 mx-auto" />
@@ -47,22 +51,29 @@ export function OverlayCanvas({
 
   return (
     <div 
-      className={`w-full h-full min-h-[200px] sm:min-h-[400px] bg-gray-50 rounded-lg flex flex-col justify-center items-center p-4 ${className}`}
-      style={{ fontSize: "clamp(1rem, 3vh, 1.8rem)" }}
+      className={baseClassName}
+      style={{ 
+        fontSize: "clamp(1rem, 3vh, 1.8rem)",
+        ...checkerboardStyle
+      }}
     >
-      {visibleMetrics.map((key) => {
-        const metric = getMetricByKey(key)
-        return metric ? (
-          <div key={key} className="text-center mb-2">
-            <div className="text-gray-600" style={{ fontSize: "0.85em" }}>
-              {metric.label}
+      {!session ? (
+        <div className="text-center text-white text-xl drop-shadow-lg">Not Authenticated</div>
+      ) : (
+        visibleMetrics.map((key) => {
+          const metric = getMetricByKey(key)
+          return metric ? (
+            <div key={key} className="text-center mb-2">
+              <div className="text-white drop-shadow-lg" style={{ fontSize: "0.85em" }}>
+                {metric.label}
+              </div>
+              <div className="font-semibold text-lg text-white drop-shadow-lg">
+                {metric.formatter(data, unitSystem)}
+              </div>
             </div>
-            <div className="font-semibold text-lg">
-              {metric.formatter(data, unitSystem)}
-            </div>
-          </div>
-        ) : null
-      })}
+          ) : null
+        })
+      )}
     </div>
   )
 }

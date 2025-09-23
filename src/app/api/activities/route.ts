@@ -2,11 +2,11 @@ import { auth } from "@/lib/auth"
 import { NextResponse } from "next/server"
 import { db } from "@/db"
 import { activityLists } from "@/db/schema"
-import { eq } from "drizzle-orm"
+import { eq, and } from "drizzle-orm"
 
 const CACHE_DURATION = 3 * 60 * 1000 // 3 minutes
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const session = await auth()
 
@@ -19,11 +19,19 @@ export async function GET() {
       return NextResponse.json({ error: "No user ID" }, { status: 401 })
     }
 
-    // Check DB cache first
+    // Parse URL parameters
+    const { searchParams } = new URL(request.url)
+    const page = parseInt(searchParams.get('page') || '1', 10)
+    const perPage = parseInt(searchParams.get('per_page') || '30', 10)
+
+    // Check DB cache first for this specific page
     const cached = await db
       .select()
       .from(activityLists)
-      .where(eq(activityLists.userId, parseInt(userId, 10)))
+      .where(and(
+        eq(activityLists.userId, parseInt(userId, 10)),
+        eq(activityLists.page, page)
+      ))
       .limit(1)
 
     if (cached.length > 0) {
@@ -31,15 +39,15 @@ export async function GET() {
       const isStale = Date.now() - lastSynced.getTime() > CACHE_DURATION
 
       if (!isStale) {
-        console.log("💾 Returning from DB cache")
+        console.log(`💾 Returning page ${page} from DB cache`)
         return NextResponse.json(cached[0].data)
       }
     }
 
-    console.log("🌐 Fetching from Strava API")
+    console.log(`🌐 Fetching page ${page} from Strava API`)
 
     const response = await fetch(
-      "https://www.strava.com/api/v3/athlete/activities",
+      `https://www.strava.com/api/v3/athlete/activities?page=${page}&per_page=${perPage}`,
       {
         headers: {
           Authorization: `Bearer ${session.accessToken}`,
@@ -59,7 +67,7 @@ export async function GET() {
     }
 
     const data = await response.json()
-    console.log("✅ Activities data received:", data.length, "activities")
+    console.log(`✅ Page ${page} activities data received:`, data.length, "activities")
 
     // Store in DB
     if (data.length > 0) {
@@ -68,7 +76,10 @@ export async function GET() {
         const existingRecord = await db
           .select()
           .from(activityLists)
-          .where(eq(activityLists.userId, athleteId))
+          .where(and(
+            eq(activityLists.userId, athleteId),
+            eq(activityLists.page, page)
+          ))
           .limit(1)
 
         if (existingRecord.length > 0) {
@@ -76,21 +87,24 @@ export async function GET() {
             .update(activityLists)
             .set({
               data: data,
-              page: 1,
-              perPage: data.length,
+              page: page,
+              perPage: perPage,
               lastSynced: new Date(),
             })
-            .where(eq(activityLists.userId, athleteId))
+            .where(and(
+              eq(activityLists.userId, athleteId),
+              eq(activityLists.page, page)
+            ))
         } else {
           await db.insert(activityLists).values({
             userId: athleteId,
             data: data,
-            page: 1,
-            perPage: data.length,
+            page: page,
+            perPage: perPage,
             lastSynced: new Date(),
           })
         }
-        console.log("💾 Activity list stored in database")
+        console.log(`💾 Activity list page ${page} stored in database`)
       }
     }
 

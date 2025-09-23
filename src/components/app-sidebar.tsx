@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { useQuery } from "@tanstack/react-query"
+import { useInfiniteQuery } from "@tanstack/react-query"
 import { useEffect, useState } from "react"
 import { useSession } from "next-auth/react"
 import Image from "next/image"
@@ -32,16 +32,31 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     null,
   )
   const [currentPage, setCurrentPage] = useState(1)
-  const { data: session } = useSession()
+  const { data: session, status } = useSession()
 
-  const { isPending, error, data } = useQuery({
+  const { 
+    data,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetching,
+    isFetchingNextPage,
+    isPending
+  } = useInfiniteQuery({
     queryKey: ["activityData"],
-    queryFn: () => fetch("/api/activities").then((res) => res.json()),
+    queryFn: ({ pageParam = 1 }) => 
+      fetch(`/api/activities?page=${pageParam}&per_page=30`)
+        .then((res) => res.json()),
+    getNextPageParam: (lastPage, allPages) => {
+      // If last page has 30 activities, there might be more
+      return lastPage.length === 30 ? allPages.length + 1 : undefined
+    },
     enabled: !!session,
+    initialPageParam: 1,
   })
 
-  const allActivities = Array.isArray(data) ? data : []
-  const perPage = 5
+  const allActivities = data?.pages.flat() || []
+  const perPage = 10
   const totalPages = Math.ceil(allActivities.length / perPage)
   const startIndex = (currentPage - 1) * perPage
   const endIndex = startIndex + perPage
@@ -65,6 +80,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page)
+    
+    // Auto-fetch next page if we're near the end
+    if (page > totalPages - 2 && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage()
+    }
   }
 
   const selectActivity = (activityId: number) => {
@@ -124,7 +144,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent className="px-2">
         <div className="space-y-2">
-          {!session ? (
+          {status === "loading" ? (
+            [...Array(5)].map((_, i) => <Skeleton key={i} className="h-28" />)
+          ) : !session ? (
             <div className="text-base text-muted-foreground text-center py-8">
               Please sign in to view your activities
             </div>
@@ -152,7 +174,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <PaginationContent>
               <PaginationItem>
                 <PaginationPrevious
-                  href="#"
                   onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
                 />
               </PaginationItem>
@@ -162,7 +183,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 return (
                   <PaginationItem key={page}>
                     <PaginationLink
-                      href="#"
                       onClick={() => handlePageChange(page)}
                       isActive={currentPage === page}
                       className="text-sm"
@@ -174,10 +194,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               })}
               <PaginationItem>
                 <PaginationNext
-                  href="#"
-                  onClick={() =>
-                    handlePageChange(Math.min(totalPages, currentPage + 1))
-                  }
+                  onClick={() => handlePageChange(currentPage + 1)}
                 />
               </PaginationItem>
             </PaginationContent>

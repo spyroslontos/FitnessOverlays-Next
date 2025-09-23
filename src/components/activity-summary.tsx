@@ -1,7 +1,8 @@
 "use client"
 
-import { Calendar, Clock, Route, Zap } from "lucide-react"
+import { Calendar, Clock, Route, Zap, ExternalLink } from "lucide-react"
 import { Card } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 import { formatDistance, formatTime, formatPace, formatDate } from "@/lib/activity-utils"
 import { useAthletePreferences } from "@/hooks/use-athlete-preferences"
 
@@ -55,7 +56,7 @@ export function ActivitySummary({ data, isPending }: ActivityDetailsProps) {
             </span>
           </div>
         </div>
-        <div className="grid grid-cols-3 gap-4 text-base">
+        <div className="grid grid-cols-4 gap-4 text-base items-center">
           <div className="flex items-center gap-1">
             <Route className="h-4 w-4 text-gray-500" />
             <span className="font-medium">{formatDistance(data.distance, unitSystem)}</span>
@@ -69,6 +70,17 @@ export function ActivitySummary({ data, isPending }: ActivityDetailsProps) {
             <span className="font-medium">
               {formatPace(data.distance, data.moving_time, unitSystem)}
             </span>
+          </div>
+          <div className="flex justify-end">
+            <Button
+              variant="outline"
+              size="sm"
+              className="px-2 text-xs bg-orange-500 hover:bg-orange-600 text-white border-orange-500 hover:border-orange-600"
+              onClick={() => window.open(`https://www.strava.com/activities/${data.id}`, '_blank')}
+            >
+              <ExternalLink className="h-3 w-3 mr-1" />
+              Strava
+            </Button>
           </div>
         </div>
       </div>
