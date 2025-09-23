@@ -12,14 +12,9 @@ export default async function Home() {
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6">
         <h1 className="text-4xl font-bold">Fitness Overlays</h1>
         <div className="flex gap-4">
-          <Link href="/dashboard">
-            <Button size="lg">Go to Dashboard</Button>
-          </Link>
           {session && (
             <Link href="/app">
-              <Button size="lg" variant="outline">
-                Go to App
-              </Button>
+              <Button size="lg">Go to App</Button>
             </Link>
           )}
         </div>

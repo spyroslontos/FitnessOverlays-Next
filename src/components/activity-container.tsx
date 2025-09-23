@@ -33,7 +33,21 @@ export function ActivityContainer() {
       const persisted = localStorage.getItem("selectedActivityId")
       if (persisted) setSelectedActivityId(Number(persisted))
     }
+
+    const updateUnitSystem = () => {
+      const persistedUnitSystem = localStorage.getItem(
+        "unitSystem",
+      ) as UnitSystem
+      if (
+        persistedUnitSystem === "metric" ||
+        persistedUnitSystem === "imperial"
+      ) {
+        setUnitSystem(persistedUnitSystem)
+      }
+    }
+
     updateSelection()
+    updateUnitSystem()
     window.addEventListener("storage", updateSelection)
     const handleActivitySelect = (event: CustomEvent) =>
       setSelectedActivityId(event.detail)

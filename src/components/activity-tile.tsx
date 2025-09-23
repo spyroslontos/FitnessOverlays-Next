@@ -6,6 +6,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { formatDistance, formatTime, formatDate } from "@/lib/activity-utils"
 
 interface Activity {
   id: number
@@ -29,26 +30,6 @@ interface ActivityTileProps {
 }
 
 export function ActivityTile({ activity, onClick }: ActivityTileProps) {
-  const formatDistance = (meters: number) => {
-    if (meters >= 1000) {
-      return `${(meters / 1000).toFixed(1)} km`
-    }
-    return `${meters.toFixed(0)} m`
-  }
-
-  const formatTime = (seconds: number) => {
-    const hours = Math.floor(seconds / 3600)
-    const minutes = Math.floor((seconds % 3600) / 60)
-    if (hours > 0) {
-      return `${hours}h ${minutes}m`
-    }
-    return `${minutes}m`
-  }
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString()
-  }
-
   return (
     <Tooltip>
       <TooltipTrigger asChild>

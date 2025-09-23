@@ -26,7 +26,14 @@ export const METRICS: Metric[] = [
       const hours = Math.floor((data.moving_time as number) / 3600)
       const minutes = Math.floor(((data.moving_time as number) % 3600) / 60)
       const seconds = (data.moving_time as number) % 60
-      return `${hours}h ${minutes}m ${seconds}s`
+      
+      if (hours > 0) {
+        return `${hours}h ${minutes}m ${seconds}s`
+      }
+      if (minutes > 0) {
+        return `${minutes}m ${seconds}s`
+      }
+      return `${seconds}s`
     },
   },
   {

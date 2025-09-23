@@ -26,19 +26,21 @@ export function SiteHeader() {
       <div className="relative flex h-(--header-height) w-full items-center justify-between px-4">
         <div className="flex items-center gap-2">
           <Button
-            className="h-8 w-8"
+            className="h-8 px-3 gap-2 sm:gap-2"
             variant="ghost"
-            size="icon"
             onClick={toggleSidebar}
           >
-            <SidebarIcon />
+            <SidebarIcon className="h-4 w-4" />
+            <span className="text-sm font-medium hidden sm:inline">
+              Activities
+            </span>
           </Button>
-          <Separator orientation="vertical" className="h-4" />
+          <Separator orientation="vertical" className="h-4 hidden sm:block" />
         </div>
         <div className="absolute left-1/2 transform -translate-x-1/2">
           <Link
             href="/"
-            className="text-xl font-bold hover:text-primary transition-colors"
+            className="text-lg sm:text-xl font-bold hover:text-primary transition-colors truncate max-w-[200px] sm:max-w-none"
           >
             FitnessOverlays
           </Link>

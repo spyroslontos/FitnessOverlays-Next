@@ -31,7 +31,9 @@ export function MetricControls({
   }
 
   const toggleUnitSystem = () => {
-    onUnitSystemChange(unitSystem === "metric" ? "imperial" : "metric")
+    const newUnitSystem = unitSystem === "metric" ? "imperial" : "metric"
+    localStorage.setItem("unitSystem", newUnitSystem)
+    onUnitSystemChange(newUnitSystem)
   }
 
   return (
@@ -46,10 +48,10 @@ export function MetricControls({
           <div className="flex items-center justify-between">
             <h4 className="font-medium text-sm">Select Metrics</h4>
             <Button
-              variant="ghost"
+              variant="secondary"
               size="sm"
               onClick={toggleUnitSystem}
-              className="text-xs h-6 px-2"
+              className="text-xs"
             >
               {unitSystem === "metric" ? "Imperial" : "Metric"}
             </Button>
