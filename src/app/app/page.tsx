@@ -11,7 +11,7 @@ import { cookies } from "next/headers"
 export default async function Page() {
   await SessionInfo()
   const cookieStore = await cookies()
-  const defaultOpen = cookieStore.get("sidebar_state")?.value === "true"
+  const defaultOpen = cookieStore.get("sidebar_state")?.value !== "false"
   
   return (
     <div className="h-screen [--header-height:calc(--spacing(14))]">

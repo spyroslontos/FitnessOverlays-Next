@@ -2,7 +2,7 @@ import { signIn, signOut } from "@/lib/auth"
 import { LogOut } from "lucide-react"
 import Image from "next/image"
 
-export function SignInButton() {
+export function SignInButton({ large = false }: { large?: boolean }) {
   return (
     <form
       action={async () => {
@@ -19,7 +19,7 @@ export function SignInButton() {
           alt="Connect with Strava"
           width={192}
           height={48}
-          className="h-10 w-auto sm:h-12"
+          className={large ? "h-16 w-auto sm:h-20" : "h-10 w-auto sm:h-12"}
         />
       </button>
     </form>

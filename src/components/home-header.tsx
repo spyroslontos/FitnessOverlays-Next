@@ -15,15 +15,13 @@ export async function HomeHeader() {
   const session = await auth()
 
   return (
-    <header className="sticky top-0 z-50 bg-background border-b">
-      <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Link href="/" className="text-xl font-bold">
-            FitnessOverlays
-          </Link>
-        </div>
+    <header className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
+      <div className="container mx-auto px-4 py-4 flex items-center justify-between gap-4">
+        <Link href="/" className="text-xl font-bold hover:opacity-80 transition-opacity">
+          FitnessOverlays
+        </Link>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 ml-auto">
           {session ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

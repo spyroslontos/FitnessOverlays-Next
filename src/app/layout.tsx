@@ -46,8 +46,42 @@ const specialElite = Special_Elite({
 })
 
 export const metadata: Metadata = {
-  title: "FitnessOverlays",
-  description: "Create beautiful fitness overlays for your activities",
+  title: "Fitness Overlays - Create Beautiful Strava Activity Graphics",
+  description: "Transform your Strava activities into stunning visual overlays. Create professional fitness content with customizable templates, rich data visualization, and easy sharing options.",
+  keywords: ["fitness overlays", "strava graphics", "activity visualization", "fitness content", "running graphics", "cycling overlays", "workout visualization"],
+  authors: [{ name: "Spyros Lontos" }],
+  creator: "Spyros Lontos",
+  publisher: "Spyros Lontos",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://fitnessoverlays.com",
+    title: "Fitness Overlays - Create Beautiful Strava Activity Graphics",
+    description: "Transform your Strava activities into stunning visual overlays. Create professional fitness content with customizable templates and rich data visualization.",
+    siteName: "Fitness Overlays",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Fitness Overlays - Create Beautiful Strava Activity Graphics",
+    description: "Transform your Strava activities into stunning visual overlays. Create professional fitness content with customizable templates and rich data visualization.",
+    creator: "@spyroslontos",
+  },
+  viewport: {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 1,
+  },
 }
 
 export default function RootLayout({
