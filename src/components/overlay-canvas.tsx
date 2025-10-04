@@ -1,5 +1,7 @@
 "use client"
 
+import { useEffect, useRef, useState, useImperativeHandle, forwardRef } from "react"
+import { Canvas, FabricText, TOriginX, TOriginY } from "fabric"
 import { Skeleton } from "@/components/ui/skeleton"
 import { getMetricByKey, UnitSystem } from "@/lib/metrics"
 import { useSession } from "next-auth/react"
@@ -21,7 +23,58 @@ interface OverlayCanvasProps {
   textColor?: string
 }
 
-export function OverlayCanvas({
+export interface OverlayCanvasRef {
+  exportToPNG: () => string | null
+  getCanvas: () => Canvas | null
+}
+
+const FONT_SIZES = { 
+  label: { small: 12, medium: 16, large: 20 }, 
+  value: { small: 18, medium: 24, large: 32 } 
+}
+
+const TEXT_GAP = 4 // Gap between label and value
+
+// Helper functions
+const getSizeValue = (size: Size, type: 'label' | 'value') => {
+  const validSize = ['small', 'medium', 'large'].includes(size) ? size : 'medium'
+  return FONT_SIZES[type][validSize]
+}
+
+const createText = (
+  text: string,
+  x: number,
+  y: number,
+  options: {
+    fontSize: number
+    fontFamily: string
+    fill: string
+    fontWeight?: string
+    originX: TOriginX
+    originY: TOriginY
+  }
+) => new FabricText(text, {
+  left: x,
+  top: y,
+  ...options,
+  selectable: false,
+  evented: false,
+})
+
+const drawCheckerboard = (ctx: CanvasRenderingContext2D, width: number, height: number) => {
+  const squareSize = 10
+  ctx.fillStyle = '#4a4a4a'
+  ctx.fillRect(0, 0, width, height)
+  ctx.fillStyle = '#333333'
+  for (let i = 0; i < width; i += squareSize * 2) {
+    for (let j = 0; j < height; j += squareSize * 2) {
+      ctx.fillRect(i, j, squareSize, squareSize)
+      ctx.fillRect(i + squareSize, j + squareSize, squareSize, squareSize)
+    }
+  }
+}
+
+const OverlayCanvasComponent = forwardRef<OverlayCanvasRef, OverlayCanvasProps>(({
   visibleMetrics = [],
   data,
   unitSystem = "metric",
@@ -33,120 +86,203 @@ export function OverlayCanvas({
   columns = 1,
   fontFamily = 'Poppins',
   textColor = '#ffffff',
-}: OverlayCanvasProps) {
+}, ref) => {
   const { data: session, status } = useSession()
+  const containerRef = useRef<HTMLDivElement>(null)
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const fabricRef = useRef<Canvas | null>(null)
+  const [canvasReady, setCanvasReady] = useState(false)
 
-  const STYLES = {
-    baseClassName: `w-full h-full min-h-[200px] sm:min-h-[400px] rounded-lg border bg-card text-card-foreground shadow-sm ${className}`,
-    checkerboard: {
-      backgroundColor: '#4a4a4a',
-      backgroundImage: `
-        linear-gradient(45deg, #333333 25%, transparent 25%),
-        linear-gradient(-45deg, #333333 25%, transparent 25%),
-        linear-gradient(45deg, transparent 75%, #333333 75%),
-        linear-gradient(-45deg, transparent 75%, #333333 75%)
-      `,
-      backgroundSize: '20px 20px',
-      backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px'
-    }
-  }
-
-  const CONFIG = {
-    fontSizes: { 
-      label: { small: 'text-sm', medium: 'text-base', large: 'text-lg' }, 
-      value: { small: 'text-lg', medium: 'text-xl', large: 'text-2xl' } 
+  // Expose methods via ref
+  useImperativeHandle(ref, () => ({
+    exportToPNG: () => {
+      const canvas = fabricRef.current
+      if (!canvas) return null
+      
+      // Temporarily remove checkerboard background
+      const originalBg = canvas.backgroundColor
+      canvas.backgroundColor = 'transparent'
+      canvas.renderAll()
+      
+      const dataURL = canvas.toDataURL({
+        format: 'png',
+        quality: 1,
+        multiplier: 2, // 2x resolution for better quality
+      })
+      
+      // Restore background
+      canvas.backgroundColor = originalBg
+      canvas.renderAll()
+      
+      return dataURL
     },
-    alignment: { left: 'left', center: 'center', right: 'right' }
-  }
+    getCanvas: () => fabricRef.current
+  }))
 
-  const getAlignmentClass = (align: Alignment) => {
-    switch (align) {
-      case 'left': return 'text-left items-start'
-      case 'right': return 'text-right items-end'
-      default: return 'text-center items-center'
+  // Initialize canvas and setup background rendering
+  useEffect(() => {
+    if (!canvasRef.current || !containerRef.current || fabricRef.current) return
+
+    const container = containerRef.current
+    
+    const initCanvas = () => {
+      const rect = container.getBoundingClientRect()
+      const width = Math.max(rect.width || 800, 100)
+      const height = Math.max(rect.height || 600, 100)
+
+      const canvas = new Canvas(canvasRef.current!, { 
+        width, 
+        height,
+        backgroundColor: '#4a4a4a',
+      })
+      
+      fabricRef.current = canvas
+
+      // Setup checkerboard rendering  
+      const originalRenderAll = canvas.renderAll.bind(canvas)
+      canvas.renderAll = function() {
+        const ctx = this.getContext()
+        if (ctx) {
+          drawCheckerboard(ctx, this.width || 800, this.height || 600)
+        }
+        originalRenderAll()
+        return this
+      }
+
+      // Use ResizeObserver for better resize handling
+      const resizeObserver = new ResizeObserver((entries) => {
+        for (const entry of entries) {
+          const { width, height } = entry.contentRect
+          if (width > 0 && height > 0) {
+            canvas.setDimensions({ width, height })
+            canvas.renderAll()
+          }
+        }
+      })
+
+      resizeObserver.observe(container)
+      
+      setCanvasReady(true)
+      canvas.renderAll()
+
+      return () => {
+        resizeObserver.disconnect()
+        canvas.dispose()
+        fabricRef.current = null
+        setCanvasReady(false)
+      }
     }
-  }
 
-  const getSizeClass = (size: Size, type: 'label' | 'value') => {
-    // Ensure we have valid size values with fallbacks
-    const validSize = size && ['small', 'medium', 'large'].includes(size) ? size : 'medium'
-    return CONFIG.fontSizes[type][validSize]
-  }
+    // Use requestAnimationFrame to ensure container is rendered
+    let cleanup: (() => void) | undefined
+    const rafId = requestAnimationFrame(() => {
+      cleanup = initCanvas()
+    })
+    
+    return () => {
+      cancelAnimationFrame(rafId)
+      cleanup?.()
+    }
+  }, [])
 
-  // Show skeleton while loading
-  if (status === "loading" || (session && isPending)) {
-    return (
-      <div className={`${STYLES.baseClassName} flex items-center justify-center`} style={STYLES.checkerboard}>
-        <div className="space-y-2">
-          {visibleMetrics.map((_, i) => (
-            <div key={i} className="text-center space-y-1 w-full">
-              <Skeleton className="h-3 w-16 mx-auto" />
-              <Skeleton className="h-4 w-20 mx-auto" />
-            </div>
-          ))}
-        </div>
-      </div>
-    )
-  }
+  // Render canvas content
+  useEffect(() => {
+    const canvas = fabricRef.current
+    if (!canvas || !canvasReady) return
 
-  if (!session) {
-    return (
-      <div className={STYLES.baseClassName} style={STYLES.checkerboard}>
-        <div className="flex items-center justify-center h-full">
-          <div className="text-center text-white text-xl drop-shadow-lg">Not Authenticated</div>
-        </div>
-      </div>
-    )
-  }
+    // Remove all objects but keep canvas setup
+    const objects = canvas.getObjects()
+    objects.forEach(obj => canvas.remove(obj))
 
-  if (!data) {
-    return (
-      <div className={STYLES.baseClassName} style={STYLES.checkerboard}>
-        <div className="flex items-center justify-center h-full">
-          <div className="text-center text-white text-xl drop-shadow-lg">No Activity Selected</div>
-        </div>
-      </div>
-    )
-  }
+    // Check for status messages
+    const statusMessage = 
+      status === "loading" ? 'Loading...' :
+      !session ? 'Not Authenticated' :
+      !data ? 'No Activity Selected' :
+      isPending ? 'Loading Activity...' : null
 
-  const rowsPerColumn = Math.ceil(visibleMetrics.length / columns)
-  const gridCols = columns === 1 ? 'grid-cols-1' : columns === 2 ? 'grid-cols-2' : columns === 3 ? 'grid-cols-3' : 'grid-cols-4'
+    if (statusMessage) {
+      const text = createText(
+        statusMessage,
+        canvas.width / 2,
+        canvas.height / 2,
+        {
+          fontSize: 24,
+          fontFamily: 'Arial',
+          fill: '#ffffff',
+          originX: 'center',
+          originY: 'center',
+        }
+      )
+      canvas.add(text)
+      canvas.renderAll()
+      return
+    }
+
+    // Render metrics
+    if (visibleMetrics.length === 0) {
+      canvas.renderAll()
+      return
+    }
+
+    const columnWidth = canvas.width / columns
+    const rowsCount = Math.ceil(visibleMetrics.length / columns)
+    const rowHeight = canvas.height / rowsCount
+
+    const originX: TOriginX = alignment === 'left' ? 'left' : alignment === 'right' ? 'right' : 'center'
+
+    visibleMetrics.forEach((key, i) => {
+      const metric = getMetricByKey(key)
+      if (!metric) return
+
+      const col = i % columns
+      const row = Math.floor(i / columns)
+      
+      // Calculate x position
+      let x = col * columnWidth + columnWidth / 2
+      if (alignment === 'left') x = col * columnWidth + 20
+      else if (alignment === 'right') x = (col + 1) * columnWidth - 20
+
+      const centerY = row * rowHeight + rowHeight / 2
+      const labelFontSize = getSizeValue(labelSize, 'label')
+      const valueFontSize = getSizeValue(valueSize, 'value')
+      
+      // Calculate positions with reduced gap
+      const labelY = centerY - TEXT_GAP / 2 - valueFontSize / 2
+      const valueY = centerY + TEXT_GAP / 2 + labelFontSize / 2
+
+      const label = createText(metric.label, x, labelY, {
+        fontSize: labelFontSize,
+        fontFamily,
+        fill: textColor,
+        originX,
+        originY: 'bottom',
+      })
+
+      const value = createText(metric.formatter(data, unitSystem), x, valueY, {
+        fontSize: valueFontSize,
+        fontFamily,
+        fill: textColor,
+        fontWeight: 'bold',
+        originX,
+        originY: 'top',
+      })
+
+      canvas.add(label, value)
+    })
+
+    canvas.renderAll()
+  }, [canvasReady, status, session, isPending, data, visibleMetrics, unitSystem, alignment, labelSize, valueSize, columns, fontFamily, textColor])
+
+  const baseClassName = `w-full h-full min-h-[200px] sm:min-h-[400px] rounded-lg border bg-card text-card-foreground shadow-sm ${className}`
 
   return (
-    <div className={STYLES.baseClassName} style={STYLES.checkerboard}>
-      <div className={`grid ${gridCols} gap-4 h-full p-4`}>
-        {visibleMetrics.map((key, i) => {
-          const metric = getMetricByKey(key)
-          if (!metric) return null
-          
-          const col = i % columns
-          const row = Math.floor(i / columns)
-          
-          return (
-            <div 
-              key={key}
-              className={`flex flex-col justify-center space-y-1 ${getAlignmentClass(alignment)}`}
-              style={{ 
-                fontFamily,
-                color: textColor,
-                gridColumn: col + 1,
-                gridRow: row + 1
-              }}
-            >
-              <div 
-                className={`font-normal ${getSizeClass(labelSize, 'label')}`}
-              >
-                {metric.label}
-              </div>
-              <div 
-                className={`font-bold ${getSizeClass(valueSize, 'value')}`}
-              >
-                {metric.formatter(data, unitSystem)}
-              </div>
-            </div>
-          )
-        })}
-      </div>
+    <div ref={containerRef} className={baseClassName}>
+      <canvas ref={canvasRef} />
     </div>
   )
-}
+})
+
+OverlayCanvasComponent.displayName = 'OverlayCanvas'
+
+export const OverlayCanvas = OverlayCanvasComponent

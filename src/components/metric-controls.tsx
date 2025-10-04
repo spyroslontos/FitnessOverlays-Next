@@ -7,7 +7,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import { RotateCcw, AlignLeft, AlignCenter, AlignRight } from "lucide-react"
+import { RotateCcw, AlignLeft, AlignCenter, AlignRight, Download } from "lucide-react"
 import { METRICS, UnitSystem, DEFAULT_METRICS } from "@/lib/metrics"
 import { useAthletePreferences } from "@/hooks/use-athlete-preferences"
 
@@ -31,6 +31,7 @@ interface MetricControlsProps {
   textColor?: string
   onTextColorChange?: (color: string) => void
   onResetAll?: () => void
+  onExport?: () => void
 }
 
 export function MetricControls({
@@ -50,6 +51,7 @@ export function MetricControls({
   textColor = '#ffffff',
   onTextColorChange,
   onResetAll,
+  onExport,
 }: MetricControlsProps) {
   const { data: athletePreferences } = useAthletePreferences()
   
@@ -280,8 +282,15 @@ export function MetricControls({
         </Popover>
       )}
 
+      {onExport && (
+        <Button variant="outline" size="sm" onClick={onExport} className="px-3 text-green-600 hover:text-green-700 hover:bg-green-50 ml-auto">
+          <Download className="h-4 w-4 mr-1" />
+          Export PNG
+        </Button>
+      )}
+
       {onResetAll && (
-        <Button variant="outline" size="sm" onClick={onResetAll} className="px-3 text-red-600 hover:text-red-700 hover:bg-red-50 ml-auto">
+        <Button variant="outline" size="sm" onClick={onResetAll} className="px-3 text-red-600 hover:text-red-700 hover:bg-red-50">
           <RotateCcw className="h-4 w-4 mr-1" />
           Reset All
         </Button>

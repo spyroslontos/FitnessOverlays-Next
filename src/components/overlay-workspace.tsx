@@ -1,9 +1,9 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { useSession } from "next-auth/react"
-import { OverlayCanvas } from "./overlay-canvas"
+import { OverlayCanvas, OverlayCanvasRef } from "./overlay-canvas"
 import { MetricControls } from "./metric-controls"
 import { UnitSystem } from "@/lib/metrics"
 import { useAthletePreferences } from "@/hooks/use-athlete-preferences"
@@ -14,6 +14,8 @@ interface ActivityContainerProps {
 }
 
 export function OverlayWorkspace({ data, isPending }: ActivityContainerProps) {
+  const canvasRef = useRef<OverlayCanvasRef>(null)
+
   const DEFAULTS = {
     visibleMetrics: ["distance", "time", "pace", "avgSpeed"],
     alignment: 'center' as const,
@@ -34,6 +36,17 @@ export function OverlayWorkspace({ data, isPending }: ActivityContainerProps) {
   const { data: athletePreferences } = useAthletePreferences()
   
   const unitSystem: UnitSystem = athletePreferences?.unitSystem || "metric"
+
+  const handleExport = () => {
+    const dataURL = canvasRef.current?.exportToPNG()
+    if (!dataURL) return
+
+    // Download the image
+    const link = document.createElement('a')
+    link.download = `overlay-${Date.now()}.png`
+    link.href = dataURL
+    link.click()
+  }
 
   const STORAGE_KEYS = {
     selectedMetrics: "selectedMetrics",
@@ -131,6 +144,7 @@ export function OverlayWorkspace({ data, isPending }: ActivityContainerProps) {
   return (
     <div className="flex flex-col h-full min-h-[300px] sm:min-h-[500px]">
       <OverlayCanvas
+        ref={canvasRef}
         visibleMetrics={visibleMetrics}
         data={data}
         unitSystem={unitSystem}
@@ -161,6 +175,7 @@ export function OverlayWorkspace({ data, isPending }: ActivityContainerProps) {
           textColor={textColor}
           onTextColorChange={handleTextColorChange}
           onResetAll={resetAllSettings}
+          onExport={handleExport}
         />
       </div>
     </div>
