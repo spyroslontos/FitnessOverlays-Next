@@ -42,18 +42,32 @@ export default async function Home() {
             </div>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8 text-center">
-            <Card className="p-8">
-              <div className="text-3xl mb-4">✨</div>
-              <div className="font-medium">Customize your overlays</div>
+          <div className="grid md:grid-cols-3 gap-6">
+            <Card className="group relative overflow-hidden bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-950/30 dark:to-pink-950/30 p-8 transition-all hover:shadow-xl hover:shadow-purple-500/20 hover:scale-[1.02]">
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-400/10 to-pink-400/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="relative text-center">
+                <div className="text-5xl mb-4">✨</div>
+                <h3 className="font-semibold text-lg mb-2">Customize your overlays</h3>
+                <p className="text-sm text-muted-foreground">Personalize colors, fonts, and metrics</p>
+              </div>
             </Card>
-            <Card className="p-8">
-              <div className="text-3xl mb-4">📥</div>
-              <div className="font-medium">Export as PNG</div>
+            
+            <Card className="group relative overflow-hidden bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950/30 dark:to-cyan-950/30 p-8 transition-all hover:shadow-xl hover:shadow-blue-500/20 hover:scale-[1.02]">
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-400/10 to-cyan-400/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="relative text-center">
+                <div className="text-5xl mb-4">📥</div>
+                <h3 className="font-semibold text-lg mb-2">Export as PNG</h3>
+                <p className="text-sm text-muted-foreground">Download transparent overlays instantly</p>
+              </div>
             </Card>
-            <Card className="p-8">
-              <div className="text-3xl mb-4">🚀</div>
-              <div className="font-medium">Share on social media</div>
+            
+            <Card className="group relative overflow-hidden bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-950/30 dark:to-red-950/30 p-8 transition-all hover:shadow-xl hover:shadow-orange-500/20 hover:scale-[1.02]">
+              <div className="absolute inset-0 bg-gradient-to-br from-orange-400/10 to-red-400/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="relative text-center">
+                <div className="text-5xl mb-4">🚀</div>
+                <h3 className="font-semibold text-lg mb-2">Share on social media</h3>
+                <p className="text-sm text-muted-foreground">Perfect for Instagram, TikTok & more</p>
+              </div>
             </Card>
           </div>
 
