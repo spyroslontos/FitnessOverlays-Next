@@ -77,12 +77,13 @@ export const metadata: Metadata = {
     description: "Transform your Strava activities into stunning visual overlays. Create professional fitness content with customizable templates and rich data visualization.",
     creator: "@spyroslontos",
   },
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 1,
-  },
 }
+
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+};
 
 export default function RootLayout({
   children,
