@@ -1,12 +1,11 @@
 "use client"
 
-import { Card } from "@/components/ui/card"
 import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible"
-import { ChevronDown } from "lucide-react"
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "@/components/ui/accordion"
 import Link from "next/link"
 
 const faqs = [
@@ -62,33 +61,20 @@ const faqs = [
   },
 ]
 
-function FAQItem({ question, answer }: { question: string; answer: string | React.ReactNode }) {
-  return (
-    <Collapsible>
-      <Card className="p-4">
-        <CollapsibleTrigger className="w-full text-left flex justify-between items-center gap-4 group">
-          <h3 className="font-semibold">{question}</h3>
-          <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
-        </CollapsibleTrigger>
-        <CollapsibleContent>
-          <div className="pt-4 text-muted-foreground text-sm">
-            {typeof answer === "string" ? <p>{answer}</p> : answer}
-          </div>
-        </CollapsibleContent>
-      </Card>
-    </Collapsible>
-  )
-}
-
 export function FAQSection() {
   return (
     <div className="space-y-8">
       <h2 className="text-3xl font-bold text-center">FAQ</h2>
-      <div className="space-y-4">
-        {faqs.map((faq, index) => (
-          <FAQItem key={index} question={faq.question} answer={faq.answer} />
-        ))}
-      </div>
+      <Accordion type="single" collapsible className="w-full">
+  {faqs.map((faq, index) => (
+    <AccordionItem key={index} value={`faq-${index}`}>
+      <AccordionTrigger>{faq.question}</AccordionTrigger>
+      <AccordionContent>
+        {typeof faq.answer === "string" ? <p>{faq.answer}</p> : faq.answer}
+      </AccordionContent>
+    </AccordionItem>
+  ))}
+</Accordion>
     </div>
   )
 }
