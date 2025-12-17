@@ -43,8 +43,8 @@ export default async function Home() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">
-            <Card className="group relative overflow-hidden bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-950/30 dark:to-pink-950/30 p-8 transition-all hover:shadow-xl hover:shadow-purple-500/20 hover:scale-[1.02]">
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-400/10 to-pink-400/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+            <Card className="group relative overflow-hidden bg-linear-to-br from-purple-50 to-pink-50 dark:from-purple-950/30 dark:to-pink-950/30 p-8 transition-all hover:shadow-xl hover:shadow-purple-500/20 hover:scale-[1.02]">
+              <div className="absolute inset-0 bg-linear-to-br from-purple-400/10 to-pink-400/10 opacity-0 group-hover:opacity-100 transition-opacity" />
               <div className="relative text-center">
                 <div className="text-5xl mb-4">✨</div>
                 <h3 className="font-semibold text-lg mb-2">Customize your overlays</h3>
@@ -52,8 +52,8 @@ export default async function Home() {
               </div>
             </Card>
             
-            <Card className="group relative overflow-hidden bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950/30 dark:to-cyan-950/30 p-8 transition-all hover:shadow-xl hover:shadow-blue-500/20 hover:scale-[1.02]">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-400/10 to-cyan-400/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+            <Card className="group relative overflow-hidden bg-linear-to-br from-blue-50 to-cyan-50 dark:from-blue-950/30 dark:to-cyan-950/30 p-8 transition-all hover:shadow-xl hover:shadow-blue-500/20 hover:scale-[1.02]">
+              <div className="absolute inset-0 bg-linear-to-br from-blue-400/10 to-cyan-400/10 opacity-0 group-hover:opacity-100 transition-opacity" />
               <div className="relative text-center">
                 <div className="text-5xl mb-4">📥</div>
                 <h3 className="font-semibold text-lg mb-2">Export as PNG</h3>
@@ -61,8 +61,8 @@ export default async function Home() {
               </div>
             </Card>
             
-            <Card className="group relative overflow-hidden bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-950/30 dark:to-red-950/30 p-8 transition-all hover:shadow-xl hover:shadow-orange-500/20 hover:scale-[1.02]">
-              <div className="absolute inset-0 bg-gradient-to-br from-orange-400/10 to-red-400/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+            <Card className="group relative overflow-hidden bg-linear-to-br from-orange-50 to-red-50 dark:from-orange-950/30 dark:to-red-950/30 p-8 transition-all hover:shadow-xl hover:shadow-orange-500/20 hover:scale-[1.02]">
+              <div className="absolute inset-0 bg-linear-to-br from-orange-400/10 to-red-400/10 opacity-0 group-hover:opacity-100 transition-opacity" />
               <div className="relative text-center">
                 <div className="text-5xl mb-4">🚀</div>
                 <h3 className="font-semibold text-lg mb-2">Share on social media</h3>

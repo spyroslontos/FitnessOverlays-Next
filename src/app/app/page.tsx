@@ -26,7 +26,7 @@ export default async function Page() {
                   <SelectedActivityDisplay />
                 </div>
               </div>
-              <div className="flex-shrink-0 hidden sm:block">
+              <div className="shrink-0 hidden sm:block">
                 <AthleteInfo />
               </div>
             </div>
