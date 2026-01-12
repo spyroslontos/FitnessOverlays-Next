@@ -6,76 +6,98 @@ import {
   AccordionTrigger,
   AccordionContent,
 } from "@/components/ui/accordion"
-import Link from "next/link"
 
 const faqs = [
   {
-    question: "How do I create a Strava activity overlay?",
-    answer: "Connect your Strava account to FitnessOverlays, select any running or cycling activity, and customize your overlay with different fonts, colors, and layouts. Download the final graphic as a transparent PNG for Instagram or other social media.",
+    question: "How to get Strava overlays?",
+    answer: "You can easily get Strava overlays using FitnessOverlays. Simply connect your Strava account, select any activity, and our tool will generate a transparent overlay with your stats that you can download and use on Instagram Stories, TikTok, or any other platform.",
   },
   {
-    question: "Is FitnessOverlays free to use?",
-    answer: "Yes! FitnessOverlays is completely free. We believe in making fitness visualization accessible to everyone.",
-  },
-  {
-    question: "What Strava activities can I create overlays for?",
-    answer: "You can create overlays for all your Strava activities including runs, rides, hikes, and more. The tool pulls your activity data like distance, pace, time, and elevation directly from Strava.",
-  },
-  {
-    question: "Can I customize the fonts and colors?",
-    answer: "Yes! You can customize fonts, colors, and layouts to match your personal style or brand. We're constantly adding new customization options.",
-  },
-  {
-    question: "What permissions does FitnessOverlays need from Strava?",
-    answer: "We only ask for read-only access to view your Strava activities and profile information. We never modify or post anything to your Strava account.",
-  },
-  {
-    question: "How do I disconnect my Strava account?",
+    question: "How do I use my overlay in Instagram Stories (like a Strava stats sticker)?",
     answer: (
       <div className="space-y-2">
-        <p>To revoke FitnessOverlays access:</p>
         <ol className="list-decimal list-inside space-y-1">
-          <li>Go to Strava Settings</li>
-          <li>Navigate to "My Apps"</li>
-          <li>Find FitnessOverlays and click "Revoke Access"</li>
+          <li>Connect your Strava account in FitnessOverlays and select the activity you want to share.</li>
+          <li>Customize your Strava overlay (stats, colors, layout) and copy or download the transparent PNG.</li>
+          <li>Open Instagram and create a new Story with your background photo or video.</li>
+          <li>Add your FitnessOverlays image from your camera roll as a sticker and position it like a Strava stats sticker over your background.</li>
         </ol>
+        <p className="mt-2">This gives you full control over how your Strava activity appears on Instagram Stories while avoiding the default orange Strava share image.</p>
       </div>
     ),
+    textContent: "Connect your Strava account in FitnessOverlays, pick an activity, customize your overlay with your favorite stats and colors, then download the transparent PNG and add it as a sticker on top of your background in Instagram Stories, just like a Strava stats sticker but fully customized."
   },
   {
-    question: "How do I report a bug or request a feature?",
+    question: "How to overlay Strava on Snapchat?",
+    answer: "You can use FitnessOverlays to add Strava stats to Snapchat too! Create your custom overlay, download the transparent image, and then add it as a sticker or attachment to your Snap.",
+  },
+  {
+    question: "How to get Strava map overlay on Instagram?",
+    answer: "FitnessOverlays lets you add a Strava map overlay to your Instagram Stories. Just connect Strava, choose your activity, design your map overlay (with transparent background), and paste it onto your Instagram Story.",
+  },
+  {
+    question: "Is FitnessOverlays free?",
+    answer: "Yes! FitnessOverlays is completely free to use. We believe in making fitness visualization accessible to everyone.",
+  },
+  {
+    question: "What data does FitnessOverlays access?",
+    answer: "We ask for read-only access to your Strava activities and some info from your profile to make your experience better. We don't change anything on your account.",
+  },
+  {
+    question: "How do I report a bug in FitnessOverlays?",
     answer: (
       <p>
-        Report issues or suggest features on our{" "}
-        <Link 
-          href="https://github.com/spyroslontos/FitnessOverlays-Next" 
+        If you encounter any issues, you can let me know on the{" "}
+        <a 
+          href="https://github.com/spyroslontos/FitnessOverlays/issues" 
           target="_blank" 
           rel="noopener noreferrer"
           className="text-primary hover:underline"
         >
-          GitHub repository
-        </Link>
-        . We appreciate your feedback!
+          FitnessOverlays GitHub page
+        </a>{" "}
+        by clicking "Issues" and briefly describing what went wrong.
+        If you're not familiar with GitHub, you can also reach out using the contact details in the footer.
       </p>
     ),
+    textContent: "If you encounter any issues, you can let me know on the FitnessOverlays GitHub page by clicking 'Issues' and briefly describing what went wrong. If you're not familiar with GitHub, you can also reach out using the contact details in the footer."
   },
 ]
 
 export function FAQSection() {
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqs.map(faq => ({
+      "@type": "Question",
+      "name": faq.question,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": faq.textContent || (typeof faq.answer === 'string' ? faq.answer : "")
+      }
+    }))
+  }
+
   return (
-    <div className="space-y-8">
-      <h2 className="text-3xl font-bold text-center">FAQ</h2>
-      <Accordion type="single" collapsible className="w-full">
-  {faqs.map((faq, index) => (
-    <AccordionItem key={index} value={`faq-${index}`}>
-      <AccordionTrigger>{faq.question}</AccordionTrigger>
-      <AccordionContent>
-        {typeof faq.answer === "string" ? <p>{faq.answer}</p> : faq.answer}
-      </AccordionContent>
-    </AccordionItem>
-  ))}
-</Accordion>
-    </div>
+    <section id="faq" className="space-y-8 scroll-mt-20">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
+      <div className="text-center mb-8">
+        <h2 className="text-4xl md:text-5xl font-bold text-foreground">Frequently Asked Questions</h2>
+        <p className="mt-4 text-lg text-muted-foreground">Everything you need to know about FitnessOverlays</p>
+      </div>
+      <Accordion type="single" collapsible className="w-full max-w-4xl mx-auto space-y-4">
+        {faqs.map((faq, index) => (
+          <AccordionItem key={index} value={`faq-${index}`} className="border rounded-lg px-6 bg-card shadow-sm">
+            <AccordionTrigger className="text-xl font-semibold text-left hover:no-underline">{faq.question}</AccordionTrigger>
+            <AccordionContent className="text-base text-muted-foreground pt-2">
+              {faq.answer}
+            </AccordionContent>
+          </AccordionItem>
+        ))}
+      </Accordion>
+    </section>
   )
 }
-

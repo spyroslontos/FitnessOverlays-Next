@@ -41,6 +41,13 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  --color-fitness-gray: oklch(44.6% 0.03 256.802);
+  --color-fitness-dark-gray: oklch(13% 0.028 261.692);
+  --color-fitness-light-gray: oklch(87.2% 0.01 258.338);
+  --color-fitness-green: oklch(62.7% 0.194 149.214);
+  --color-fitness-dark-green: oklch(44.8% 0.119 151.328);
+  --color-fitness-light-green: oklch(87.1% 0.15 154.449);
+  --color-fitness-orange: oklch(64.6% 0.222 41.116);
 }
 
 :root {

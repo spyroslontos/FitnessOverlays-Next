@@ -14,66 +14,78 @@ export default async function Home() {
     <div className="min-h-screen flex flex-col">
       <HomeHeader />
       
-      <main className="px-4 py-16">
-        <div className="max-w-4xl mx-auto space-y-16">
-          
-          <div className="text-center space-y-8">
-            <h1 className="text-4xl md:text-6xl font-bold">
-              Convert Your Strava Activities into Transparent Fitness Overlays for Instagram
+      <main className="flex-1">
+        <section className="w-full py-16 md:py-24 bg-background">
+          <div className="max-w-4xl mx-auto px-4 space-y-8 text-center">
+            <h1 className="text-4xl md:text-6xl font-bold tracking-tight">
+              Create Custom Strava Stickers & Overlays for Instagram Stories
             </h1>
             
-            <p className="text-xl text-muted-foreground">
-              Easily generate customizable Strava activity overlays to share on Instagram Stories, Reels, or TikTok. Perfect for runners, cyclists, and fitness creators.
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Generate transparent Strava-style stats stickers for your runs, rides, and workouts. Export clean visuals for Instagram Stories, Reels, and TikTok.
             </p>
 
             <div className="pt-4 space-y-4">
               {session ? (
-                <Button size="lg" asChild>
+                <Button size="lg" asChild className="rounded-full px-8">
                   <Link href="/app">Open App</Link>
                 </Button>
               ) : (
-                <>
+                <div className="flex flex-col items-center gap-3">
                   <SignInButton large />
                   <p className="text-sm text-muted-foreground">
                     Completely free. Just log in with Strava.
                   </p>
-                </>
+                </div>
               )}
             </div>
           </div>
+        </section>
 
-          <div className="grid md:grid-cols-3 gap-6">
-            <Card className="group relative overflow-hidden bg-linear-to-br from-purple-50 to-pink-50 dark:from-purple-950/30 dark:to-pink-950/30 p-8 transition-all hover:shadow-xl hover:shadow-purple-500/20 hover:scale-[1.02]">
-              <div className="absolute inset-0 bg-linear-to-br from-purple-400/10 to-pink-400/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-              <div className="relative text-center">
-                <div className="text-5xl mb-4">✨</div>
-                <h3 className="font-semibold text-lg mb-2">Customize your overlays</h3>
-                <p className="text-sm text-muted-foreground">Personalize colors, fonts, and metrics</p>
-              </div>
-            </Card>
-            
-            <Card className="group relative overflow-hidden bg-linear-to-br from-blue-50 to-cyan-50 dark:from-blue-950/30 dark:to-cyan-950/30 p-8 transition-all hover:shadow-xl hover:shadow-blue-500/20 hover:scale-[1.02]">
-              <div className="absolute inset-0 bg-linear-to-br from-blue-400/10 to-cyan-400/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-              <div className="relative text-center">
-                <div className="text-5xl mb-4">📥</div>
-                <h3 className="font-semibold text-lg mb-2">Export as PNG</h3>
-                <p className="text-sm text-muted-foreground">Download transparent overlays instantly</p>
-              </div>
-            </Card>
-            
-            <Card className="group relative overflow-hidden bg-linear-to-br from-orange-50 to-red-50 dark:from-orange-950/30 dark:to-red-950/30 p-8 transition-all hover:shadow-xl hover:shadow-orange-500/20 hover:scale-[1.02]">
-              <div className="absolute inset-0 bg-linear-to-br from-orange-400/10 to-red-400/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-              <div className="relative text-center">
-                <div className="text-5xl mb-4">🚀</div>
-                <h3 className="font-semibold text-lg mb-2">Share on social media</h3>
-                <p className="text-sm text-muted-foreground">Perfect for Instagram, TikTok & more</p>
-              </div>
-            </Card>
+        <section className="w-full py-12 md:py-16 bg-muted/40 border-y border-border/50">
+          <div className="max-w-4xl mx-auto px-4">
+            <div className="grid md:grid-cols-3 gap-8">
+              <Card className="group relative overflow-hidden bg-background/50 backdrop-blur-sm border-border/50 p-8 transition-all hover:shadow-xl hover:shadow-purple-500/10 hover:-translate-y-1">
+                <div className="absolute inset-0 bg-linear-to-br from-purple-400/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="relative text-center space-y-4">
+                  <div className="text-5xl transform group-hover:scale-110 transition-transform duration-300">✨</div>
+                  <div>
+                    <h3 className="font-bold text-lg mb-1">Customize your overlays</h3>
+                    <p className="text-sm text-muted-foreground">Personalize colors, fonts, and metrics to match your vibe</p>
+                  </div>
+                </div>
+              </Card>
+              
+              <Card className="group relative overflow-hidden bg-background/50 backdrop-blur-sm border-border/50 p-8 transition-all hover:shadow-xl hover:shadow-blue-500/10 hover:-translate-y-1">
+                <div className="absolute inset-0 bg-linear-to-br from-blue-400/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="relative text-center space-y-4">
+                  <div className="text-5xl transform group-hover:scale-110 transition-transform duration-300">📥</div>
+                  <div>
+                    <h3 className="font-bold text-lg mb-1">Export as PNG</h3>
+                    <p className="text-sm text-muted-foreground">Download crystal clear transparent overlays instantly</p>
+                  </div>
+                </div>
+              </Card>
+              
+              <Card className="group relative overflow-hidden bg-background/50 backdrop-blur-sm border-border/50 p-8 transition-all hover:shadow-xl hover:shadow-orange-500/10 hover:-translate-y-1">
+                <div className="absolute inset-0 bg-linear-to-br from-orange-400/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="relative text-center space-y-4">
+                  <div className="text-5xl transform group-hover:scale-110 transition-transform duration-300">🚀</div>
+                  <div>
+                    <h3 className="font-bold text-lg mb-1">Share on social media</h3>
+                    <p className="text-sm text-muted-foreground">Perfect format for Instagram Stories, TikTok & more</p>
+                  </div>
+                </div>
+              </Card>
+            </div>
           </div>
+        </section>
 
-          <FAQSection />
-
-        </div>
+        <section className="w-full py-12 md:py-16 bg-background">
+          <div className="max-w-4xl mx-auto px-4">
+            <FAQSection />
+          </div>
+        </section>
       </main>
 
       <Footer />

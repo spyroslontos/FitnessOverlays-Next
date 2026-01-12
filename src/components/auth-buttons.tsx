@@ -20,6 +20,7 @@ export function SignInButton({ large = false }: { large?: boolean }) {
           width={192}
           height={48}
           className={large ? "h-16 w-auto sm:h-20" : "h-10 w-auto sm:h-12"}
+          style={{ width: "auto" }}
         />
       </button>
     </form>

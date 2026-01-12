@@ -17,8 +17,8 @@ export async function HomeHeader() {
   return (
     <header className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between gap-4">
-        <Link href="/" className="text-xl font-bold hover:opacity-80 transition-opacity">
-          FitnessOverlays
+        <Link href="/" className="text-3xl font-bold hover:opacity-80 transition-opacity">
+          <span className="text-fitness-green">Fitness</span><span className="text-fitness-dark-gray">Overlays</span>
         </Link>
 
         <div className="flex items-center gap-4 ml-auto">

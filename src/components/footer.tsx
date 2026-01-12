@@ -8,11 +8,12 @@ export function Footer() {
           
           <div className="md:w-1/3">
             <Image 
-              src="/images/api_logo_pwrdBy_strava_horiz_orange.svg" 
+              src="/images/api_logo_pwrdBy_strava_horiz_black.svg" 
               alt="Powered by Strava API" 
               width={120}
               height={20}
-              className="h-5 w-auto mx-auto md:mx-0"
+              className="h-4 w-auto mx-auto md:mx-0"
+              style={{ width: "auto" }}
             />
           </div>
 
@@ -55,7 +56,7 @@ export function Footer() {
           </div>
 
           <div className="md:w-1/3">
-            <p className="text-sm text-gray-500 text-center md:text-right">
+            <p className="text-sm text-gray text-center md:text-right">
               © 2026 FitnessOverlays
             </p>
           </div>
