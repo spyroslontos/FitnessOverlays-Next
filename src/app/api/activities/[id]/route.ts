@@ -1,10 +1,11 @@
 import { auth } from "@/lib/auth"
-import { NextResponse } from "next/server"
 import { db } from "@/db"
 import { activities } from "@/db/schema"
-import { eq, and } from "drizzle-orm"
+import { and, eq } from "drizzle-orm"
+import { NextResponse } from "next/server"
 
-const CACHE_DURATION = 3 * 60 * 1000 // 3 minutes
+const CACHE_DURATION = 5 * 60 * 1000 // 3 minutes
+const CACHE_MAX_AGE = 180 // 3 minutes
 
 export async function GET(
   _request: Request,
@@ -13,99 +14,86 @@ export async function GET(
   try {
     const session = await auth()
 
-    if (!session || !session.accessToken) {
+    if (!session?.accessToken || !session.user?.id) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 })
     }
 
     const { id } = await params
-
-    // Validate activity ID
     const activityId = parseInt(id, 10)
-    if (
-      Number.isNaN(activityId) ||
-      activityId <= 0 ||
-      activityId > 999999999999 ||
-      !Number.isInteger(activityId)
-    ) {
+    const userId = parseInt(session.user.id, 10)
+
+    // Validate ID
+    if (isNaN(activityId) || activityId <= 0) {
       return NextResponse.json(
-        { error: "Invalid activity ID. Must be a positive integer." },
+        { error: "Invalid activity ID" },
         { status: 400 },
       )
     }
 
-    const userId = session.user?.id
-    if (!userId) {
-      return NextResponse.json({ error: "No user ID" }, { status: 401 })
-    }
-
-    // Check DB cache first - ensure activity belongs to current user
+    // 1. Check DB cache
     const cached = await db
       .select()
       .from(activities)
-      .where(
-        and(
-          eq(activities.activityId, activityId),
-          eq(activities.userId, parseInt(userId, 10)),
-        ),
-      )
+      .where(and(eq(activities.activityId, activityId), eq(activities.userId, userId)))
       .limit(1)
 
     if (cached.length > 0) {
-      const lastSynced = cached[0].lastSynced
-      const isStale = Date.now() - lastSynced.getTime() > CACHE_DURATION
-
-      if (!isStale) {
-        console.log("💾 Returning from DB cache")
-        return NextResponse.json(cached[0].data)
+      const isFresh = Date.now() - cached[0].lastSynced.getTime() < CACHE_DURATION
+      if (isFresh) {
+        return NextResponse.json(cached[0].data, {
+          headers: {
+            "Cache-Control": `private, max-age=${CACHE_MAX_AGE}`,
+          },
+        })
       }
     }
 
-    console.log("🌐 Fetching from Strava API")
-
+    // 2. Fetch from Strava API
     const response = await fetch(
       `https://www.strava.com/api/v3/activities/${activityId}`,
       {
-        headers: {
-          Authorization: `Bearer ${session.accessToken}`,
-        },
+        headers: { Authorization: `Bearer ${session.accessToken}` },
         signal: AbortSignal.timeout(10000),
       },
     )
 
     if (!response.ok) {
-      throw new Error(`Failed to fetch activity data: ${response.status}`)
+      if (response.status === 404) {
+        return NextResponse.json({ error: "Activity not found" }, { status: 404 })
+      }
+      throw new Error(`Strava API error: ${response.status}`)
     }
 
     const data = await response.json()
-    console.log("✅ Activity data received:", data.name)
 
-    // Security check: ensure activity belongs to current user
-    const activityOwnerId = data.athlete?.id
-    if (!activityOwnerId || activityOwnerId !== parseInt(userId, 10)) {
-      return NextResponse.json({ error: "Activity not found" }, { status: 404 })
+    // 3. Security check & Store in DB
+    if (data.athlete?.id !== userId) {
+      return NextResponse.json({ error: "Unauthorized activity access" }, { status: 403 })
     }
 
-    // Store in DB
     await db
       .insert(activities)
       .values({
         activityId: data.id,
-        userId: parseInt(userId, 10),
-        data: data,
+        userId,
+        data,
         lastSynced: new Date(),
       })
       .onConflictDoUpdate({
         target: activities.activityId,
         set: {
-          data: data,
+          data,
           lastSynced: new Date(),
         },
       })
-    console.log("💾 Activity stored in database")
 
-    return NextResponse.json(data)
+    return NextResponse.json(data, {
+      headers: {
+        "Cache-Control": `private, max-age=${CACHE_MAX_AGE}`,
+      },
+    })
   } catch (error) {
-    console.error("Error fetching activity:", error)
+    console.error("Error in GET /api/activities/[id]:", error)
     return NextResponse.json(
       { error: "Failed to fetch activity" },
       { status: 500 },
