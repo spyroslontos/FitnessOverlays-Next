@@ -56,7 +56,7 @@ export function Footer() {
 
           <div className="md:w-1/3">
             <p className="text-sm text-gray-500 text-center md:text-right">
-              © 2025 FitnessOverlays
+              © 2026 FitnessOverlays
             </p>
           </div>
 

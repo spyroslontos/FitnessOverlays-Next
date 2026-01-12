@@ -5,6 +5,7 @@ import { NextResponse } from "next/server"
 import { db } from "@/db"
 import { users } from "@/db/schema"
 import { eq } from "drizzle-orm"
+import { upsertUser } from "@/lib/user-sync"
 
 const CACHE_DURATION = 3 * 60 * 1000 // 3 minutes
 
@@ -71,73 +72,7 @@ export async function GET() {
     }
 
     // Store in DB
-    const athleteId = data.id
-    await db
-      .insert(users)
-      .values({
-        id: athleteId,
-        name: `${data.firstname} ${data.lastname}`,
-        createdAt: new Date(),
-        athleteId: data.id,
-        username: data.username,
-        firstname: data.firstname,
-        lastname: data.lastname,
-        bio: data.bio,
-        city: data.city,
-        state: data.state,
-        country: data.country,
-        sex: data.sex,
-        premium: data.premium,
-        summit: data.summit,
-        badgeTypeId: data.badge_type_id,
-        weight: data.weight,
-        profileMedium: data.profile_medium,
-        profile: data.profile,
-        followerCount: data.follower_count,
-        friendCount: data.friend_count,
-        mutualFriendCount: data.mutual_friend_count,
-        athleteType: data.athlete_type,
-        datePreference: data.date_preference,
-        measurementPreference: data.measurement_preference,
-        postableClubsCount: data.postable_clubs_count,
-        ftp: data.ftp,
-        stravaCreatedAt: data.created_at ? new Date(data.created_at) : null,
-        stravaUpdatedAt: data.updated_at ? new Date(data.updated_at) : null,
-        fullAthleteData: data,
-        lastStravaSync: new Date(),
-      })
-      .onConflictDoUpdate({
-        target: users.id,
-        set: {
-          name: `${data.firstname} ${data.lastname}`,
-          lastStravaSync: new Date(),
-          username: data.username,
-          firstname: data.firstname,
-          lastname: data.lastname,
-          bio: data.bio,
-          city: data.city,
-          state: data.state,
-          country: data.country,
-          sex: data.sex,
-          premium: data.premium,
-          summit: data.summit,
-          badgeTypeId: data.badge_type_id,
-          weight: data.weight,
-          profileMedium: data.profile_medium,
-          profile: data.profile,
-          followerCount: data.follower_count,
-          friendCount: data.friend_count,
-          mutualFriendCount: data.mutual_friend_count,
-          athleteType: data.athlete_type,
-          datePreference: data.date_preference,
-          measurementPreference: data.measurement_preference,
-          postableClubsCount: data.postable_clubs_count,
-          ftp: data.ftp,
-          stravaCreatedAt: data.created_at ? new Date(data.created_at) : null,
-          stravaUpdatedAt: data.updated_at ? new Date(data.updated_at) : null,
-          fullAthleteData: data,
-        },
-      })
+    await upsertUser(data)
     console.log("💾 Athlete data stored in database")
 
     return NextResponse.json(data)

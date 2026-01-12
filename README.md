@@ -1,38 +1,41 @@
 # FitnessOverlays 🏃📱
 
-## 🌍 Live Website
+[![Live](https://img.shields.io/badge/Live-fitnessoverlays.com-007bff)](https://fitnessoverlays.com/)
 
-[fitnessoverlays.com](https://fitnessoverlays.com/)
-
-## Turn Your Strava Activities into Custom Overlays
-
-FitnessOverlays lets you create clean, Instagram-ready overlays from your Strava activities. Designed to work smoothly on both mobile and desktop.
+FitnessOverlays generates clean, customizable activity overlays from Strava data, designed for social sharing.
 
 ---
 
-## ⚙️ How It Works
+## Why
 
-1. **Connect** your Strava account securely via Strava's OAuth.
-2. **Choose an activity** from your personal Strava history.
-3. **Customize** your overlay:
-   - Pick stats to include
-   - Choose text size, color, alignment
-   - Select number of columns
-4. **Export** as a transparent PNG or plain text
+Strava’s built-in activity overlays are limited, mostly locked behind a premium paywall, and not optimized for export-quality sharing.
+
+FitnessOverlays solves this by letting athletes create better overlays from their activity data without relying on Strava’s premium features.
 
 ---
 
-## 📤 Export & Share
+## What It Does
 
-- **Copy as text**
-- **Copy image** (transparent PNG, including map if selected)
-- **Download** or long-press to save on mobile
+- Secure OAuth connection to Strava
+- Client-side Canvas rendering for deterministic overlays
+- Route map rendering from activity data
+- Export transparent PNGs for social platforms
 
 ---
 
-## ❓ FAQ
+## Stack
 
-For common questions like disconnecting from Strava or privacy details, visit the [FAQ page](https://fitnessoverlays.com/faq).
+- **Framework**: Next.js 16 (React, TypeScript)
+- **Styling**: Tailwind CSS v4, Shadcn/UI
+- **Data**: PostgreSQL, Drizzle ORM
+- **Auth**: NextAuth.js
+- **Canvas**: Fabric.js
+
+---
+
+## Notes
+
+Local setup and development instructions are in the repo.
 
 ---
 
