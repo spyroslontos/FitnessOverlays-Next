@@ -10,6 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import Link from "next/link"
+import { ThemeSubmenu } from "./mode-toggle"
 
 export async function HomeHeader() {
   const session = await auth()
@@ -25,7 +26,7 @@ export async function HomeHeader() {
           {session ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Avatar className="h-8 w-8 cursor-pointer">
+                <Avatar className="h-10 w-10 cursor-pointer">
                   <AvatarImage
                     src={session.user?.image || ""}
                     alt={session.user?.name || ""}
@@ -52,6 +53,8 @@ export async function HomeHeader() {
                     </span>
                   </div>
                 </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <ThemeSubmenu />
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
                   <SignOutButton />

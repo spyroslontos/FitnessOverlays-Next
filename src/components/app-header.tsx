@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { signOut } from "next-auth/react"
 import Link from "next/link"
+import { ThemeSubmenu } from "./mode-toggle"
 
 export function AppHeader() {
   const { toggleSidebar } = useSidebar()
@@ -73,6 +74,8 @@ export function AppHeader() {
                     </span>
                   </div>
                 </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <ThemeSubmenu />
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={() => signOut({ callbackUrl: "/" })}
