@@ -31,29 +31,29 @@ export default async function Home() {
       <HomeHeader />
       
       <main className="flex-1">
-        <section className="w-full py-8 md:py-16 bg-background">
-          <div className="max-w-4xl mx-auto px-4 space-y-8 text-center">
-            <h1 className="text-4xl md:text-6xl font-bold tracking-tight max-w-xl mx-auto">
-              Create Custom Strava Stickers & Overlays for Instagram Stories
+        <section className="py-12 md:py-20">
+          <div className="max-w-4xl mx-auto px-4 text-center space-y-8">
+            <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground">
+              Free Custom Strava Stickers and Overlays
             </h1>
-            
-            <p className="text-md md:text-lg text-muted-foreground max-w-lg mx-auto">
-              Generate transparent Strava-style stats stickers for your runs, rides, and workouts. Export clean visuals for Instagram Stories, Reels, and TikTok.
-            </p>
+
+            <h2 className="text-lg md:text-xl max-w-2xl mx-auto text-muted-foreground font-normal">
+              Generate transparent Strava-style stats for runs, rides, and workouts. Export clean PNGs ready for social media including Instagram, TikTok, and Reels.
+            </h2>
 
             <div className="space-y-6">
               {session ? (
                 <Button 
                   size="lg" 
                   asChild 
-                  className="rounded-full px-12 py-6 text-lg font-semibold bg-fitness-green hover:bg-fitness-dark-green text-white"
+                  className="rounded-full px-12 py-6 text-lg font-semibold"
                 >
                   <Link href="/app">Open App</Link>
                 </Button>
               ) : (
-                <div className="flex flex-col items-center gap-1">
+                <div className="flex flex-col items-center gap-2">
                   <SignInButton size="lg" />
-                  <p className="text-sm text-muted-foreground dark:text-fitness-light-gray">
+                  <p className="text-sm text-muted-foreground">
                     Completely free. Just log in with Strava.
                   </p>
                 </div>
@@ -65,7 +65,7 @@ export default async function Home() {
         </section>
 
 
-        <section className="w-full py-12 md:py-24 bg-background border-y border-border/50">
+        <section className="w-full py-12 md:py-24 bg-muted/40 border-y border-border/50">
           <div className="max-w-6xl mx-auto px-4">
             <div className="text-center mb-16 space-y-4">
               <h2 className="text-4xl md:text-5xl font-bold text-foreground tracking-tight">How It Works</h2>
@@ -75,11 +75,11 @@ export default async function Home() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-              <Card className="group relative overflow-hidden bg-card border-border/50 p-8 transition-all duration-300 hover:shadow-2xl hover:shadow-fitness-green/10 hover:-translate-y-2 rounded-3xl">
-                <div className="absolute inset-0 bg-linear-to-br from-fitness-green/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <Card className="group relative overflow-hidden bg-card border-border/50 p-8 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-2 rounded-3xl">
+                <div className="absolute inset-0 bg-linear-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 <div className="relative space-y-6">
                   <div className="flex justify-center">
-                    <div className="h-16 w-16 flex items-center justify-center rounded-2xl bg-linear-to-br from-fitness-green to-fitness-dark-green text-white shadow-xl shadow-fitness-green/20 transform group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
+                    <div className="h-16 w-16 flex items-center justify-center rounded-2xl bg-linear-to-br from-primary to-primary/80 text-primary-foreground shadow-xl shadow-primary/20 transform group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
                       <LinkIcon className="h-8 w-8" />
                     </div>
                   </div>
@@ -92,11 +92,11 @@ export default async function Home() {
                 </div>
               </Card>
 
-              <Card className="group relative overflow-hidden bg-card border-border/50 p-8 transition-all duration-300 hover:shadow-2xl hover:shadow-fitness-green/10 hover:-translate-y-2 rounded-3xl">
-                <div className="absolute inset-0 bg-linear-to-br from-fitness-green/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <Card className="group relative overflow-hidden bg-card border-border/50 p-8 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-2 rounded-3xl">
+                <div className="absolute inset-0 bg-linear-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 <div className="relative space-y-6">
                   <div className="flex justify-center">
-                    <div className="h-16 w-16 flex items-center justify-center rounded-2xl bg-linear-to-br from-fitness-green to-fitness-dark-green text-white shadow-xl shadow-fitness-green/20 transform group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-300">
+                    <div className="h-16 w-16 flex items-center justify-center rounded-2xl bg-linear-to-br from-primary to-primary/80 text-primary-foreground shadow-xl shadow-primary/20 transform group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-300">
                       <List className="h-8 w-8" />
                     </div>
                   </div>
@@ -109,11 +109,11 @@ export default async function Home() {
                 </div>
               </Card>
 
-              <Card className="group relative overflow-hidden bg-card border-border/50 p-8 transition-all duration-300 hover:shadow-2xl hover:shadow-fitness-green/10 hover:-translate-y-2 rounded-3xl">
-                <div className="absolute inset-0 bg-linear-to-br from-fitness-green/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <Card className="group relative overflow-hidden bg-card border-border/50 p-8 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-2 rounded-3xl">
+                <div className="absolute inset-0 bg-linear-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 <div className="relative space-y-6">
                   <div className="flex justify-center">
-                    <div className="h-16 w-16 flex items-center justify-center rounded-2xl bg-linear-to-br from-fitness-green to-fitness-dark-green text-white shadow-xl shadow-fitness-green/20 transform group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
+                    <div className="h-16 w-16 flex items-center justify-center rounded-2xl bg-linear-to-br from-primary to-primary/80 text-primary-foreground shadow-xl shadow-primary/20 transform group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
                       <Palette className="h-8 w-8" />
                     </div>
                   </div>
@@ -126,11 +126,11 @@ export default async function Home() {
                 </div>
               </Card>
 
-              <Card className="group relative overflow-hidden bg-card border-border/50 p-8 transition-all duration-300 hover:shadow-2xl hover:shadow-fitness-green/10 hover:-translate-y-2 rounded-3xl">
-                <div className="absolute inset-0 bg-linear-to-br from-fitness-green/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <Card className="group relative overflow-hidden bg-card border-border/50 p-8 transition-all duration-300 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-2 rounded-3xl">
+                <div className="absolute inset-0 bg-linear-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 <div className="relative space-y-6">
                   <div className="flex justify-center">
-                    <div className="h-16 w-16 flex items-center justify-center rounded-2xl bg-linear-to-br from-fitness-green to-fitness-dark-green text-white shadow-xl shadow-fitness-green/20 transform group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-300">
+                    <div className="h-16 w-16 flex items-center justify-center rounded-2xl bg-linear-to-br from-primary to-primary/80 text-primary-foreground shadow-xl shadow-primary/20 transform group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-300">
                       <Download className="h-8 w-8" />
                     </div>
                   </div>
@@ -151,6 +151,24 @@ export default async function Home() {
             <FAQSection />
           </div>
         </section>
+
+        {!session && (
+          <section className="w-full py-16 md:py-24 bg-muted/30 border-t border-border/50">
+            <div className="max-w-2xl mx-auto px-4 text-center space-y-8">
+              <div className="space-y-4">
+                <h3 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight">
+                  Ready to Create Your First Overlay?
+                </h3>
+                <p className="text-lg text-muted-foreground">
+                  Connect your Strava account and start sharing your achievements in seconds.
+                </p>
+              </div>
+              <div className="flex justify-center transition-transform hover:scale-105 duration-200">
+                <SignInButton size="lg" />
+              </div>
+            </div>
+          </section>
+        )}
       </main>
 
       <Footer />

@@ -5,25 +5,27 @@ export function Footer() {
   return (
     <footer className="w-full mt-auto border-t">
       <div className="mx-auto max-w-5xl py-8 px-4">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6 md:gap-4">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-8 md:gap-4">
           
           <div className="flex-1 flex justify-center md:justify-start">
-            <Image 
-              src="/images/api_logo_pwrdBy_strava_horiz_black.svg" 
-              alt="Powered by Strava API" 
-              width={120}
-              height={20}
-              className="h-4 w-auto dark:hidden"
-              style={{ width: "auto" }}
-            />
-            <Image 
-              src="/images/api_logo_pwrdBy_strava_horiz_white.svg" 
-              alt="Powered by Strava API" 
-              width={120}
-              height={20}
-              className="h-4 w-auto hidden dark:block"
-              style={{ width: "auto" }}
-            />
+            <div className="relative group transition-opacity hover:opacity-80">
+              <Image 
+                src="/images/api_logo_pwrdBy_strava_horiz_black.svg" 
+                alt="Powered by Strava API" 
+                width={120}
+                height={20}
+                className="h-4 w-auto dark:hidden"
+                style={{ width: "auto" }}
+              />
+              <Image 
+                src="/images/api_logo_pwrdBy_strava_horiz_white.svg" 
+                alt="Powered by Strava API" 
+                width={120}
+                height={20}
+                className="h-4 w-auto hidden dark:block"
+                style={{ width: "auto" }}
+              />
+            </div>
           </div>
 
           <div className="flex-1 flex items-center justify-center gap-6">
@@ -31,7 +33,7 @@ export function Footer() {
               href="https://strava.app.link/QzrdTbuZYSb" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-muted-foreground hover:text-foreground transition-colors"
+              className="text-accent-foreground hover:text-primary transition-all hover:scale-110"
               aria-label="Strava"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
@@ -43,7 +45,7 @@ export function Footer() {
               href="https://x.com/spyroslontos" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-muted-foreground hover:text-foreground transition-colors"
+              className="text-accent-foreground hover:text-primary transition-all hover:scale-110"
               aria-label="X (Twitter)"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
@@ -55,7 +57,7 @@ export function Footer() {
               href="https://github.com/spyroslontos" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-muted-foreground hover:text-foreground transition-colors"
+              className="text-accent-foreground hover:text-primary transition-all hover:scale-110"
               aria-label="GitHub"
             >
               <svg className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
@@ -64,11 +66,11 @@ export function Footer() {
             </a>
           </div>
 
-          <div className="flex-1 flex flex-col items-center md:items-end gap-2">
-            <ModeToggle />
-            <p className="text-xs text-muted-foreground">
+          <div className="flex-1 flex items-center justify-center md:justify-end gap-4">
+            <p className="text-xs text-accent-foreground whitespace-nowrap">
               © 2026 FitnessOverlays
             </p>
+            <ModeToggle />
           </div>
 
         </div>

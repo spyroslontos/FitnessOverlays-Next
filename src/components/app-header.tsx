@@ -39,7 +39,7 @@ export function AppHeader() {
             href="/"
             className="text-xl sm:text-2xl font-bold hover:text-primary transition-colors truncate max-w-[200px] sm:max-w-none"
           >
-            <span className="text-fitness-green">Fitness</span><span className="text-fitness-dark-gray">Overlays</span>
+            <span className="text-primary">Fitness</span><span className="text-foreground">Overlays</span>
           </Link>
         </div>
         <div className="flex items-center">

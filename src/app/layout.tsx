@@ -1,49 +1,42 @@
 import type { Metadata } from "next"
-import { Geist, Geist_Mono, Poppins, Lato, Oswald, Lora, Special_Elite } from "next/font/google"
+import { Plus_Jakarta_Sans, Poppins, Lato, Oswald, Lora, Special_Elite } from "next/font/google"
 import "./globals.css"
 import { QueryProvider } from "@/components/query-provider"
 import { SessionProvider } from "next-auth/react"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { ThemeProvider } from "@/components/theme-provider"
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-})
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const plusJakartaSans = Plus_Jakarta_Sans({
+  variable: "--font-plus-jakarta-sans",
   subsets: ["latin"],
 })
 
 const poppins = Poppins({
+  weight: ["400", "700"],
   variable: "--font-poppins",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
 })
 
 const lato = Lato({
+  weight: ["400", "700"],
   variable: "--font-lato",
   subsets: ["latin"],
-  weight: ["300", "400", "700"],
 })
 
 const oswald = Oswald({
   variable: "--font-oswald",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
 })
 
 const lora = Lora({
   variable: "--font-lora",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
 })
 
 const specialElite = Special_Elite({
+  weight: "400",
   variable: "--font-special-elite",
   subsets: ["latin"],
-  weight: ["400"],
 })
 
 export const metadata: Metadata = {
@@ -94,7 +87,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${poppins.variable} ${lato.variable} ${oswald.variable} ${lora.variable} ${specialElite.variable} antialiased`}
+        className={`${plusJakartaSans.variable} ${poppins.variable} ${lato.variable} ${oswald.variable} ${lora.variable} ${specialElite.variable} antialiased font-sans`}
       >
         <ThemeProvider
           attribute="class"
