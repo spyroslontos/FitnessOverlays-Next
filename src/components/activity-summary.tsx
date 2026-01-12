@@ -79,7 +79,7 @@ export function ActivitySummary({ data, isPending }: ActivityDetailsProps) {
               onClick={() => window.open(`https://www.strava.com/activities/${data.id}`, '_blank')}
             >
               <ExternalLink className="h-3 w-3 mr-1" />
-              View
+              View on Strava
             </Button>
           </div>
         </div>

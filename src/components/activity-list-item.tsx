@@ -10,6 +10,7 @@ import {
 import { Route, Clock, Zap, TrendingUp, Heart, Crown } from "lucide-react"
 import { formatDistance, formatTime, formatDate, formatPace, formatElevation } from "@/lib/activity-utils"
 import { useAthletePreferences } from "@/hooks/use-athlete-preferences"
+import { Skeleton } from "@/components/ui/skeleton"
 
 interface Activity {
   id: number
@@ -28,7 +29,7 @@ interface Activity {
 }
 
 interface ActivityTileProps {
-  activity: Activity
+  activity?: Activity
   onClick?: (activityId: number) => void
   isLatest?: boolean
   isSelected?: boolean
@@ -56,10 +57,43 @@ function Metric({ icon, label, value, className = "" }: MetricProps) {
 }
 
 export function ActivityListItem({ activity, onClick, isLatest, isSelected }: ActivityTileProps) {
-  const { data: athletePreferences } = useAthletePreferences()
+  const { data: athletePreferences, isLoading: isLoadingPreferences } = useAthletePreferences()
   
+  const isLoading = isLoadingPreferences || !activity
   const unitSystem = athletePreferences?.unitSystem || "metric"
   const dateFormat = athletePreferences?.datePreference || "%m/%d/%Y"
+
+  if (isLoading) {
+    return (
+      <Card className="w-full">
+        <CardHeader className="pb-2">
+          <div className="flex justify-between items-start mb-2">
+            <Skeleton className="h-5 w-[150px]" />
+            <Skeleton className="h-4 w-[60px]" />
+          </div>
+          <div className="flex items-center gap-2">
+            <Skeleton className="h-5 w-[80px]" />
+          </div>
+        </CardHeader>
+        <CardContent className="pt-0">
+          <div className="grid grid-cols-3 gap-3">
+            <div className="space-y-1">
+              <Skeleton className="h-3 w-[40px]" />
+              <Skeleton className="h-4 w-[60px]" />
+            </div>
+            <div className="space-y-1">
+              <Skeleton className="h-3 w-[40px]" />
+              <Skeleton className="h-4 w-[60px]" />
+            </div>
+            <div className="space-y-1">
+              <Skeleton className="h-3 w-[40px]" />
+              <Skeleton className="h-4 w-[60px]" />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
   
   return (
     <Tooltip>

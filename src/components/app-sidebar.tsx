@@ -6,9 +6,7 @@ import { useEffect, useState } from "react"
 import { useSession } from "next-auth/react"
 import Image from "next/image"
 import { ActivityListItem } from "./activity-list-item"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Skeleton } from "@/components/ui/skeleton"
 import {
   Sidebar,
   SidebarContent,
@@ -116,17 +114,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <div className="flex items-center justify-between w-full">
               <div className="flex items-center gap-2 flex-1 px-2 py-2">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg">
-                  <Image
-                    src="/images/FitnessOverlaysLogo.jpg"
-                    alt="FitnessOverlays"
-                    width={30}
-                    height={30}
-                    className="rounded"
-                  />
-                </div>
-                <div className="grid flex-1 text-left text-base leading-tight">
-                  <span className="truncate font-medium">Activities</span>
+                <div className="grid flex-1 text-left text-2xl leading-tight">
+                  <span className="truncate font-bold">Activities</span>
                 </div>
               </div>
               {latestActivity && (currentPage !== 1 || selectedActivityId !== latestActivity.id) && (
@@ -143,15 +132,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent className="px-2">
-        <div className="space-y-2">
+        <div className="space-y-4">
           {status === "loading" ? (
-            [...Array(5)].map((_, i) => <Skeleton key={i} className="h-28" />)
+            [...Array(5)].map((_, i) => <ActivityListItem key={i} />)
           ) : !session ? (
             <div className="text-base text-muted-foreground text-center py-8">
               Please sign in to view your activities
             </div>
           ) : isPending ? (
-            [...Array(5)].map((_, i) => <Skeleton key={i} className="h-28" />)
+            [...Array(5)].map((_, i) => <ActivityListItem key={i} />)
           ) : error ? (
             <div className="text-base text-destructive">
               Error loading activities
