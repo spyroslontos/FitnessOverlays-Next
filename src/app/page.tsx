@@ -52,7 +52,7 @@ export default async function Home() {
               ) : (
                 <div className="flex flex-col items-center gap-3">
                   <SignInButton size="lg" />
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-muted-foreground dark:text-fitness-light-gray">
                     Completely free. Just log in with Strava.
                   </p>
                 </div>

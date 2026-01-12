@@ -4,6 +4,7 @@ import "./globals.css"
 import { QueryProvider } from "@/components/query-provider"
 import { SessionProvider } from "next-auth/react"
 import { TooltipProvider } from "@/components/ui/tooltip"
+import { ThemeProvider } from "@/components/theme-provider"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -91,15 +92,22 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${poppins.variable} ${lato.variable} ${oswald.variable} ${lora.variable} ${specialElite.variable} antialiased`}
       >
-        <SessionProvider>
-          <QueryProvider>
-            <TooltipProvider>{children}</TooltipProvider>
-          </QueryProvider>
-        </SessionProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <SessionProvider>
+            <QueryProvider>
+              <TooltipProvider>{children}</TooltipProvider>
+            </QueryProvider>
+          </SessionProvider>
+        </ThemeProvider>
       </body>
     </html>
   )

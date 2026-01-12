@@ -18,7 +18,7 @@ export function SocialProof({ count }: SocialProofProps) {
     <div className="flex items-center justify-center gap-3">
       <div className="flex -space-x-3">
         {avatarColors.map((colors, index) => (
-          <Avatar key={index} className={`size-10 border-2 border-white shadow-sm ${colors.split(" ")[0]}`}>
+          <Avatar key={index} className={`size-10 border-2 border-background shadow-sm ${colors.split(" ")[0]}`}>
             <AvatarFallback className={colors}>
               {index === avatarColors.length - 1 ? (
                 <span className="text-xs font-bold">+</span>
@@ -29,8 +29,8 @@ export function SocialProof({ count }: SocialProofProps) {
           </Avatar>
         ))}
       </div>
-      <div className="text-sm font-medium text-fitness-gray">
-        Loved by <span className="font-bold text-fitness-dark-gray">{count}+</span> athletes
+      <div className="text-sm font-medium text-fitness-gray dark:text-fitness-light-gray">
+        Loved by <span className="font-bold text-fitness-dark-gray dark:text-fitness-green">{count}+</span> athletes
       </div>
     </div>
   )

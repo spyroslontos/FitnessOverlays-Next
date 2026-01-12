@@ -1,28 +1,37 @@
 import Image from "next/image"
+import { ModeToggle } from "@/components/mode-toggle"
 
 export function Footer() {
   return (
     <footer className="w-full mt-auto border-t">
       <div className="mx-auto max-w-5xl py-8 px-4">
-        <div className="flex flex-col md:flex-row items-center justify-center md:justify-between gap-8">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6 md:gap-4">
           
-          <div className="md:w-1/3">
+          <div className="flex-1 flex justify-center md:justify-start">
             <Image 
               src="/images/api_logo_pwrdBy_strava_horiz_black.svg" 
               alt="Powered by Strava API" 
               width={120}
               height={20}
-              className="h-4 w-auto mx-auto md:mx-0"
+              className="h-4 w-auto dark:hidden"
+              style={{ width: "auto" }}
+            />
+            <Image 
+              src="/images/api_logo_pwrdBy_strava_horiz_white.svg" 
+              alt="Powered by Strava API" 
+              width={120}
+              height={20}
+              className="h-4 w-auto hidden dark:block"
               style={{ width: "auto" }}
             />
           </div>
 
-          <div className="md:w-1/3 flex items-center justify-center gap-6">
+          <div className="flex-1 flex items-center justify-center gap-6">
             <a 
               href="https://strava.app.link/QzrdTbuZYSb" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-gray-600 hover:text-gray-900 transition-colors"
+              className="text-muted-foreground hover:text-foreground transition-colors"
               aria-label="Strava"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
@@ -34,7 +43,7 @@ export function Footer() {
               href="https://x.com/spyroslontos" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-gray-600 hover:text-gray-900 transition-colors"
+              className="text-muted-foreground hover:text-foreground transition-colors"
               aria-label="X (Twitter)"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
@@ -46,7 +55,7 @@ export function Footer() {
               href="https://github.com/spyroslontos" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-gray-600 hover:text-gray-900 transition-colors"
+              className="text-muted-foreground hover:text-foreground transition-colors"
               aria-label="GitHub"
             >
               <svg className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
@@ -55,8 +64,9 @@ export function Footer() {
             </a>
           </div>
 
-          <div className="md:w-1/3">
-            <p className="text-sm text-gray text-center md:text-right">
+          <div className="flex-1 flex flex-col items-center md:items-end gap-2">
+            <ModeToggle />
+            <p className="text-xs text-muted-foreground">
               © 2026 FitnessOverlays
             </p>
           </div>
