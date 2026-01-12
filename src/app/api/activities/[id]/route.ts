@@ -9,7 +9,7 @@ const CACHE_MAX_AGE = 180 // 3 minutes
 
 export async function GET(
   _request: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const session = await auth()
