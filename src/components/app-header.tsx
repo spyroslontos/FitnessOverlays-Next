@@ -31,9 +31,6 @@ export function AppHeader() {
             onClick={toggleSidebar}
           >
             <SidebarIcon className="h-5 w-5" />
-            <span className="text-base font-medium hidden sm:inline">
-              Activities
-            </span>
           </Button>
           <Separator orientation="vertical" className="h-4 hidden sm:block" />
         </div>
