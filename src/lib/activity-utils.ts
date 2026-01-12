@@ -59,6 +59,22 @@ export const formatElevation = (meters: number, unitSystem: UnitSystem = "metric
 
 export const formatDate = (dateString: string, dateFormat: string = "%m/%d/%Y") => {
   const date = new Date(dateString)
+  const now = new Date()
+  
+  // Set times to midnight for date-only comparison in local time
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  const yesterday = new Date(today)
+  yesterday.setDate(yesterday.getDate() - 1)
+  
+  const targetDate = new Date(date.getFullYear(), date.getMonth(), date.getDate())
+  
+  if (targetDate.getTime() === today.getTime()) {
+    return "Today"
+  }
+  
+  if (targetDate.getTime() === yesterday.getTime()) {
+    return "Yesterday"
+  }
   
   // Handle different date format patterns
   if (dateFormat === "%b %d, %Y") {
