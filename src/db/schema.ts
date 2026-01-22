@@ -64,8 +64,9 @@ export const activityLists = pgTable(
     lastSynced: timestamp("last_synced").notNull().defaultNow(),
     page: integer("page").notNull().default(1),
     perPage: integer("per_page").notNull().default(30),
+    before: integer("before"), // Timestamp seconds
+    after: integer("after"), // Timestamp seconds
   },
-  (table) => [unique("unique_user_page").on(table.userId, table.page)],
 )
 
 // Individual Activities - Store detailed data when user selects specific activities

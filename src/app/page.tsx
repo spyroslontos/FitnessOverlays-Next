@@ -43,13 +43,23 @@ export default async function Home() {
 
             <div className="space-y-6">
               {session ? (
-                <Button 
-                  size="lg" 
-                  asChild 
-                  className="rounded-full px-12 py-6 text-lg font-semibold"
-                >
-                  <Link href="/app">Open App</Link>
-                </Button>
+                <div className="flex flex-wrap items-center justify-center gap-4">
+                  <Button 
+                    size="lg" 
+                    asChild 
+                    className="rounded-full px-12 py-6 text-lg font-semibold"
+                  >
+                    <Link href="/app">Open App</Link>
+                  </Button>
+                  <Button 
+                    size="lg" 
+                    variant="outline"
+                    asChild 
+                    className="rounded-full px-8 py-6 text-lg font-semibold"
+                  >
+                    <Link href="/heatmap">View Heatmap</Link>
+                  </Button>
+                </div>
               ) : (
                 <div className="flex flex-col items-center gap-2">
                   <SignInButton size="lg" />
