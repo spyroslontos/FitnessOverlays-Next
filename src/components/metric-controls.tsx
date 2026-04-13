@@ -14,7 +14,7 @@ import {
   AlignRight,
   Download,
 } from "lucide-react"
-import { METRICS, UnitSystem, DEFAULT_METRICS } from "@/lib/metrics"
+import { METRICS, DEFAULT_METRICS } from "@/lib/metrics"
 import { useAthletePreferences } from "@/hooks/use-athlete-preferences"
 
 type Alignment = "left" | "center" | "right"
@@ -270,10 +270,14 @@ export function MetricControls({
 
               <div className="space-y-3">
                 <div>
-                  <label className="text-sm text-gray-600 mb-2 block">
+                  <label
+                    htmlFor="overlay-text-color"
+                    className="text-sm text-gray-600 mb-2 block"
+                  >
                     Custom Color
                   </label>
                   <input
+                    id="overlay-text-color"
                     type="color"
                     value={textColor}
                     onChange={(e) => onTextColorChange(e.target.value)}
@@ -282,9 +286,9 @@ export function MetricControls({
                 </div>
 
                 <div>
-                  <label className="text-sm text-gray-600 mb-2 block">
+                  <p className="text-sm text-gray-600 mb-2 block">
                     Quick Colors
-                  </label>
+                  </p>
                   <div className="grid grid-cols-4 gap-2">
                     {[
                       { color: "#ffffff", name: "White" },
@@ -301,6 +305,7 @@ export function MetricControls({
                       { color: "#a52a2a", name: "Brown" },
                     ].map(({ color, name }) => (
                       <button
+                        type="button"
                         key={color}
                         className="w-8 h-8 rounded-lg border-2 border-gray-200 hover:border-gray-400 hover:scale-110 transition-all duration-200 shadow-sm hover:shadow-md"
                         style={{ backgroundColor: color }}

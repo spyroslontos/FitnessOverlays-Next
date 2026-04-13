@@ -1,8 +1,6 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import { useQuery } from "@tanstack/react-query"
-import { useSession } from "next-auth/react"
 import { OverlayCanvas, OverlayCanvasRef } from "./overlay-canvas"
 import { MetricControls } from "./metric-controls"
 import { UnitSystem } from "@/lib/metrics"
@@ -187,7 +185,9 @@ export function OverlayWorkspace({ data, isPending }: ActivityContainerProps) {
     setFontFamily(DEFAULTS.fontFamily)
     setTextColor(DEFAULTS.textColor)
 
-    Object.values(STORAGE_KEYS).forEach((key) => localStorage.removeItem(key))
+    Object.values(STORAGE_KEYS).forEach((key) => {
+      localStorage.removeItem(key)
+    })
   }
 
   return (

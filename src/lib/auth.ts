@@ -1,7 +1,5 @@
 import NextAuth from "next-auth"
 import Strava from "next-auth/providers/strava"
-import { db } from "@/db"
-import { users } from "@/db/schema"
 import { upsertUser } from "@/lib/user-sync"
 
 export const { handlers, signIn, signOut, auth } = NextAuth({

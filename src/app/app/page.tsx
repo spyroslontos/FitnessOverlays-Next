@@ -1,13 +1,19 @@
-import * as React from "react"
 import { AppSidebar } from "@/components/app-sidebar"
 import { AppHeader } from "@/components/app-header"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { SessionInfo } from "@/components/session-info"
 import { AthleteInfo } from "@/components/athlete-info"
 import { SelectedActivityDisplay } from "@/components/selected-activity-display"
+import { auth } from "@/lib/auth"
 import { cookies } from "next/headers"
+import { redirect } from "next/navigation"
 
 export default async function Page() {
+  const session = await auth()
+  if (!session?.user?.id) {
+    redirect("/")
+  }
+
   await SessionInfo()
   const cookieStore = await cookies()
   const defaultOpen = cookieStore.get("sidebar_state")?.value !== "false"

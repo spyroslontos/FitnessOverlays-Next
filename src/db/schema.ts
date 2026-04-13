@@ -8,7 +8,6 @@ import {
   bigint,
   json,
   serial,
-  unique,
 } from "drizzle-orm/pg-core"
 
 export const users = pgTable("users", {

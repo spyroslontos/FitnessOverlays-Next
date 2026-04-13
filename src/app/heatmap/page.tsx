@@ -19,7 +19,7 @@ export default async function HeatmapPage() {
 
   // Fetch user to get creation date and preferences
   const user = await db.query.users.findFirst({
-    where: eq(users.id, parseInt(session.user.id)),
+    where: eq(users.id, parseInt(session.user.id, 10)),
   })
 
   // Calculate year range

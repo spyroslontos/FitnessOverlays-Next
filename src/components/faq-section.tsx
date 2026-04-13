@@ -106,10 +106,9 @@ export function FAQSection() {
 
   return (
     <section id="faq" className="space-y-8 scroll-mt-20">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-      />
+      <script type="application/ld+json">
+        {JSON.stringify(structuredData)}
+      </script>
       <div className="text-center mb-8">
         <h2 className="text-4xl md:text-5xl font-bold text-foreground">
           Frequently Asked Questions

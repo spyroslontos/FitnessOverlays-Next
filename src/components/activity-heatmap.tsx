@@ -95,7 +95,7 @@ export function ActivityHeatmap({
     }
 
     // Check if selecting "Current Year" -> also normalize to end of day
-    const year = parseInt(yearStr)
+    const year = parseInt(yearStr, 10)
     const isCurrentYear = year === new Date().getFullYear()
 
     const end = isCurrentYear ? new Date() : new Date(year, 11, 31)

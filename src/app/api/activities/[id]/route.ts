@@ -23,7 +23,7 @@ export async function GET(
     const userId = parseInt(session.user.id, 10)
 
     // Validate ID
-    if (isNaN(activityId) || activityId <= 0) {
+    if (Number.isNaN(activityId) || activityId <= 0) {
       return NextResponse.json(
         { error: "Invalid activity ID" },
         { status: 400 },

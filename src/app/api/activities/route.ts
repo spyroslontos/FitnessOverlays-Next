@@ -22,12 +22,13 @@ export async function GET(request: Request) {
     const after = searchParams.get("after")
 
     // Determine Cache Strategy
-    const isHistorical = before && parseInt(before) < Date.now() / 1000 - 86400
+    const isHistorical =
+      before && parseInt(before, 10) < Date.now() / 1000 - 86400
     const cacheMaxAge = isHistorical ? LONG_CACHE : SHORT_CACHE
 
-    if (isNaN(page) || page < 1)
+    if (Number.isNaN(page) || page < 1)
       return NextResponse.json({ error: "Invalid page" }, { status: 400 })
-    if (isNaN(perPage) || perPage < 1 || perPage > 200)
+    if (Number.isNaN(perPage) || perPage < 1 || perPage > 200)
       return NextResponse.json({ error: "Invalid per_page" }, { status: 400 })
 
     // 1. Check DB cache (Supports filtered queries now)
@@ -36,10 +37,10 @@ export async function GET(request: Request) {
       eq(activityLists.page, page),
       perPage ? eq(activityLists.perPage, perPage) : undefined,
       before
-        ? eq(activityLists.before, parseInt(before))
+        ? eq(activityLists.before, parseInt(before, 10))
         : isNull(activityLists.before),
       after
-        ? eq(activityLists.after, parseInt(after))
+        ? eq(activityLists.after, parseInt(after, 10))
         : isNull(activityLists.after),
     )
 
@@ -90,8 +91,8 @@ export async function GET(request: Request) {
           data,
           page,
           perPage,
-          before: before ? parseInt(before) : null,
-          after: after ? parseInt(after) : null,
+          before: before ? parseInt(before, 10) : null,
+          after: after ? parseInt(after, 10) : null,
           lastSynced: new Date(),
         }
 

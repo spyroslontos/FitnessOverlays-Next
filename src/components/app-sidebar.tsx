@@ -4,16 +4,13 @@ import * as React from "react"
 import { useInfiniteQuery } from "@tanstack/react-query"
 import { useEffect, useState } from "react"
 import { useSession } from "next-auth/react"
-import Image from "next/image"
 import { ActivityListItem } from "./activity-list-item"
 import { Button } from "@/components/ui/button"
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import {
@@ -37,7 +34,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     error,
     fetchNextPage,
     hasNextPage,
-    isFetching,
     isFetchingNextPage,
     isPending,
   } = useInfiniteQuery({
