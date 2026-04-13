@@ -85,7 +85,7 @@ export function ActivitySummary({ data, isPending }: ActivityDetailsProps) {
             <Button
               variant="ghost"
               size="sm"
-              className="h-7 px-2 text-xs bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white border-0 shadow-sm hover:shadow-md transition-all duration-200"
+              className="h-7 px-2 text-xs bg-linear-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white border-0 shadow-sm hover:shadow-md transition-all duration-200"
               onClick={() =>
                 window.open(
                   `https://www.strava.com/activities/${data.id}`,

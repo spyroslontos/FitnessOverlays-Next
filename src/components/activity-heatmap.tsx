@@ -1,8 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { useQuery } from "@tanstack/react-query"
-import { Loader2 } from "lucide-react"
+import { keepPreviousData, useQuery } from "@tanstack/react-query"
 import { HeatmapCalendar } from "./heatmap-calendar"
 import {
   Select,
@@ -112,7 +111,7 @@ export function ActivityHeatmap({
 
   // Fetch Data
   const { data: activities = [], isLoading } = useQuery({
-    queryKey: ["activities", yearStr],
+    queryKey: ["activities", yearStr, startEpoch, endEpoch],
     queryFn: async () => {
       let all: any[] = [],
         page = 1
@@ -129,6 +128,11 @@ export function ActivityHeatmap({
       }
       return all
     },
+    placeholderData: keepPreviousData,
+    staleTime: 5 * 60 * 1000,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   })
 
   // Transform Data
@@ -184,6 +188,22 @@ export function ActivityHeatmap({
     })
   }, [activities, metric, isImperial])
 
+  const HeatmapLoading = () => {
+    return (
+      <div className="animate-pulse opacity-70">
+        <HeatmapCalendar
+          title={yearStr === "last365" ? "Last 365 Days" : `Year ${yearStr}`}
+          data={[]}
+          endDate={endDate}
+          rangeDays={rangeDays}
+          legend={{ placement: "bottom" }}
+          axisLabels={true}
+          levelClassNames={LEVEL_CLASSES}
+        />
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
@@ -221,9 +241,7 @@ export function ActivityHeatmap({
       </div>
 
       {isLoading ? (
-        <div className="flex justify-center p-12">
-          <Loader2 className="animate-spin" />
-        </div>
+        <HeatmapLoading />
       ) : (
         <HeatmapCalendar
           title={yearStr === "last365" ? "Last 365 Days" : `Year ${yearStr}`}
