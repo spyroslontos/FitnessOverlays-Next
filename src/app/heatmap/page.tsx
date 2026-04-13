@@ -25,11 +25,11 @@ export default async function HeatmapPage() {
   // Calculate year range
   const currentYear = new Date().getFullYear()
   let startYear = currentYear
-  
+
   if (user?.stravaCreatedAt) {
     startYear = user.stravaCreatedAt.getFullYear()
   } else if (user?.createdAt) {
-      startYear = user.createdAt.getFullYear()
+    startYear = user.createdAt.getFullYear()
   }
 
   // Generate years list [current, ..., start]
@@ -40,10 +40,10 @@ export default async function HeatmapPage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-       <HomeHeader />
-       <main className="flex-1 container mx-auto py-10 px-4">
-          <ActivityHeatmap years={years} currentYear={currentYear} />
-       </main>
+      <HomeHeader />
+      <main className="flex-1 container mx-auto py-10 px-4">
+        <ActivityHeatmap years={years} currentYear={currentYear} />
+      </main>
     </div>
   )
 }

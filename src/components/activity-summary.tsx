@@ -3,7 +3,12 @@
 import { Calendar, Clock, Route, Zap, ExternalLink } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { formatDistance, formatTime, formatPace, formatDate } from "@/lib/activity-utils"
+import {
+  formatDistance,
+  formatTime,
+  formatPace,
+  formatDate,
+} from "@/lib/activity-utils"
 import { useAthletePreferences } from "@/hooks/use-athlete-preferences"
 
 interface ActivityDetailsProps {
@@ -13,10 +18,10 @@ interface ActivityDetailsProps {
 
 export function ActivitySummary({ data, isPending }: ActivityDetailsProps) {
   const { data: athletePreferences } = useAthletePreferences()
-  
+
   const unitSystem = athletePreferences?.unitSystem || "metric"
   const dateFormat = athletePreferences?.datePreference || "%m/%d/%Y"
-  
+
   if (isPending) {
     return (
       <Card className="p-3 mb-4">
@@ -46,10 +51,13 @@ export function ActivitySummary({ data, isPending }: ActivityDetailsProps) {
     <Card className="p-3 mb-4">
       <div className="space-y-2">
         <div className="flex justify-between items-center gap-2">
-          <h3 className="font-medium text-base truncate flex-1" title={data.name}>
+          <h3
+            className="font-medium text-base truncate flex-1"
+            title={data.name}
+          >
             {data.name}
           </h3>
-          <div className="flex items-center gap-1 text-gray-600 flex-shrink-0">
+          <div className="flex items-center gap-1 text-gray-600 shrink-0">
             <Calendar className="h-3 w-3 text-gray-500" />
             <span className="text-sm whitespace-nowrap">
               {formatDate(data.start_date, dateFormat)}
@@ -59,7 +67,9 @@ export function ActivitySummary({ data, isPending }: ActivityDetailsProps) {
         <div className="flex items-center gap-3 text-sm">
           <div className="flex items-center gap-1">
             <Route className="h-3 w-3 text-gray-500" />
-            <span className="font-medium">{formatDistance(data.distance, unitSystem)}</span>
+            <span className="font-medium">
+              {formatDistance(data.distance, unitSystem)}
+            </span>
           </div>
           <div className="flex items-center gap-1">
             <Clock className="h-3 w-3 text-gray-500" />
@@ -76,7 +86,12 @@ export function ActivitySummary({ data, isPending }: ActivityDetailsProps) {
               variant="ghost"
               size="sm"
               className="h-7 px-2 text-xs bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white border-0 shadow-sm hover:shadow-md transition-all duration-200"
-              onClick={() => window.open(`https://www.strava.com/activities/${data.id}`, '_blank')}
+              onClick={() =>
+                window.open(
+                  `https://www.strava.com/activities/${data.id}`,
+                  "_blank",
+                )
+              }
             >
               <ExternalLink className="h-3 w-3 mr-1" />
               View on Strava

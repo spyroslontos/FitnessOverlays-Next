@@ -8,7 +8,13 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { Route, Clock, Zap, TrendingUp, Heart, Crown } from "lucide-react"
-import { formatDistance, formatTime, formatDate, formatPace, formatElevation } from "@/lib/activity-utils"
+import {
+  formatDistance,
+  formatTime,
+  formatDate,
+  formatPace,
+  formatElevation,
+} from "@/lib/activity-utils"
 import { useAthletePreferences } from "@/hooks/use-athlete-preferences"
 import { Skeleton } from "@/components/ui/skeleton"
 
@@ -48,17 +54,21 @@ function Metric({ icon, label, value, className = "" }: MetricProps) {
       {icon}
       <div className="min-w-0">
         <div className="text-muted-foreground text-xs">{label}</div>
-        <div className={`font-medium ${className}`}>
-          {value}
-        </div>
+        <div className={`font-medium ${className}`}>{value}</div>
       </div>
     </div>
   )
 }
 
-export function ActivityListItem({ activity, onClick, isLatest, isSelected }: ActivityTileProps) {
-  const { data: athletePreferences, isLoading: isLoadingPreferences } = useAthletePreferences()
-  
+export function ActivityListItem({
+  activity,
+  onClick,
+  isLatest,
+  isSelected,
+}: ActivityTileProps) {
+  const { data: athletePreferences, isLoading: isLoadingPreferences } =
+    useAthletePreferences()
+
   const isLoading = isLoadingPreferences || !activity
   const unitSystem = athletePreferences?.unitSystem || "metric"
   const dateFormat = athletePreferences?.datePreference || "%m/%d/%Y"
@@ -94,7 +104,7 @@ export function ActivityListItem({ activity, onClick, isLatest, isSelected }: Ac
       </Card>
     )
   }
-  
+
   return (
     <Tooltip>
       <TooltipTrigger asChild>
@@ -130,37 +140,46 @@ export function ActivityListItem({ activity, onClick, isLatest, isSelected }: Ac
           <CardContent className="pt-0">
             <div className="grid grid-cols-3 gap-3 text-sm">
               <Metric
-                icon={<Route className="h-3 w-3 text-gray-500 flex-shrink-0" />}
+                icon={<Route className="h-3 w-3 text-gray-500 shrink-0" />}
                 label="Distance"
                 value={formatDistance(activity.distance, unitSystem)}
               />
               <Metric
-                icon={<Clock className="h-3 w-3 text-gray-500 flex-shrink-0" />}
+                icon={<Clock className="h-3 w-3 text-gray-500 shrink-0" />}
                 label="Time"
                 value={formatTime(activity.moving_time)}
               />
               <Metric
-                icon={<Zap className="h-3 w-3 text-gray-500 flex-shrink-0" />}
+                icon={<Zap className="h-3 w-3 text-gray-500 shrink-0" />}
                 label="Pace"
-                value={formatPace(activity.distance, activity.moving_time, unitSystem)}
+                value={formatPace(
+                  activity.distance,
+                  activity.moving_time,
+                  unitSystem,
+                )}
               />
               {activity.total_elevation_gain > 0 && (
                 <Metric
-                  icon={<TrendingUp className="h-3 w-3 text-gray-500 flex-shrink-0" />}
+                  icon={
+                    <TrendingUp className="h-3 w-3 text-gray-500 shrink-0" />
+                  }
                   label="Elevation"
-                  value={formatElevation(activity.total_elevation_gain, unitSystem)}
+                  value={formatElevation(
+                    activity.total_elevation_gain,
+                    unitSystem,
+                  )}
                 />
               )}
               {activity.kudos_count > 0 && (
                 <Metric
-                  icon={<Heart className="h-3 w-3 text-gray-500 flex-shrink-0" />}
+                  icon={<Heart className="h-3 w-3 text-gray-500 shrink-0" />}
                   label="Kudos"
                   value={activity.kudos_count}
                 />
               )}
               {(activity.pr_count ?? 0) > 0 && (
                 <Metric
-                  icon={<Crown className="h-3 w-3 text-yellow-500 flex-shrink-0" />}
+                  icon={<Crown className="h-3 w-3 text-yellow-500 shrink-0" />}
                   label="PRs"
                   value={activity.pr_count!}
                   className="text-yellow-600"
@@ -171,12 +190,12 @@ export function ActivityListItem({ activity, onClick, isLatest, isSelected }: Ac
         </Card>
       </TooltipTrigger>
       <TooltipContent side="right">
-          <div className="text-base">
-            <div className="font-medium">{activity.name}</div>
-            <div className="text-sm text-muted-foreground">
-              {activity.type} • {formatDate(activity.start_date, dateFormat)}
-            </div>
+        <div className="text-base">
+          <div className="font-medium">{activity.name}</div>
+          <div className="text-sm text-muted-foreground">
+            {activity.type} • {formatDate(activity.start_date, dateFormat)}
           </div>
+        </div>
       </TooltipContent>
     </Tooltip>
   )

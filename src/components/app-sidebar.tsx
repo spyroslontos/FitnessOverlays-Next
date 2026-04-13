@@ -32,19 +32,20 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const [currentPage, setCurrentPage] = useState(1)
   const { data: session, status } = useSession()
 
-  const { 
+  const {
     data,
     error,
     fetchNextPage,
     hasNextPage,
     isFetching,
     isFetchingNextPage,
-    isPending
+    isPending,
   } = useInfiniteQuery({
     queryKey: ["activityData"],
-    queryFn: ({ pageParam = 1 }) => 
-      fetch(`/api/activities?page=${pageParam}&per_page=30`)
-        .then((res) => res.json()),
+    queryFn: ({ pageParam = 1 }) =>
+      fetch(`/api/activities?page=${pageParam}&per_page=30`).then((res) =>
+        res.json(),
+      ),
     getNextPageParam: (lastPage, allPages) => {
       // If last page has 30 activities, there might be more
       return lastPage.length === 30 ? allPages.length + 1 : undefined
@@ -63,7 +64,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   // Set initial selection on data load (only after hydration)
   useEffect(() => {
-    if (latestActivity && typeof window !== 'undefined') {
+    if (latestActivity && typeof window !== "undefined") {
       const persisted = localStorage.getItem("selectedActivityId")
       const timestamp = localStorage.getItem("selectedActivityTimestamp")
       const oneDay = 24 * 60 * 60 * 1000
@@ -78,7 +79,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page)
-    
+
     // Auto-fetch next page if we're near the end
     if (page > totalPages - 2 && hasNextPage && !isFetchingNextPage) {
       fetchNextPage()
@@ -87,7 +88,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   const selectActivity = (activityId: number) => {
     setSelectedActivityId(activityId)
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       localStorage.setItem("selectedActivityId", activityId.toString())
       localStorage.setItem("selectedActivityTimestamp", Date.now().toString())
       window.dispatchEvent(
@@ -118,15 +119,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <span className="truncate font-bold">Activities</span>
                 </div>
               </div>
-              {latestActivity && (currentPage !== 1 || selectedActivityId !== latestActivity.id) && (
-                <Button 
-                  size="sm" 
-                  onClick={jumpToLatest}
-                  className="text-sm px-3 py-2 h-auto ml-2"
-                >
-                  Jump to latest
-                </Button>
-              )}
+              {latestActivity &&
+                (currentPage !== 1 ||
+                  selectedActivityId !== latestActivity.id) && (
+                  <Button
+                    size="sm"
+                    onClick={jumpToLatest}
+                    className="text-sm px-3 py-2 h-auto ml-2"
+                  >
+                    Jump to latest
+                  </Button>
+                )}
             </div>
           </SidebarMenuItem>
         </SidebarMenu>

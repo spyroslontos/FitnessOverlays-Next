@@ -53,21 +53,18 @@ export const users = pgTable("users", {
 })
 
 // Activity Lists (for pagination/sync management) - Store the 30 activities from list
-export const activityLists = pgTable(
-  "activity_lists",
-  {
-    id: serial("id").primaryKey(),
-    userId: bigint("user_id", { mode: "number" })
-      .notNull()
-      .references(() => users.id),
-    data: json("data").notNull(), // Activity list JSON (30 activities)
-    lastSynced: timestamp("last_synced").notNull().defaultNow(),
-    page: integer("page").notNull().default(1),
-    perPage: integer("per_page").notNull().default(30),
-    before: integer("before"), // Timestamp seconds
-    after: integer("after"), // Timestamp seconds
-  },
-)
+export const activityLists = pgTable("activity_lists", {
+  id: serial("id").primaryKey(),
+  userId: bigint("user_id", { mode: "number" })
+    .notNull()
+    .references(() => users.id),
+  data: json("data").notNull(), // Activity list JSON (30 activities)
+  lastSynced: timestamp("last_synced").notNull().defaultNow(),
+  page: integer("page").notNull().default(1),
+  perPage: integer("per_page").notNull().default(30),
+  before: integer("before"), // Timestamp seconds
+  after: integer("after"), // Timestamp seconds
+})
 
 // Individual Activities - Store detailed data when user selects specific activities
 export const activities = pgTable("activities", {

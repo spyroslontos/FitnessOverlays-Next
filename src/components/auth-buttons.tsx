@@ -8,7 +8,7 @@ export function SignInButton({ size = "md" }: { size?: "sm" | "md" | "lg" }) {
     md: "h-14 w-auto sm:h-14",
     lg: "h-18 w-auto sm:h-18",
   }
-  
+
   return (
     <form
       action={async () => {

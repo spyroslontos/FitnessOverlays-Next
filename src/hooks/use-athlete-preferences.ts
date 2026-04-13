@@ -21,10 +21,10 @@ export function useAthletePreferences() {
         throw new Error("Failed to fetch athlete data")
       }
       const data = await response.json()
-      
+
       // Map Strava measurement preference to our unit system
       const unitSystem = mapStravaUnitsToUnitSystem(data.measurement_preference)
-      
+
       return {
         datePreference: unitSystem === "metric" ? "%b %d, %Y" : "%m/%d/%Y",
         measurementPreference: data.measurement_preference || "meters",

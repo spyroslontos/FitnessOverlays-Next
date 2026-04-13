@@ -19,7 +19,7 @@ const getCachedUserCount = unstable_cache(
     return result[0]?.count ?? 0
   },
   ["user-count"],
-  { revalidate: 3600 } // 1 hour
+  { revalidate: 3600 }, // 1 hour
 )
 
 export default async function Home() {
@@ -29,7 +29,7 @@ export default async function Home() {
   return (
     <div className="min-h-screen flex flex-col">
       <HomeHeader />
-      
+
       <main className="flex-1">
         <section className="py-12 md:py-20">
           <div className="max-w-4xl mx-auto px-4 text-center space-y-8">
@@ -38,23 +38,25 @@ export default async function Home() {
             </h1>
 
             <h2 className="text-lg md:text-xl max-w-2xl mx-auto text-muted-foreground font-normal">
-              Generate transparent Strava-style stats for runs, rides, and workouts. Export clean PNGs ready for social media including Instagram, TikTok, and Reels.
+              Generate transparent Strava-style stats for runs, rides, and
+              workouts. Export clean PNGs ready for social media including
+              Instagram, TikTok, and Reels.
             </h2>
 
             <div className="space-y-6">
               {session ? (
                 <div className="flex flex-wrap items-center justify-center gap-4">
-                  <Button 
-                    size="lg" 
-                    asChild 
+                  <Button
+                    size="lg"
+                    asChild
                     className="rounded-full px-12 py-6 text-lg font-semibold"
                   >
                     <Link href="/app">Open App</Link>
                   </Button>
-                  <Button 
-                    size="lg" 
+                  <Button
+                    size="lg"
                     variant="outline"
-                    asChild 
+                    asChild
                     className="rounded-full px-8 py-6 text-lg font-semibold"
                   >
                     <Link href="/heatmap">View Heatmap</Link>
@@ -68,19 +70,21 @@ export default async function Home() {
                   </p>
                 </div>
               )}
-              
+
               <SocialProof count={userCount} />
             </div>
           </div>
         </section>
 
-
         <section className="w-full py-12 md:py-24 bg-muted/40 border-y border-border/50">
           <div className="max-w-6xl mx-auto px-4">
             <div className="text-center mb-16 space-y-4">
-              <h2 className="text-4xl md:text-5xl font-bold text-foreground tracking-tight">How It Works</h2>
+              <h2 className="text-4xl md:text-5xl font-bold text-foreground tracking-tight">
+                How It Works
+              </h2>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Turn any Strava activity into a custom overlay for Instagram Stories in a few simple steps.
+                Turn any Strava activity into a custom overlay for Instagram
+                Stories in a few simple steps.
               </p>
             </div>
 
@@ -94,9 +98,12 @@ export default async function Home() {
                     </div>
                   </div>
                   <div className="text-center space-y-2">
-                    <h3 className="text-xl font-bold text-foreground">1. Connect Strava</h3>
+                    <h3 className="text-xl font-bold text-foreground">
+                      1. Connect Strava
+                    </h3>
                     <p className="text-sm text-muted-foreground leading-relaxed">
-                      Securely sync your account to access activities instantly. Fast, read-only access with no manual entry needed.
+                      Securely sync your account to access activities instantly.
+                      Fast, read-only access with no manual entry needed.
                     </p>
                   </div>
                 </div>
@@ -111,9 +118,12 @@ export default async function Home() {
                     </div>
                   </div>
                   <div className="text-center space-y-2">
-                    <h3 className="text-xl font-bold text-foreground">2. Choose Activity</h3>
+                    <h3 className="text-xl font-bold text-foreground">
+                      2. Choose Activity
+                    </h3>
                     <p className="text-sm text-muted-foreground leading-relaxed">
-                      Select any run, ride, or workout. We automatically pull your stats to generate your unique custom overlay.
+                      Select any run, ride, or workout. We automatically pull
+                      your stats to generate your unique custom overlay.
                     </p>
                   </div>
                 </div>
@@ -128,9 +138,13 @@ export default async function Home() {
                     </div>
                   </div>
                   <div className="text-center space-y-2">
-                    <h3 className="text-xl font-bold text-foreground">3. Customize Design</h3>
+                    <h3 className="text-xl font-bold text-foreground">
+                      3. Customize Design
+                    </h3>
                     <p className="text-sm text-muted-foreground leading-relaxed">
-                      Style your transparent overlay with custom colors and stats. Create a look that matches your aesthetic perfectly.
+                      Style your transparent overlay with custom colors and
+                      stats. Create a look that matches your aesthetic
+                      perfectly.
                     </p>
                   </div>
                 </div>
@@ -145,9 +159,12 @@ export default async function Home() {
                     </div>
                   </div>
                   <div className="text-center space-y-2">
-                    <h3 className="text-xl font-bold text-foreground">4. Download Sticker</h3>
+                    <h3 className="text-xl font-bold text-foreground">
+                      4. Download Sticker
+                    </h3>
                     <p className="text-sm text-muted-foreground leading-relaxed">
-                      Export a high-quality transparent PNG. Add it as a sticker to Instagram Stories, Reels, or TikTok.
+                      Export a high-quality transparent PNG. Add it as a sticker
+                      to Instagram Stories, Reels, or TikTok.
                     </p>
                   </div>
                 </div>
@@ -170,7 +187,8 @@ export default async function Home() {
                   Ready to Create Your First Overlay?
                 </h3>
                 <p className="text-lg text-muted-foreground">
-                  Connect your Strava account and start sharing your achievements in seconds.
+                  Connect your Strava account and start sharing your
+                  achievements in seconds.
                 </p>
               </div>
               <div className="flex justify-center transition-transform hover:scale-105 duration-200">

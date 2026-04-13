@@ -18,23 +18,33 @@ export function OverlayWorkspace({ data, isPending }: ActivityContainerProps) {
 
   const DEFAULTS = {
     visibleMetrics: ["distance", "time", "pace", "avgSpeed"],
-    alignment: 'center' as const,
-    labelSize: 'medium' as const,
-    valueSize: 'medium' as const,
+    alignment: "center" as const,
+    labelSize: "medium" as const,
+    valueSize: "medium" as const,
     columns: 1,
-    fontFamily: 'Poppins',
-    textColor: '#ffffff'
+    fontFamily: "Poppins",
+    textColor: "#ffffff",
   }
 
-  const [visibleMetrics, setVisibleMetrics] = useState<string[]>(DEFAULTS.visibleMetrics)
-  const [alignment, setAlignment] = useState<'left' | 'center' | 'right'>(DEFAULTS.alignment)
-  const [labelSize, setLabelSize] = useState<'small' | 'medium' | 'large'>(DEFAULTS.labelSize)
-  const [valueSize, setValueSize] = useState<'small' | 'medium' | 'large'>(DEFAULTS.valueSize)
-  const [columns, setColumns] = useState<1 | 2 | 3 | 4>(DEFAULTS.columns as 1 | 2 | 3 | 4)
+  const [visibleMetrics, setVisibleMetrics] = useState<string[]>(
+    DEFAULTS.visibleMetrics,
+  )
+  const [alignment, setAlignment] = useState<"left" | "center" | "right">(
+    DEFAULTS.alignment,
+  )
+  const [labelSize, setLabelSize] = useState<"small" | "medium" | "large">(
+    DEFAULTS.labelSize,
+  )
+  const [valueSize, setValueSize] = useState<"small" | "medium" | "large">(
+    DEFAULTS.valueSize,
+  )
+  const [columns, setColumns] = useState<1 | 2 | 3 | 4>(
+    DEFAULTS.columns as 1 | 2 | 3 | 4,
+  )
   const [fontFamily, setFontFamily] = useState<string>(DEFAULTS.fontFamily)
   const [textColor, setTextColor] = useState<string>(DEFAULTS.textColor)
   const { data: athletePreferences } = useAthletePreferences()
-  
+
   const unitSystem: UnitSystem = athletePreferences?.unitSystem || "metric"
 
   const handleExport = () => {
@@ -42,7 +52,7 @@ export function OverlayWorkspace({ data, isPending }: ActivityContainerProps) {
     if (!dataURL) return
 
     // Download the image
-    const link = document.createElement('a')
+    const link = document.createElement("a")
     link.download = `overlay-${Date.now()}.png`
     link.href = dataURL
     link.click()
@@ -50,16 +60,20 @@ export function OverlayWorkspace({ data, isPending }: ActivityContainerProps) {
 
   const STORAGE_KEYS = {
     selectedMetrics: "selectedMetrics",
-    alignment: "alignment", 
+    alignment: "alignment",
     labelSize: "labelSize",
     valueSize: "valueSize",
     columns: "columns",
     fontFamily: "fontFamily",
-    textColor: "textColor"
+    textColor: "textColor",
   }
 
   useEffect(() => {
-    const loadSetting = (key: string, setter: (value: any) => void, parser?: (value: string) => any) => {
+    const loadSetting = (
+      key: string,
+      setter: (value: any) => void,
+      parser?: (value: string) => any,
+    ) => {
       const saved = localStorage.getItem(key)
       if (saved) {
         try {
@@ -75,26 +89,26 @@ export function OverlayWorkspace({ data, isPending }: ActivityContainerProps) {
     }
 
     // Only load from localStorage if we're in the browser
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       // Load metrics (array) - needs JSON parsing
       loadSetting(STORAGE_KEYS.selectedMetrics, setVisibleMetrics)
-      
+
       // Load simple string values
       const alignment = localStorage.getItem(STORAGE_KEYS.alignment)
-      if (alignment && ['left', 'center', 'right'].includes(alignment)) {
-        setAlignment(alignment as 'left' | 'center' | 'right')
+      if (alignment && ["left", "center", "right"].includes(alignment)) {
+        setAlignment(alignment as "left" | "center" | "right")
       }
-      
+
       const labelSize = localStorage.getItem(STORAGE_KEYS.labelSize)
-      if (labelSize && ['small', 'medium', 'large'].includes(labelSize)) {
-        setLabelSize(labelSize as 'small' | 'medium' | 'large')
+      if (labelSize && ["small", "medium", "large"].includes(labelSize)) {
+        setLabelSize(labelSize as "small" | "medium" | "large")
       }
-      
+
       const valueSize = localStorage.getItem(STORAGE_KEYS.valueSize)
-      if (valueSize && ['small', 'medium', 'large'].includes(valueSize)) {
-        setValueSize(valueSize as 'small' | 'medium' | 'large')
+      if (valueSize && ["small", "medium", "large"].includes(valueSize)) {
+        setValueSize(valueSize as "small" | "medium" | "large")
       }
-      
+
       const columns = localStorage.getItem(STORAGE_KEYS.columns)
       if (columns) {
         const num = Number(columns)
@@ -102,12 +116,12 @@ export function OverlayWorkspace({ data, isPending }: ActivityContainerProps) {
           setColumns(num as 1 | 2 | 3 | 4)
         }
       }
-      
+
       const fontFamily = localStorage.getItem(STORAGE_KEYS.fontFamily)
       if (fontFamily) {
         setFontFamily(fontFamily)
       }
-      
+
       const textColor = localStorage.getItem(STORAGE_KEYS.textColor)
       if (textColor) {
         setTextColor(textColor)
@@ -115,19 +129,54 @@ export function OverlayWorkspace({ data, isPending }: ActivityContainerProps) {
     }
   }, [])
 
-  const createHandler = (setter: (value: any) => void, key: string, serializer?: (value: any) => string) => 
+  const createHandler =
+    (
+      setter: (value: any) => void,
+      key: string,
+      serializer?: (value: any) => string,
+    ) =>
     (value: any) => {
       setter(value)
-      localStorage.setItem(key, serializer ? serializer(value) : JSON.stringify(value))
+      localStorage.setItem(
+        key,
+        serializer ? serializer(value) : JSON.stringify(value),
+      )
     }
 
-  const handleMetricsChange = createHandler(setVisibleMetrics, STORAGE_KEYS.selectedMetrics)
-  const handleAlignmentChange = createHandler(setAlignment, STORAGE_KEYS.alignment, String)
-  const handleLabelSizeChange = createHandler(setLabelSize, STORAGE_KEYS.labelSize, String)
-  const handleValueSizeChange = createHandler(setValueSize, STORAGE_KEYS.valueSize, String)
-  const handleColumnsChange = createHandler(setColumns as (value: 1 | 2 | 3 | 4) => void, STORAGE_KEYS.columns, String)
-  const handleFontFamilyChange = createHandler(setFontFamily, STORAGE_KEYS.fontFamily, String)
-  const handleTextColorChange = createHandler(setTextColor, STORAGE_KEYS.textColor, String)
+  const handleMetricsChange = createHandler(
+    setVisibleMetrics,
+    STORAGE_KEYS.selectedMetrics,
+  )
+  const handleAlignmentChange = createHandler(
+    setAlignment,
+    STORAGE_KEYS.alignment,
+    String,
+  )
+  const handleLabelSizeChange = createHandler(
+    setLabelSize,
+    STORAGE_KEYS.labelSize,
+    String,
+  )
+  const handleValueSizeChange = createHandler(
+    setValueSize,
+    STORAGE_KEYS.valueSize,
+    String,
+  )
+  const handleColumnsChange = createHandler(
+    setColumns as (value: 1 | 2 | 3 | 4) => void,
+    STORAGE_KEYS.columns,
+    String,
+  )
+  const handleFontFamilyChange = createHandler(
+    setFontFamily,
+    STORAGE_KEYS.fontFamily,
+    String,
+  )
+  const handleTextColorChange = createHandler(
+    setTextColor,
+    STORAGE_KEYS.textColor,
+    String,
+  )
 
   const resetAllSettings = () => {
     setVisibleMetrics(DEFAULTS.visibleMetrics)
@@ -138,7 +187,7 @@ export function OverlayWorkspace({ data, isPending }: ActivityContainerProps) {
     setFontFamily(DEFAULTS.fontFamily)
     setTextColor(DEFAULTS.textColor)
 
-    Object.values(STORAGE_KEYS).forEach(key => localStorage.removeItem(key))
+    Object.values(STORAGE_KEYS).forEach((key) => localStorage.removeItem(key))
   }
 
   return (

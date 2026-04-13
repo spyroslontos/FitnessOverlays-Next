@@ -29,7 +29,7 @@ function CollapsibleContent({
       data-slot="collapsible-content"
       className={cn(
         "overflow-hidden transition-all duration-200 ease-out data-[state=closed]:max-h-0 data-[state=open]:max-h-[500px]",
-        className
+        className,
       )}
       {...props}
     />

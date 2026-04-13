@@ -83,7 +83,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           // Ensure profile.id is a number (Strava API returns numbers, but Profile type might call it string)
           const profileWithId = {
             ...profile,
-            id: typeof profile.id === 'string' ? parseInt(profile.id, 10) : profile.id
+            id:
+              typeof profile.id === "string"
+                ? parseInt(profile.id, 10)
+                : profile.id,
           }
           await upsertUser(profileWithId)
         } catch (error) {

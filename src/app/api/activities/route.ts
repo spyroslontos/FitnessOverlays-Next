@@ -22,32 +22,37 @@ export async function GET(request: Request) {
     const after = searchParams.get("after")
 
     // Determine Cache Strategy
-    const isHistorical = before && (parseInt(before) < (Date.now() / 1000) - 86400)
+    const isHistorical = before && parseInt(before) < Date.now() / 1000 - 86400
     const cacheMaxAge = isHistorical ? LONG_CACHE : SHORT_CACHE
 
-    if (isNaN(page) || page < 1) return NextResponse.json({ error: "Invalid page" }, { status: 400 })
-    if (isNaN(perPage) || perPage < 1 || perPage > 200) return NextResponse.json({ error: "Invalid per_page" }, { status: 400 })
+    if (isNaN(page) || page < 1)
+      return NextResponse.json({ error: "Invalid page" }, { status: 400 })
+    if (isNaN(perPage) || perPage < 1 || perPage > 200)
+      return NextResponse.json({ error: "Invalid per_page" }, { status: 400 })
 
     // 1. Check DB cache (Supports filtered queries now)
     const dbQuery = and(
-        eq(activityLists.userId, userId),
-        eq(activityLists.page, page),
-        perPage ? eq(activityLists.perPage, perPage) : undefined,
-        before ? eq(activityLists.before, parseInt(before)) : isNull(activityLists.before),
-        after ? eq(activityLists.after, parseInt(after)) : isNull(activityLists.after),
+      eq(activityLists.userId, userId),
+      eq(activityLists.page, page),
+      perPage ? eq(activityLists.perPage, perPage) : undefined,
+      before
+        ? eq(activityLists.before, parseInt(before))
+        : isNull(activityLists.before),
+      after
+        ? eq(activityLists.after, parseInt(after))
+        : isNull(activityLists.after),
     )
 
-    const cached = await db
-      .select()
-      .from(activityLists)
-      .where(dbQuery)
-      .limit(1)
+    const cached = await db.select().from(activityLists).where(dbQuery).limit(1)
 
     if (cached.length > 0) {
-      const isFresh = Date.now() - cached[0].lastSynced.getTime() < (cacheMaxAge * 1000)
+      const isFresh =
+        Date.now() - cached[0].lastSynced.getTime() < cacheMaxAge * 1000
       if (isFresh) {
         return NextResponse.json(cached[0].data, {
-          headers: { "Cache-Control": `private, max-age=${cacheMaxAge}, stale-while-revalidate=600` }
+          headers: {
+            "Cache-Control": `private, max-age=${cacheMaxAge}, stale-while-revalidate=600`,
+          },
         })
       }
     }
@@ -58,13 +63,14 @@ export async function GET(request: Request) {
     if (after) stravaUrl += `&after=${after}`
 
     const response = await fetch(stravaUrl, {
-        headers: { Authorization: `Bearer ${session.accessToken}` },
-        next: { revalidate: 0 } 
+      headers: { Authorization: `Bearer ${session.accessToken}` },
+      next: { revalidate: 0 },
     })
 
     if (!response.ok) {
-        if (response.status === 401) return NextResponse.json({ error: "Token expired" }, { status: 401 })
-        throw new Error(`Strava API error: ${response.status}`)
+      if (response.status === 401)
+        return NextResponse.json({ error: "Token expired" }, { status: 401 })
+      throw new Error(`Strava API error: ${response.status}`)
     }
 
     const data = await response.json()
@@ -72,32 +78,44 @@ export async function GET(request: Request) {
     // 3. Update DB Cache
     if (data.length > 0) {
       if (data[0].athlete?.id === userId) {
-         // Manual Upsert Logic since we dropped the unique constraint
-         const existing = await db.select({ id: activityLists.id }).from(activityLists).where(dbQuery).limit(1)
-         
-         const payload = {
-            userId,
-            data,
-            page,
-            perPage,
-            before: before ? parseInt(before) : null,
-            after: after ? parseInt(after) : null,
-            lastSynced: new Date(),
-         }
+        // Manual Upsert Logic since we dropped the unique constraint
+        const existing = await db
+          .select({ id: activityLists.id })
+          .from(activityLists)
+          .where(dbQuery)
+          .limit(1)
 
-         if (existing.length > 0) {
-             await db.update(activityLists).set(payload).where(eq(activityLists.id, existing[0].id))
-         } else {
-             await db.insert(activityLists).values(payload)
-         }
+        const payload = {
+          userId,
+          data,
+          page,
+          perPage,
+          before: before ? parseInt(before) : null,
+          after: after ? parseInt(after) : null,
+          lastSynced: new Date(),
+        }
+
+        if (existing.length > 0) {
+          await db
+            .update(activityLists)
+            .set(payload)
+            .where(eq(activityLists.id, existing[0].id))
+        } else {
+          await db.insert(activityLists).values(payload)
+        }
       }
     }
 
     return NextResponse.json(data, {
-      headers: { "Cache-Control": `private, max-age=${cacheMaxAge}, stale-while-revalidate=600` }
+      headers: {
+        "Cache-Control": `private, max-age=${cacheMaxAge}, stale-while-revalidate=600`,
+      },
     })
   } catch (error) {
     console.error("GET /api/activities error:", error)
-    return NextResponse.json({ error: "Failed to fetch activities" }, { status: 500 })
+    return NextResponse.json(
+      { error: "Failed to fetch activities" },
+      { status: 500 },
+    )
   }
 }

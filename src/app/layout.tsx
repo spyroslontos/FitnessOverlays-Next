@@ -1,5 +1,12 @@
 import type { Metadata } from "next"
-import { Plus_Jakarta_Sans, Poppins, Lato, Oswald, Lora, Special_Elite } from "next/font/google"
+import {
+  Plus_Jakarta_Sans,
+  Poppins,
+  Lato,
+  Oswald,
+  Lora,
+  Special_Elite,
+} from "next/font/google"
 import "./globals.css"
 import { QueryProvider } from "@/components/query-provider"
 import { SessionProvider } from "next-auth/react"
@@ -41,8 +48,17 @@ const specialElite = Special_Elite({
 
 export const metadata: Metadata = {
   title: "Fitness Overlays - Create Beautiful Strava Activity Graphics",
-  description: "Transform your Strava activities into stunning visual overlays. Create professional fitness content with customizable templates, rich data visualization, and easy sharing options.",
-  keywords: ["fitness overlays", "strava graphics", "activity visualization", "fitness content", "running graphics", "cycling overlays", "workout visualization"],
+  description:
+    "Transform your Strava activities into stunning visual overlays. Create professional fitness content with customizable templates, rich data visualization, and easy sharing options.",
+  keywords: [
+    "fitness overlays",
+    "strava graphics",
+    "activity visualization",
+    "fitness content",
+    "running graphics",
+    "cycling overlays",
+    "workout visualization",
+  ],
   authors: [{ name: "Spyros Lontos" }],
   creator: "Spyros Lontos",
   publisher: "Spyros Lontos",
@@ -62,13 +78,15 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: "https://fitnessoverlays.com",
     title: "Fitness Overlays - Create Beautiful Strava Activity Graphics",
-    description: "Transform your Strava activities into stunning visual overlays. Create professional fitness content with customizable templates and rich data visualization.",
+    description:
+      "Transform your Strava activities into stunning visual overlays. Create professional fitness content with customizable templates and rich data visualization.",
     siteName: "Fitness Overlays",
   },
   twitter: {
     card: "summary_large_image",
     title: "Fitness Overlays - Create Beautiful Strava Activity Graphics",
-    description: "Transform your Strava activities into stunning visual overlays. Create professional fitness content with customizable templates and rich data visualization.",
+    description:
+      "Transform your Strava activities into stunning visual overlays. Create professional fitness content with customizable templates and rich data visualization.",
     creator: "@spyroslontos",
   },
 }
@@ -77,7 +95,7 @@ export const viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
-};
+}
 
 export default function RootLayout({
   children,

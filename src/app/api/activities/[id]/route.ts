@@ -34,11 +34,17 @@ export async function GET(
     const cached = await db
       .select()
       .from(activities)
-      .where(and(eq(activities.activityId, activityId), eq(activities.userId, userId)))
+      .where(
+        and(
+          eq(activities.activityId, activityId),
+          eq(activities.userId, userId),
+        ),
+      )
       .limit(1)
 
     if (cached.length > 0) {
-      const isFresh = Date.now() - cached[0].lastSynced.getTime() < CACHE_DURATION
+      const isFresh =
+        Date.now() - cached[0].lastSynced.getTime() < CACHE_DURATION
       if (isFresh) {
         return NextResponse.json(cached[0].data, {
           headers: {
@@ -59,7 +65,10 @@ export async function GET(
 
     if (!response.ok) {
       if (response.status === 404) {
-        return NextResponse.json({ error: "Activity not found" }, { status: 404 })
+        return NextResponse.json(
+          { error: "Activity not found" },
+          { status: 404 },
+        )
       }
       throw new Error(`Strava API error: ${response.status}`)
     }
@@ -68,7 +77,10 @@ export async function GET(
 
     // 3. Security check & Store in DB
     if (data.athlete?.id !== userId) {
-      return NextResponse.json({ error: "Unauthorized activity access" }, { status: 403 })
+      return NextResponse.json(
+        { error: "Unauthorized activity access" },
+        { status: 403 },
+      )
     }
 
     await db

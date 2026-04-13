@@ -55,15 +55,24 @@ export function ThemeSubmenu() {
       </DropdownMenuSubTrigger>
       <DropdownMenuPortal>
         <DropdownMenuSubContent>
-          <DropdownMenuItem onClick={() => setTheme("light")} className="cursor-pointer text-base">
+          <DropdownMenuItem
+            onClick={() => setTheme("light")}
+            className="cursor-pointer text-base"
+          >
             <Sun className="mr-2 h-4 w-4" />
             <span>Light</span>
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setTheme("dark")} className="cursor-pointer text-base">
+          <DropdownMenuItem
+            onClick={() => setTheme("dark")}
+            className="cursor-pointer text-base"
+          >
             <Moon className="mr-2 h-4 w-4" />
             <span>Dark</span>
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setTheme("system")} className="cursor-pointer text-base">
+          <DropdownMenuItem
+            onClick={() => setTheme("system")}
+            className="cursor-pointer text-base"
+          >
             <Monitor className="mr-2 h-4 w-4" />
             <span>System</span>
           </DropdownMenuItem>

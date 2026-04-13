@@ -1,7 +1,9 @@
 export type UnitSystem = "metric" | "imperial"
 
 // Maps Strava measurement preference to our unit system
-export const mapStravaUnitsToUnitSystem = (measurementPreference?: string): UnitSystem => {
+export const mapStravaUnitsToUnitSystem = (
+  measurementPreference?: string,
+): UnitSystem => {
   // Strava uses "meters" or "feet" - if feet, use imperial, otherwise default to metric
   return measurementPreference === "feet" ? "imperial" : "metric"
 }
@@ -32,7 +34,7 @@ export const METRICS: Metric[] = [
       const hours = Math.floor((data.moving_time as number) / 3600)
       const minutes = Math.floor(((data.moving_time as number) % 3600) / 60)
       const seconds = (data.moving_time as number) % 60
-      
+
       if (hours > 0) {
         return `${hours}h ${minutes}m ${seconds}s`
       }
@@ -126,7 +128,7 @@ export const METRICS: Metric[] = [
       const hours = Math.floor((data.elapsed_time as number) / 3600)
       const minutes = Math.floor(((data.elapsed_time as number) % 3600) / 60)
       const seconds = (data.elapsed_time as number) % 60
-      
+
       if (hours > 0) {
         return `${hours}h ${minutes}m ${seconds}s`
       }
@@ -163,13 +165,17 @@ export const METRICS: Metric[] = [
     key: "kudos",
     label: "Kudos",
     formatter: (data) =>
-      data.kudos_count && (data.kudos_count as number) > 0 ? `❤️ ${data.kudos_count}` : "N/A",
+      data.kudos_count && (data.kudos_count as number) > 0
+        ? `❤️ ${data.kudos_count}`
+        : "N/A",
   },
   {
     key: "avgPower",
     label: "Avg Power",
     formatter: (data) =>
-      data.average_watts ? `${Math.round(data.average_watts as number)}W` : "N/A",
+      data.average_watts
+        ? `${Math.round(data.average_watts as number)}W`
+        : "N/A",
   },
 ]
 

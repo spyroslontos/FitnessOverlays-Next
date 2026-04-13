@@ -1,193 +1,198 @@
-"use client";
+"use client"
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { cn } from "@/lib/utils";
-import * as React from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+import { cn } from "@/lib/utils"
+import * as React from "react"
 
 export type HeatmapDatum = {
-  date: string | Date;
-  value: number;
-  meta?: unknown;
-};
+  date: string | Date
+  value: number
+  meta?: unknown
+}
 
 export type HeatmapCell = {
-  date: Date;
-  key: string;
-  value: number;
-  level: number;
-  label: string;
-  disabled: boolean;
-  meta?: unknown;
-};
+  date: Date
+  key: string
+  value: number
+  level: number
+  label: string
+  disabled: boolean
+  meta?: unknown
+}
 
 export type LegendConfig = {
-  show?: boolean;
+  show?: boolean
   /** Default: "Less" */
-  lessText?: React.ReactNode;
+  lessText?: React.ReactNode
   /** Default: "More" */
-  moreText?: React.ReactNode;
+  moreText?: React.ReactNode
   /** Default: true (shows the arrow) */
-  showArrow?: boolean;
+  showArrow?: boolean
   /** Default: "right" */
-  placement?: "right" | "bottom";
+  placement?: "right" | "bottom"
   /** Default: "row" */
-  direction?: "row" | "column";
+  direction?: "row" | "column"
   /** Default: true */
-  showText?: boolean;
+  showText?: boolean
   /** Default: uses cellSize */
-  swatchSize?: number;
+  swatchSize?: number
   /** Default: uses cellGap */
-  swatchGap?: number;
-  className?: string;
-};
+  swatchGap?: number
+  className?: string
+}
 
 export type AxisLabelsConfig = {
   /** Default: true */
-  show?: boolean;
+  show?: boolean
   /** Show weekday labels on left. Default: true */
-  showWeekdays?: boolean;
+  showWeekdays?: boolean
   /** Show month labels on top. Default: true */
-  showMonths?: boolean;
+  showMonths?: boolean
   /**
    * Which weekday rows to label (0..6 in grid order top->bottom).
    * Default: [1,3,5] => Mon/Wed/Fri when weekStartsOn=1 (nice uncluttered)
    */
-  weekdayIndices?: number[];
+  weekdayIndices?: number[]
   /** Month label format. Default: "short" */
-  monthFormat?: "short" | "long" | "numeric";
+  monthFormat?: "short" | "long" | "numeric"
   /**
    * Minimum spacing in weeks between month labels to avoid crowding.
    * Default: 3
    */
-  minWeekSpacing?: number;
-  className?: string;
-};
+  minWeekSpacing?: number
+  className?: string
+}
 
 export type HeatmapCalendarProps = {
-  title?: string;
-  data: HeatmapDatum[];
+  title?: string
+  data: HeatmapDatum[]
   /** Number of days ending at endDate (default 365) */
-  rangeDays?: number;
-  endDate?: Date;
-  weekStartsOn?: 0 | 1;
+  rangeDays?: number
+  endDate?: Date
+  weekStartsOn?: 0 | 1
 
   /** Cell size in px (default 12) */
-  cellSize?: number;
+  cellSize?: number
   /** Gap between cells in px (default 3) */
-  cellGap?: number;
+  cellGap?: number
 
   /** Called when a cell is clicked */
-  onCellClick?: (cell: HeatmapCell) => void;
+  onCellClick?: (cell: HeatmapCell) => void
 
   /** Tailwind class names for levels 0..N (used when palette is not provided) */
-  levelClassNames?: string[];
+  levelClassNames?: string[]
 
   /**
    * Direct color palette for levels 0..N (e.g. ["#eee", "#bbf7d0", ...] or "hsl(var(--primary) / 0.35)").
    * If provided, it overrides levelClassNames for cell and legend coloring.
    */
-  palette?: string[];
+  palette?: string[]
 
   /** Configure legend, or set to false to hide */
-  legend?: boolean | LegendConfig;
+  legend?: boolean | LegendConfig
 
   /** Add axis labels (weekday + month) */
-  axisLabels?: boolean | AxisLabelsConfig;
+  axisLabels?: boolean | AxisLabelsConfig
 
   /** Full custom legend render (overrides legend config UI) */
   renderLegend?: (args: {
-    levelCount: number;
-    levelClassNames: string[];
-    palette?: string[];
-    cellSize: number;
-    cellGap: number;
-  }) => React.ReactNode;
+    levelCount: number
+    levelClassNames: string[]
+    palette?: string[]
+    cellSize: number
+    cellGap: number
+  }) => React.ReactNode
 
   /** Tooltip content override */
-  renderTooltip?: (cell: HeatmapCell) => React.ReactNode;
+  renderTooltip?: (cell: HeatmapCell) => React.ReactNode
 
-  className?: string;
-};
+  className?: string
+}
 
 /* ---------------- utilities ---------------- */
 
 function startOfDay(d: Date) {
-  const x = new Date(d);
-  x.setHours(0, 0, 0, 0);
-  return x;
+  const x = new Date(d)
+  x.setHours(0, 0, 0, 0)
+  return x
 }
 
 function addDays(d: Date, days: number) {
-  const x = new Date(d);
-  x.setDate(x.getDate() + days);
-  return x;
+  const x = new Date(d)
+  x.setDate(x.getDate() + days)
+  return x
 }
 
 function pad2(n: number) {
-  return String(n).padStart(2, "0");
+  return String(n).padStart(2, "0")
 }
 
 function toLocalKey(d: Date) {
   // Local calendar day key to avoid UTC shifting.
-  return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+  return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`
 }
 
 function parseDateInput(input: string | Date) {
-  if (input instanceof Date) return input;
+  if (input instanceof Date) return input
   // If we get a date-only string (YYYY-MM-DD), parse as LOCAL midnight.
   // `new Date("YYYY-MM-DD")` is interpreted as UTC and will shift for non-UTC timezones.
-  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(input);
-  if (m) return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
-  return new Date(input);
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(input)
+  if (m) return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]))
+  return new Date(input)
 }
 
 function startOfWeek(d: Date, weekStartsOn: 0 | 1) {
-  const x = startOfDay(d);
-  const day = x.getDay();
-  const diff = (day - weekStartsOn + 7) % 7;
-  x.setDate(x.getDate() - diff);
-  return x;
+  const x = startOfDay(d)
+  const day = x.getDay()
+  const diff = (day - weekStartsOn + 7) % 7
+  x.setDate(x.getDate() - diff)
+  return x
 }
 
 /** Default GitHub-ish buckets. */
 function getLevel(value: number) {
-  if (value <= 0) return 0;
-  if (value <= 2) return 1;
-  if (value <= 5) return 2;
-  if (value <= 10) return 3;
-  return 4;
+  if (value <= 0) return 0
+  if (value <= 2) return 1
+  if (value <= 5) return 2
+  if (value <= 10) return 3
+  return 4
 }
 
 function clampLevel(level: number, levelCount: number) {
-  return Math.max(0, Math.min(levelCount - 1, level));
+  return Math.max(0, Math.min(levelCount - 1, level))
 }
 
 function bgStyleForLevel(level: number, palette?: string[]) {
-  if (!palette?.length) return undefined;
-  const idx = clampLevel(level, palette.length);
-  return { backgroundColor: palette[idx] };
+  if (!palette?.length) return undefined
+  const idx = clampLevel(level, palette.length)
+  return { backgroundColor: palette[idx] }
 }
 
 function sameMonth(a: Date, b: Date) {
-  return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth();
+  return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth()
 }
 
 function formatMonth(d: Date, fmt: "short" | "long" | "numeric") {
   if (fmt === "numeric") {
-    const yy = String(d.getFullYear()).slice(-2);
-    return `${d.getMonth() + 1}/${yy}`;
+    const yy = String(d.getFullYear()).slice(-2)
+    return `${d.getMonth() + 1}/${yy}`
   }
-  return d.toLocaleDateString(undefined, { month: fmt });
+  return d.toLocaleDateString(undefined, { month: fmt })
 }
 
 function weekdayLabelForIndex(index: number, weekStartsOn: 0 | 1) {
   // index is 0..6 in grid row order (top->bottom).
   // actual weekday = weekStartsOn + index
-  const actualDay = (weekStartsOn + index) % 7;
+  const actualDay = (weekStartsOn + index) % 7
   // stable reference week (UTC)
-  const base = new Date(Date.UTC(2024, 0, 7 + actualDay));
-  return base.toLocaleDateString(undefined, { weekday: "short" }).toUpperCase();
+  const base = new Date(Date.UTC(2024, 0, 7 + actualDay))
+  return base.toLocaleDateString(undefined, { weekday: "short" }).toUpperCase()
 }
 
 /* ---------------- component ---------------- */
@@ -216,53 +221,58 @@ export function HeatmapCalendar({
     "bg-primary/35",
     "bg-primary/55",
     "bg-primary/75",
-  ];
+  ]
 
-  const levelCount = palette?.length ? palette.length : levels.length;
+  const levelCount = palette?.length ? palette.length : levels.length
 
   const legendCfg: LegendConfig =
-    legend === true ? {} : legend === false ? { show: false } : legend;
+    legend === true ? {} : legend === false ? { show: false } : legend
 
   const axisCfg: AxisLabelsConfig =
-    axisLabels === true ? {} : axisLabels === false ? { show: false } : axisLabels;
+    axisLabels === true
+      ? {}
+      : axisLabels === false
+        ? { show: false }
+        : axisLabels
 
-  const showAxis = axisCfg.show ?? true;
-  const showWeekdays = axisCfg.showWeekdays ?? true;
-  const showMonths = axisCfg.showMonths ?? true;
-  const weekdayIndices = axisCfg.weekdayIndices ?? [1, 3, 5];
-  const monthFormat = axisCfg.monthFormat ?? "short";
-  const minWeekSpacing = axisCfg.minWeekSpacing ?? 3;
+  const showAxis = axisCfg.show ?? true
+  const showWeekdays = axisCfg.showWeekdays ?? true
+  const showMonths = axisCfg.showMonths ?? true
+  const weekdayIndices = axisCfg.weekdayIndices ?? [1, 3, 5]
+  const monthFormat = axisCfg.monthFormat ?? "short"
+  const minWeekSpacing = axisCfg.minWeekSpacing ?? 3
 
-  const end = startOfDay(endDate);
-  const start = addDays(end, -(rangeDays - 1));
+  const end = startOfDay(endDate)
+  const start = addDays(end, -(rangeDays - 1))
 
   const valueMap = React.useMemo(() => {
-    const map = new Map<string, { value: number; meta?: unknown }>();
+    const map = new Map<string, { value: number; meta?: unknown }>()
     for (const item of data) {
-      const d = parseDateInput(item.date);
-      const key = toLocalKey(d);
+      const d = parseDateInput(item.date)
+      const key = toLocalKey(d)
 
-      const prev = map.get(key);
-      const nextVal = (prev?.value ?? 0) + (item.value ?? 0); // sum merge
-      map.set(key, { value: nextVal, meta: item.meta ?? prev?.meta });
+      const prev = map.get(key)
+      const nextVal = (prev?.value ?? 0) + (item.value ?? 0) // sum merge
+      map.set(key, { value: nextVal, meta: item.meta ?? prev?.meta })
     }
-    return map;
-  }, [data]);
+    return map
+  }, [data])
 
-  const firstWeek = startOfWeek(start, weekStartsOn);
-  const totalDays = Math.ceil((end.getTime() - firstWeek.getTime()) / 86400000) + 1;
-  const weeks = Math.ceil(totalDays / 7);
+  const firstWeek = startOfWeek(start, weekStartsOn)
+  const totalDays =
+    Math.ceil((end.getTime() - firstWeek.getTime()) / 86400000) + 1
+  const weeks = Math.ceil(totalDays / 7)
 
-  const cells: HeatmapCell[] = [];
+  const cells: HeatmapCell[] = []
   for (let w = 0; w < weeks; w++) {
     for (let d = 0; d < 7; d++) {
-      const date = addDays(firstWeek, w * 7 + d);
-      const inRange = date >= start && date <= end;
-      const key = toLocalKey(date);
+      const date = addDays(firstWeek, w * 7 + d)
+      const inRange = date >= start && date <= end
+      const key = toLocalKey(date)
 
-      const v = inRange ? (valueMap.get(key)?.value ?? 0) : 0;
-      const meta = inRange ? valueMap.get(key)?.meta : undefined;
-      const lvl = inRange ? getLevel(v) : 0;
+      const v = inRange ? (valueMap.get(key)?.value ?? 0) : 0
+      const meta = inRange ? valueMap.get(key)?.meta : undefined
+      const lvl = inRange ? getLevel(v) : 0
 
       cells.push({
         date,
@@ -276,50 +286,52 @@ export function HeatmapCalendar({
           month: "short",
           day: "numeric",
         }),
-      });
+      })
     }
   }
 
-  const columns: HeatmapCell[][] = [];
+  const columns: HeatmapCell[][] = []
   for (let i = 0; i < weeks; i++) {
-    columns.push(cells.slice(i * 7, i * 7 + 7));
+    columns.push(cells.slice(i * 7, i * 7 + 7))
   }
 
   const monthLabels = React.useMemo(() => {
-    if (!showAxis || !showMonths) return [] as { colIndex: number; text: string }[];
+    if (!showAxis || !showMonths)
+      return [] as { colIndex: number; text: string }[]
 
-    const labels: { colIndex: number; text: string }[] = [];
-    let lastLabeledWeek = -999;
+    const labels: { colIndex: number; text: string }[] = []
+    let lastLabeledWeek = -999
 
     for (let i = 0; i < columns.length; i++) {
-      const col = columns[i];
-      const firstInCol = col.find((c) => !c.disabled)?.date ?? col[0].date;
+      const col = columns[i]
+      const firstInCol = col.find((c) => !c.disabled)?.date ?? col[0].date
 
-      const prevCol = i > 0 ? columns[i - 1] : null;
-      const prevFirst = prevCol?.find((c) => !c.disabled)?.date ?? prevCol?.[0]?.date;
+      const prevCol = i > 0 ? columns[i - 1] : null
+      const prevFirst =
+        prevCol?.find((c) => !c.disabled)?.date ?? prevCol?.[0]?.date
 
-      const monthChanged = !prevFirst || !sameMonth(firstInCol, prevFirst);
+      const monthChanged = !prevFirst || !sameMonth(firstInCol, prevFirst)
 
       if (monthChanged && i - lastLabeledWeek >= minWeekSpacing) {
-        labels.push({ colIndex: i, text: formatMonth(firstInCol, monthFormat) });
-        lastLabeledWeek = i;
+        labels.push({ colIndex: i, text: formatMonth(firstInCol, monthFormat) })
+        lastLabeledWeek = i
       }
     }
 
-    return labels;
-  }, [columns, showAxis, showMonths, monthFormat, minWeekSpacing]);
+    return labels
+  }, [columns, showAxis, showMonths, monthFormat, minWeekSpacing])
 
   /* ---------------- legend ---------------- */
 
-  const showLegend = legendCfg.show ?? true;
-  const placement = legendCfg.placement ?? "right";
-  const direction = legendCfg.direction ?? "row";
-  const showText = legendCfg.showText ?? true;
-  const showArrow = legendCfg.showArrow ?? true;
-  const lessText = legendCfg.lessText ?? "Less";
-  const moreText = legendCfg.moreText ?? "More";
-  const swatchSize = legendCfg.swatchSize ?? cellSize;
-  const swatchGap = legendCfg.swatchGap ?? cellGap;
+  const showLegend = legendCfg.show ?? true
+  const placement = legendCfg.placement ?? "right"
+  const direction = legendCfg.direction ?? "row"
+  const showText = legendCfg.showText ?? true
+  const showArrow = legendCfg.showArrow ?? true
+  const lessText = legendCfg.lessText ?? "Less"
+  const moreText = legendCfg.moreText ?? "More"
+  const swatchSize = legendCfg.swatchSize ?? cellSize
+  const swatchGap = legendCfg.swatchGap ?? cellGap
 
   const LegendUI = renderLegend ? (
     renderLegend({
@@ -338,11 +350,14 @@ export function HeatmapCalendar({
       ) : null}
 
       <div
-        className={cn("flex items-center", direction === "row" ? "flex-row" : "flex-col")}
+        className={cn(
+          "flex items-center",
+          direction === "row" ? "flex-row" : "flex-col",
+        )}
         style={{ gap: `${swatchGap}px` }}
       >
         {Array.from({ length: levelCount }).map((_, i) => {
-          const cls = levels[clampLevel(i, levels.length)];
+          const cls = levels[clampLevel(i, levels.length)]
           return (
             <div
               key={i}
@@ -354,18 +369,18 @@ export function HeatmapCalendar({
               }}
               aria-hidden="true"
             />
-          );
+          )
         })}
       </div>
     </div>
-  );
+  )
 
   /* ---------------- tooltip ---------------- */
 
   const tooltipNode = (cell: HeatmapCell) => {
-    if (renderTooltip) return renderTooltip(cell);
-    if (cell.disabled) return "Outside range";
-    const unit = cell.value === 1 ? "event" : "events";
+    if (renderTooltip) return renderTooltip(cell)
+    if (cell.disabled) return "Outside range"
+    const unit = cell.value === 1 ? "event" : "events"
     return (
       <div className="text-sm">
         <div className="font-medium">
@@ -373,10 +388,10 @@ export function HeatmapCalendar({
         </div>
         <div className="text-muted-foreground">{cell.label}</div>
       </div>
-    );
-  };
+    )
+  }
 
-  const weekdayLabelWidth = showAxis && showWeekdays ? 44 : 0;
+  const weekdayLabelWidth = showAxis && showWeekdays ? 44 : 0
 
   return (
     <Card className={cn(className)}>
@@ -386,13 +401,18 @@ export function HeatmapCalendar({
 
       <CardContent>
         <TooltipProvider delayDuration={80}>
-          <div className={cn("flex gap-4", placement === "bottom" && "flex-col")}>
+          <div
+            className={cn("flex gap-4", placement === "bottom" && "flex-col")}
+          >
             {/* Scrollable calendar area */}
             <div className="overflow-x-auto">
               <div className={cn("min-w-0 pb-2", axisCfg.className)}>
                 {/* Month labels row */}
                 {showAxis && showMonths ? (
-                  <div className="flex items-end" style={{ paddingLeft: weekdayLabelWidth }}>
+                  <div
+                    className="flex items-end"
+                    style={{ paddingLeft: weekdayLabelWidth }}
+                  >
                     <div
                       className="relative"
                       style={{
@@ -403,9 +423,9 @@ export function HeatmapCalendar({
                       {monthLabels.map((m) => (
                         <div
                           key={m.colIndex}
-                        className="absolute text-xs text-muted-foreground"
+                          className="absolute text-xs text-muted-foreground"
                           style={{
-                              left: m.colIndex * (cellSize + cellGap),
+                            left: m.colIndex * (cellSize + cellGap),
                             top: 0,
                           }}
                         >
@@ -447,14 +467,16 @@ export function HeatmapCalendar({
                       {Array.from({ length: 7 }).map((_, rowIdx) => (
                         <tr key={rowIdx}>
                           {columns.map((col, colIdx) => {
-                            const cell = col[rowIdx];
-                            const cls = levels[clampLevel(cell.level, levels.length)];
+                            const cell = col[rowIdx]
+                            const cls =
+                              levels[clampLevel(cell.level, levels.length)]
                             return (
                               <td
                                 key={`${cell.key}-${colIdx}`}
                                 style={{
                                   padding: 0,
-                                  paddingRight: colIdx === columns.length - 1 ? 0 : cellGap,
+                                  paddingRight:
+                                    colIdx === columns.length - 1 ? 0 : cellGap,
                                   paddingBottom: rowIdx === 6 ? 0 : cellGap,
                                 }}
                               >
@@ -463,26 +485,36 @@ export function HeatmapCalendar({
                                     <button
                                       type="button"
                                       disabled={cell.disabled}
-                                      onClick={() => !cell.disabled && onCellClick?.(cell)}
+                                      onClick={() =>
+                                        !cell.disabled && onCellClick?.(cell)
+                                      }
                                       className={cn(
                                         "block rounded-[3px] outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
                                         !palette?.length && cls,
-                                        cell.disabled && "cursor-default opacity-30 pointer-events-none",
+                                        cell.disabled &&
+                                          "cursor-default opacity-30 pointer-events-none",
                                       )}
                                       style={{
                                         width: cellSize,
                                         height: cellSize,
-                                        ...(bgStyleForLevel(cell.level, palette) ?? {}),
+                                        ...(bgStyleForLevel(
+                                          cell.level,
+                                          palette,
+                                        ) ?? {}),
                                       }}
                                       aria-label={
-                                        cell.disabled ? "Outside range" : `${cell.label}: ${cell.value}`
+                                        cell.disabled
+                                          ? "Outside range"
+                                          : `${cell.label}: ${cell.value}`
                                       }
                                     />
                                   </TooltipTrigger>
-                                  <TooltipContent side="top">{tooltipNode(cell)}</TooltipContent>
+                                  <TooltipContent side="top">
+                                    {tooltipNode(cell)}
+                                  </TooltipContent>
                                 </Tooltip>
                               </td>
-                            );
+                            )
                           })}
                         </tr>
                       ))}
@@ -493,10 +525,10 @@ export function HeatmapCalendar({
             </div>
 
             {/* Legend */}
-              {LegendUI}
+            {LegendUI}
           </div>
         </TooltipProvider>
       </CardContent>
     </Card>
-  );
+  )
 }

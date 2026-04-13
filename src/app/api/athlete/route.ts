@@ -29,7 +29,8 @@ export async function GET() {
 
     if (cached.length > 0) {
       const lastSynced = cached[0].lastStravaSync
-      const isFresh = lastSynced && Date.now() - lastSynced.getTime() < CACHE_DURATION
+      const isFresh =
+        lastSynced && Date.now() - lastSynced.getTime() < CACHE_DURATION
 
       if (isFresh) {
         return NextResponse.json(cached[0].fullAthleteData, {

@@ -7,7 +7,9 @@ import { ActivitySummary } from "./activity-summary"
 import { OverlayWorkspace } from "./overlay-workspace"
 
 export function SelectedActivityDisplay() {
-  const [selectedActivityId, setSelectedActivityId] = useState<number | null>(null)
+  const [selectedActivityId, setSelectedActivityId] = useState<number | null>(
+    null,
+  )
   const { data: session } = useSession()
 
   const { data, isPending } = useQuery({
@@ -18,7 +20,7 @@ export function SelectedActivityDisplay() {
   })
 
   useEffect(() => {
-    if (typeof window === 'undefined') return
+    if (typeof window === "undefined") return
 
     const updateSelection = () => {
       const persisted = localStorage.getItem("selectedActivityId")

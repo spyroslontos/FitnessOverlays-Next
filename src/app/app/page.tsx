@@ -7,15 +7,17 @@ import { AthleteInfo } from "@/components/athlete-info"
 import { SelectedActivityDisplay } from "@/components/selected-activity-display"
 import { cookies } from "next/headers"
 
-
 export default async function Page() {
   await SessionInfo()
   const cookieStore = await cookies()
   const defaultOpen = cookieStore.get("sidebar_state")?.value !== "false"
-  
+
   return (
     <div className="h-screen [--header-height:calc(--spacing(14))]">
-      <SidebarProvider defaultOpen={defaultOpen} className="flex flex-col h-full">
+      <SidebarProvider
+        defaultOpen={defaultOpen}
+        className="flex flex-col h-full"
+      >
         <AppHeader />
         <div className="flex flex-1 min-h-0">
           <AppSidebar />
