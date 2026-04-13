@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState, useImperativeHandle, forwardRef } from "react"
 import { Canvas, FabricText, TOriginX, TOriginY } from "fabric"
-import { Skeleton } from "@/components/ui/skeleton"
 import { getMetricByKey, UnitSystem } from "@/lib/metrics"
 import { useSession } from "next-auth/react"
 
@@ -192,14 +191,17 @@ const OverlayCanvasComponent = forwardRef<OverlayCanvasRef, OverlayCanvasProps>(
 
     // Remove all objects but keep canvas setup
     const objects = canvas.getObjects()
-    objects.forEach(obj => canvas.remove(obj))
+    objects.forEach((obj) => {
+      canvas.remove(obj)
+    })
 
     // Check for status messages
     const statusMessage = 
       status === "loading" ? 'Loading...' :
       !session ? 'Not Authenticated' :
-      !data ? 'No Activity Selected' :
-      isPending ? 'Loading Activity...' : null
+      // While an activity is loading, keep the grid visible (placeholders) instead of showing "No Activity Selected".
+      isPending ? null :
+      !data ? 'No Activity Selected' : null
 
     if (statusMessage) {
       const text = createText(
@@ -259,7 +261,8 @@ const OverlayCanvasComponent = forwardRef<OverlayCanvasRef, OverlayCanvasProps>(
         originY: 'bottom',
       })
 
-      const value = createText(metric.formatter(data, unitSystem), x, valueY, {
+      const valueText = data ? metric.formatter(data, unitSystem) : "…"
+      const value = createText(valueText, x, valueY, {
         fontSize: valueFontSize,
         fontFamily,
         fill: textColor,
