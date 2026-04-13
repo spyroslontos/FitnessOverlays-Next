@@ -124,10 +124,22 @@ function addDays(d: Date, days: number) {
   return x;
 }
 
-function toKey(d: Date) {
-  // Using UTC ISO date key keeps things stable for demos.
-  // If you want strict local timezone day mapping, swap this to local YYYY-MM-DD generation.
-  return d.toISOString().slice(0, 10);
+function pad2(n: number) {
+  return String(n).padStart(2, "0");
+}
+
+function toLocalKey(d: Date) {
+  // Local calendar day key to avoid UTC shifting.
+  return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+}
+
+function parseDateInput(input: string | Date) {
+  if (input instanceof Date) return input;
+  // If we get a date-only string (YYYY-MM-DD), parse as LOCAL midnight.
+  // `new Date("YYYY-MM-DD")` is interpreted as UTC and will shift for non-UTC timezones.
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(input);
+  if (m) return new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+  return new Date(input);
 }
 
 function startOfWeek(d: Date, weekStartsOn: 0 | 1) {
@@ -227,8 +239,8 @@ export function HeatmapCalendar({
   const valueMap = React.useMemo(() => {
     const map = new Map<string, { value: number; meta?: unknown }>();
     for (const item of data) {
-      const d = typeof item.date === "string" ? new Date(item.date) : item.date;
-      const key = toKey(d);
+      const d = parseDateInput(item.date);
+      const key = toLocalKey(d);
 
       const prev = map.get(key);
       const nextVal = (prev?.value ?? 0) + (item.value ?? 0); // sum merge
@@ -246,7 +258,7 @@ export function HeatmapCalendar({
     for (let d = 0; d < 7; d++) {
       const date = addDays(firstWeek, w * 7 + d);
       const inRange = date >= start && date <= end;
-      const key = toKey(date);
+      const key = toLocalKey(date);
 
       const v = inRange ? (valueMap.get(key)?.value ?? 0) : 0;
       const meta = inRange ? valueMap.get(key)?.meta : undefined;
@@ -427,51 +439,55 @@ export function HeatmapCalendar({
                   ) : null}
 
                   {/* Heatmap grid */}
-                  <div
-                    className="flex"
-                    style={{ gap: `${cellGap}px` }}
-                    role="grid"
+                  <table
                     aria-label="Heatmap calendar"
+                    className="border-separate border-spacing-0"
                   >
-                    {columns.map((col, i) => (
-                      <div
-                        key={i}
-                        className="flex flex-col"
-                        style={{ gap: `${cellGap}px` }}
-                        role="rowgroup"
-                      >
-                        {col.map((cell) => {
-                          const cls = levels[clampLevel(cell.level, levels.length)];
-                          return (
-                            <Tooltip key={`${cell.key}-${i}`}>
-                              <TooltipTrigger asChild>
-                                <button
-                                  type="button"
-                                  disabled={cell.disabled}
-                                  onClick={() => !cell.disabled && onCellClick?.(cell)}
-                                  className={cn(
-                                    "rounded-[3px] outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-                                    !palette?.length && cls,
-                                    cell.disabled && "cursor-default opacity-30 pointer-events-none",
-                                  )}
-                                  style={{
-                                    width: cellSize,
-                                    height: cellSize,
-                                    ...(bgStyleForLevel(cell.level, palette) ?? {}),
-                                  }}
-                                  aria-label={
-                                    cell.disabled ? "Outside range" : `${cell.label}: ${cell.value}`
-                                  }
-                                  role="gridcell"
-                                />
-                              </TooltipTrigger>
-                              <TooltipContent side="top">{tooltipNode(cell)}</TooltipContent>
-                            </Tooltip>
-                          );
-                        })}
-                      </div>
-                    ))}
-                  </div>
+                    <tbody>
+                      {Array.from({ length: 7 }).map((_, rowIdx) => (
+                        <tr key={rowIdx}>
+                          {columns.map((col, colIdx) => {
+                            const cell = col[rowIdx];
+                            const cls = levels[clampLevel(cell.level, levels.length)];
+                            return (
+                              <td
+                                key={`${cell.key}-${colIdx}`}
+                                style={{
+                                  padding: 0,
+                                  paddingRight: colIdx === columns.length - 1 ? 0 : cellGap,
+                                  paddingBottom: rowIdx === 6 ? 0 : cellGap,
+                                }}
+                              >
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <button
+                                      type="button"
+                                      disabled={cell.disabled}
+                                      onClick={() => !cell.disabled && onCellClick?.(cell)}
+                                      className={cn(
+                                        "block rounded-[3px] outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                                        !palette?.length && cls,
+                                        cell.disabled && "cursor-default opacity-30 pointer-events-none",
+                                      )}
+                                      style={{
+                                        width: cellSize,
+                                        height: cellSize,
+                                        ...(bgStyleForLevel(cell.level, palette) ?? {}),
+                                      }}
+                                      aria-label={
+                                        cell.disabled ? "Outside range" : `${cell.label}: ${cell.value}`
+                                      }
+                                    />
+                                  </TooltipTrigger>
+                                  <TooltipContent side="top">{tooltipNode(cell)}</TooltipContent>
+                                </Tooltip>
+                              </td>
+                            );
+                          })}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </div>

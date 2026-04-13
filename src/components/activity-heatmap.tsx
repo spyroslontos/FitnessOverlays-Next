@@ -14,41 +14,58 @@ const LEVEL_CLASSES = [
   "bg-destructive",   // Level 3: "3+ activities" or High
 ]
 
-import { useRouter, useSearchParams, usePathname } from "next/navigation"
+import { useSearchParams, usePathname } from "next/navigation"
 
 // ... imports
 
 export function ActivityHeatmap({ 
   years, 
-  currentYear, 
+  currentYear: _currentYear, 
   measurementPreference 
 }: { 
   years: number[], 
   currentYear: number,
   measurementPreference?: string 
 }) {
-  const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
 
   const isImperial = measurementPreference === "feet"
 
-  // Initialize from URL or defaults
-  const yearStr = searchParams.get("year") || "last365"
-  const metric = (searchParams.get("metric") || "count") as "count" | "time" | "distance" | "elevation"
+  type Metric = "count" | "time" | "distance" | "elevation"
 
-  const updateUrl = (key: string, value: string) => {
-    const params = new URLSearchParams(searchParams.toString())
-    
-    // Omit defaults from URL
-    if ((key === "year" && value === "last365") || (key === "metric" && value === "count")) {
-      params.delete(key)
-    } else {
-      params.set(key, value)
-    }
-    
-    const qs = params.toString()
-    router.replace(`${pathname}${qs ? `?${qs}` : ""}`, { scroll: false })
+  // Read initial values from URL once (deep-linking), then keep state client-side
+  // to avoid App Router navigations that can re-run server components (e.g. header auth()).
+  const [yearStr, setYearStr] = React.useState(() => searchParams.get("year") || "last365")
+  const [metric, setMetric] = React.useState<Metric>(
+    () => (searchParams.get("metric") as Metric) || "count",
+  )
+
+  const writeUrl = React.useCallback(
+    (nextYear: string, nextMetric: Metric) => {
+      const params = new URLSearchParams(searchParams.toString())
+
+      if (nextYear === "last365") params.delete("year")
+      else params.set("year", nextYear)
+
+      if (nextMetric === "count") params.delete("metric")
+      else params.set("metric", nextMetric)
+
+      const qs = params.toString()
+      const next = `${pathname}${qs ? `?${qs}` : ""}`
+      window.history.replaceState(null, "", next)
+    },
+    [pathname, searchParams],
+  )
+
+  const onYearChange = (nextYear: string) => {
+    setYearStr(nextYear)
+    writeUrl(nextYear, metric)
+  }
+
+  const onMetricChange = (nextMetric: Metric) => {
+    setMetric(nextMetric)
+    writeUrl(yearStr, nextMetric)
   }
 
   // Calculate range
@@ -107,7 +124,8 @@ export function ActivityHeatmap({
   const data = React.useMemo(() => {
     const map = new Map<string, number>()
     activities.forEach(act => {
-      const key = act.start_date.split("T")[0]
+      // Strava: `start_date` is UTC; `start_date_local` matches the athlete/activity local time.
+      const key = (act.start_date_local ?? act.start_date).split("T")[0]
       let val = 0
       if (metric === "count") val = 1
       if (metric === "time") val = act.moving_time / 60
@@ -153,27 +171,19 @@ export function ActivityHeatmap({
     })
   }, [activities, metric, isImperial])
 
-  const unitLabel = React.useMemo(() => {
-    if (metric === "count") return "Activities"
-    if (metric === "time") return "Time (m)"
-    if (metric === "distance") return isImperial ? "Distance (mi)" : "Distance (km)"
-    if (metric === "elevation") return isImperial ? "Elev (ft)" : "Elev (m)"
-    return ""
-  }, [metric, isImperial])
-
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <h1 className="text-2xl font-bold">Activity Heatmap</h1>
         <div className="flex gap-2">
-            <Select value={yearStr} onValueChange={(v) => updateUrl("year", v)}>
+            <Select value={yearStr} onValueChange={onYearChange}>
               <SelectTrigger className="w-[180px]"><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="last365">Last 365 Days</SelectItem>
                 {years.map(y => <SelectItem key={y} value={y.toString()}>{y}</SelectItem>)}
               </SelectContent>
             </Select>
-            <Select value={metric} onValueChange={(v) => updateUrl("metric", v)}>
+            <Select value={metric} onValueChange={onMetricChange}>
               <SelectTrigger className="w-[140px]"><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="count">Activities</SelectItem>
