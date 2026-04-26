@@ -1,0 +1,7 @@
+allowBuilds:
+  canvas: true
+  esbuild: false
+  msw: false
+  sharp: false
+
+minimumReleaseAge: 4320 # 3 days
